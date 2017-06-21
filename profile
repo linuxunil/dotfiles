@@ -1,0 +1,2 @@
+$EDITOR=termite
+export $EDITOR
