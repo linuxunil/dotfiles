@@ -30,7 +30,7 @@ font pango:monospace 8
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id termite
+bindsym $mod+Return exec --no-startup-id gnome-terminal
 bindsym $mod+c exec --no-startup-id firefox
 
 # kill focused window
@@ -155,3 +155,5 @@ bindsym $mod+r mode "resize"
 bar {
         status_command i3status
 }
+
+new_window pixel 1
