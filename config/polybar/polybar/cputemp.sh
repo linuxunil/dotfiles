@@ -1,0 +1,1 @@
+/home/matt/.dotfiles/config/polybar/cputemp.sh

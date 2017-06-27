@@ -1,0 +1,19 @@
+[Data Source]
+DisplayName=linuxunil@gmail.com
+Enabled=true
+Parent=1498405290.1541.0@woodhouse.localdomain
+
+[Mail Transport]
+BackendName=smtp
+
+[Authentication]
+Host=smtp.gmail.com
+Method=XOAUTH2
+Port=587
+ProxyUid=system-proxy
+RememberPassword=true
+User=linuxunil@gmail.com
+CredentialName=
+
+[Security]
+Method=starttls-on-standard-port

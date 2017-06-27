@@ -1,0 +1,24 @@
+[Data Source]
+DisplayName=linuxunil@gmail.com
+Enabled=true
+Parent=1498405290.1541.0@woodhouse.localdomain
+
+[Mail Composition]
+Bcc=
+Cc=
+DraftsFolder=folder://local/Drafts
+ReplyStyle=default
+SignImip=true
+TemplatesFolder=
+
+[Mail Identity]
+Address=linuxunil@gmail.com
+Name=
+Organization=
+ReplyTo=
+SignatureUid=none
+
+[Mail Submission]
+SentFolder=folder://local/Sent
+TransportUid=1498405290.1541.3@woodhouse.localdomain
+RepliesToOriginFolder=false
