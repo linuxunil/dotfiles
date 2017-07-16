@@ -30,7 +30,7 @@ font pango:monospace 10
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id urxvt256c-ml
+bindsym $mod+Return exec --no-startup-id termite
 bindsym $mod+c exec --no-startup-id firefox
 
 # kill focused window
