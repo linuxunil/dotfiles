@@ -1,4 +1,3 @@
-[[ -f ~/.Xresources ]] && xrdb -merge -I$HOME ~/.Xresources
+xrdb -merge ~/.Xresources
 xset -fp ~/.local/share/fonts
-xrandr --dpi 196
 exec i3

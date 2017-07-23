@@ -1,8 +1,8 @@
-Xft.dpi: 220
-Xft.antialias: true
-Xft.hinting: true
-Xft.rgba: rgba
-Xft.autohint: true
+Xft.dpi: 275
+Xft.antialias: 1
+Xft.hinting: 1
+Xft.rgba: rgb
+Xft.autohint: 0
 Xft.hintstyle: hintfull
 Xft.lcdfilter: lcddefault
 
@@ -40,19 +40,8 @@ URxvt.shading: 20
 #define base0E #a31db1
 #define base0F #b03060
 
-*.foreground:   base05
-#ifdef background_opacity
 *.background:   base00
-#else
-*.background:   base00
-# ------------------------------------------------------------------------------
-! ROFI Color theme
-! ------------------------------------------------------------------------------
-rofi.color-enabled: true
-rofi.color-window: argb:dd1f2022, #a31bd1, #a31bd1
-rofi.color-normal: argb:0000000, #a31bd1, argb:0000000, #a31bd1, #02143f
-rofi.color-active: argb:0000000, #8ac4ff, argb:0000000, #8ac4ff, #02143f
-rofi.color-urgent: argb:0000000, #ff81ff, argb:0000000, #ff817f, #02143fendif
+
 *.cursorColor:  base05
 
 *.color0:       base00
@@ -82,11 +71,3 @@ rofi.color-urgent: argb:0000000, #ff81ff, argb:0000000, #ff817f, #02143fendif
 *.color20:      base04
 *.color21:      base06
 
-! ------------------------------------------------------------------------------
-! ROFI Color theme
-! ------------------------------------------------------------------------------
-rofi.color-enabled: true
-rofi.color-window: argb:dd1f2022, #a31bd1, #a31bd1
-rofi.color-normal: argb:0000000, #a31bd1, argb:0000000, #a31bd1, #02143f
-rofi.color-active: argb:0000000, #8ac4ff, argb:0000000, #8ac4ff, #02143f
-rofi.color-urgent: argb:0000000, #ff81ff, argb:0000000, #ff817f, #02143f
