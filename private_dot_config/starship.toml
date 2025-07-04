@@ -1,0 +1,208 @@
+# ~/.config/starship.toml
+# ============================================================================
+# A minimal, blazing-fast, and infinitely customizable prompt for any shell.
+# Get started: https://starship.rs/
+#
+# ----------------------------------------------------------------------------
+# 🎨 Palette - Tokyo Night
+# ----------------------------------------------------------------------------
+[palette]
+tokyo_night_storm = { fg = "#a9b1d6", bg = "#24283b" }
+tokyo_night_blue = { fg = "#7aa2f7", bg = "#24283b" }
+tokyo_night_cyan = { fg = "#7dcfff", bg = "#24283b" }
+tokyo_night_green = { fg = "#9ece6a", bg = "#24283b" }
+tokyo_night_orange = { fg = "#ff9e64", bg = "#24283b" }
+tokyo_night_purple = { fg = "#bb9af7", bg = "#24283b" }
+tokyo_night_red = { fg = "#f7768e", bg = "#24283b" }
+tokyo_night_yellow = { fg = "#e0af68", bg = "#24283b" }
+
+# ----------------------------------------------------------------------------
+# 🚀 Prompt Configuration
+# ----------------------------------------------------------------------------
+format = """
+$os\
+$username\
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$cmd_duration\
+$line_break\
+$character"""
+
+[os]
+format = "[$symbol]($style) "
+style = "tokyo_night_purple"
+disabled = false
+
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+AlmaLinux = " "
+Amazon = " "
+Android = " "
+Arch = " "
+Artix = " "
+CachyOS = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Kali = " "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+Nobara = " "
+OpenBSD = "󰈺 "
+openSUSE = " "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+RockyLinux = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
+SUSE = " "
+Ubuntu = " "
+Unknown = " "
+Void = " "
+Windows = "󰍲 "
+
+[username]
+show_always = true
+format = "[$user]($style) "
+style_user = "tokyo_night_yellow"
+style_root = "tokyo_night_red"
+
+[directory]
+style = "tokyo_night_blue"
+read_only = " 󰌾"
+truncation_length = 4
+truncate_to_repo = true
+
+[git_branch]
+symbol = " "
+style = "tokyo_night_purple"
+format = "[$symbol $branch]($style) "
+
+[git_status]
+style = "tokyo_night_red"
+format = "[$all_status$ahead_behind]($style) "
+
+[cmd_duration]
+min_time = 500
+format = "[$duration]($style) "
+style = "tokyo_night_yellow"
+
+[character]
+success_symbol = "[❯](tokyo_night_green)"
+error_symbol = "[❯](tokyo_night_red)"
+vimcmd_symbol = "[❮](tokyo_night_green)"
+
+# ----------------------------------------------------------------------------
+# 📦 Language & Tool Symbols
+# ----------------------------------------------------------------------------
+[aws]
+symbol = "  "
+[buf]
+symbol = " "
+[bun]
+symbol = " "
+[c]
+symbol = " "
+[cpp]
+symbol = " "
+[cmake]
+symbol = " "
+[conda]
+symbol = " "
+[crystal]
+symbol = " "
+[dart]
+symbol = " "
+[deno]
+symbol = " "
+[docker_context]
+symbol = " "
+[elixir]
+symbol = " "
+[elm]
+symbol = " "
+[fennel]
+symbol = " "
+[fossil_branch]
+symbol = " "
+[gcloud]
+symbol = "  "
+[golang]
+symbol = " "
+[guix_shell]
+symbol = " "
+[haskell]
+symbol = " "
+[haxe]
+symbol = " "
+[hg_branch]
+symbol = " "
+[hostname]
+ssh_symbol = " "
+[java]
+symbol = " "
+[julia]
+symbol = " "
+[kotlin]
+symbol = " "
+[lua]
+symbol = " "
+[memory_usage]
+symbol = "󰍛 "
+[meson]
+symbol = "󰔷 "
+[nim]
+symbol = "󰆥 "
+[nix_shell]
+symbol = " "
+[nodejs]
+symbol = " "
+[ocaml]
+symbol = " "
+[package]
+symbol = "󰏗 "
+[perl]
+symbol = " "
+[php]
+symbol = " "
+[pijul_channel]
+symbol = " "
+[pixi]
+symbol = "󰏗 "
+[python]
+symbol = " "
+[rlang]
+symbol = "󰟔 "
+[ruby]
+symbol = " "
+[rust]
+symbol = "󱘗 "
+[scala]
+symbol = " "
+[swift]
+symbol = " "
+[zig]
+symbol = " "
+[gradle]
+symbol = " "

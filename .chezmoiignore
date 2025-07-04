@@ -1,0 +1,9 @@
+# Ignore git directories
+.git
+
+# Ignore Gemini API key file
+GEMINI.md
+
+# Ignore Zsh history and cache
+.zsh_history
+.zcompdump*
