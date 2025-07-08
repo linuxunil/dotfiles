@@ -23,8 +23,6 @@ zls = "latest"
 zoxide = "latest"
 
 # Go Tools
-"go:github.com/go-delve/delve/cmd/dlv" = "latest"
-"go:github.com/golangci/golangci-lint/cmd/golangci-lint" = "latest"
 "go:github.com/sqlc-dev/sqlc/cmd/sqlc" = "latest"
 "go:golang.org/x/tools/gopls" = "latest"
 "go:mvdan.cc/gofumpt" = "latest"
