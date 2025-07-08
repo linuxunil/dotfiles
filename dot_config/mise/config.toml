@@ -1,0 +1,42 @@
+# ~/.config/mise/config.toml
+
+[tools]
+ansible = "latest"
+"cargo:atuin" = "latest"
+bat = "latest"
+bottom = "latest"
+chezmoi = "latest"
+eza = "latest"
+fd = "latest"
+go = "latest"
+jq = "latest"
+node = "latest"
+npm = "latest"
+pipx = "latest"
+python = "latest"
+ripgrep = "latest"
+rust = "latest"
+watchexec = "latest"
+zellij = "latest"
+zig = "latest"
+zls = "latest"
+zoxide = "latest"
+
+# Go Tools
+"go:github.com/go-delve/delve/cmd/dlv" = "latest"
+"go:github.com/golangci/golangci-lint/cmd/golangci-lint" = "latest"
+"go:github.com/sqlc-dev/sqlc/cmd/sqlc" = "latest"
+"go:golang.org/x/tools/gopls" = "latest"
+"go:mvdan.cc/gofumpt" = "latest"
+
+# Python Tools
+"pipx:mypy" = "latest"
+"pipx:ruff" = "latest"
+"pipx:ruff-lsp" = "latest"
+
+# Node Tools
+"npm:@bitwarden/cli" = "latest"
+"npm:@google/gemini-cli" = "latest"
+
+[settings]
+experimental = true
