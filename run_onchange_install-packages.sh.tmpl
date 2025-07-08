@@ -1,0 +1,53 @@
+#!/bin/bash
+#
+# This script is executed by chezmoi on `chezmoi apply`.
+# It installs system-level dependencies and virtualization tools.
+# Core CLI tools (bat, eza, zoxide) are now managed by mise.
+#
+
+set -eufo pipefail
+
+echo "--- Starting package installation ---"
+
+{{ if eq .chezmoi.os "linux" -}}
+# --- Fedora (Linux) ---
+echo "Setting up repositories for Vagrant and VirtualBox..."
+# Add HashiCorp (Vagrant) repo if it doesn't exist
+if ! sudo dnf repolist | grep -q "hashicorp"; then
+  sudo dnf install -y dnf-plugins-core
+  sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
+fi
+
+# Add VirtualBox repo if it doesn't exist
+if [ ! -f /etc/yum.repos.d/virtualbox.repo ]; then
+  sudo wget https://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo -P /etc/yum.repos.d
+fi
+
+echo "Installing virtualization tools..."
+# Install kernel dependencies and tools
+sudo dnf install -y @development-tools kernel-devel kernel-headers
+# Install latest VirtualBox and Vagrant from the repos
+sudo dnf install -y VirtualBox vagrant
+
+# Rebuild kernel modules and add user to vboxusers group
+echo "Rebuilding VirtualBox kernel modules. This may take a moment..."
+sudo /sbin/vboxconfig
+if ! groups $USER | grep -q '\bvboxusers\b'; then
+  echo "Adding user to vboxusers group. A logout/login is required for this to take effect."
+  sudo usermod -aG vboxusers $USER
+fi
+
+{{ else if eq .chezmoi.os "darwin" -}}
+# --- macOS ---
+echo "Updating Homebrew..."
+brew update
+
+echo "Installing Vagrant and VirtualBox casks..."
+brew install --cask vagrant virtualbox
+
+echo "NOTE: On macOS, you may need to go to 'System Settings > Privacy & Security' to approve the VirtualBox kernel extension after the first run."
+
+{{ end -}}
+
+echo "--- Package installation complete ---"
+

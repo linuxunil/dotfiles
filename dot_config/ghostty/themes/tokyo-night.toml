@@ -1,0 +1,26 @@
+# ~/.config/ghostty/themes/tokyo-night.toml
+# Tokyo Night theme for Ghostty
+
+[primary]
+background = "#1a1b26"
+foreground = "#a9b1d6"
+
+[normal]
+black = "#32344a"
+red = "#f7768e"
+green = "#9ece6a"
+yellow = "#e0af68"
+blue = "#7aa2f7"
+magenta = "#bb9af7"
+cyan = "#7dcfff"
+white = "#acb0d0"
+
+[bright]
+black = "#444b6a"
+red = "#ff7a93"
+green = "#b9f27c"
+yellow = "#ff9e64"
+blue = "#7da6ff"
+magenta = "#bf97ff"
+cyan = "#7fd5ff"
+white = "#d5d6f0"

@@ -1,0 +1,36 @@
+# Minimal Starship prompt with Catppuccin Mocha theme
+format = "$username$hostname$directory$git_branch$git_status$cmd_duration$line_break$character"
+
+# Colors from Catppuccin Mocha palette
+[character]
+success_symbol = "[➜](bold #a6e3a1)" # Green
+error_symbol = "[✗](bold #f38ba8)"   # Red
+
+[username]
+style_user = "#f5e0dc bold" # Rosewater
+style_root = "#f38ba8 bold" # Red
+format = "[$user]($style)@"
+
+[hostname]
+style = "#cba6f7" # Mauve
+format = "[$hostname]($style):"
+
+[directory]
+style = "#89b4fa" # Blue
+truncation_length = 3
+truncate_to_repo = true
+format = "[$path]($style) "
+
+[git_branch]
+symbol = " "
+style = "#f9e2af" # Yellow
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "#f38ba8" # Red
+format = "[$all_status$ahead_behind]($style) "
+
+[cmd_duration]
+min_time = 500
+style = "#f9e2af" # Yellow
+format = "[$duration]($style) "

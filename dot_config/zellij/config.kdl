@@ -1,0 +1,12 @@
+// Zellij configuration
+// For a full list of options, see the Zellij documentation:
+// https://zellij.dev/documentation/configuration.html
+
+// Use the custom tokyo-night theme
+theme "tokyo-night"
+
+// Set the default layout
+default_layout "compact"
+
+// Keybindings: Zellij uses Ctrl+g as its default "lock" key,
+// which avoids conflicts with our Super/Alt bindings.

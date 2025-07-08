@@ -1,0 +1,17 @@
+# Ignore environment files containing secrets
+.env
+.zshrc.local
+
+# Ignore Neovim plugin and data directories
+lazy/
+packer/
+swap/
+undo/
+sessions/
+log/
+
+# Ignore Zsh generated files and history
+.zcompdump*
+.zhistory
+.zsh_history
+.zim/

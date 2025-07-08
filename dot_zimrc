@@ -1,0 +1,30 @@
+# Zim configuration
+
+# Sets sane Zsh built-in environment options.
+zmodule environment
+# Applies correct bindkeys for input events.
+zmodule input
+# Sets a custom terminal title.
+zmodule termtitle
+# Utility aliases and functions. Adds colour to ls, grep and less.
+zmodule utility
+
+# Git module
+zmodule git
+
+# Completion
+zmodule zsh-users/zsh-completions --fpath src
+zmodule completion
+
+# Tooling integrations
+zmodule joke/zim-mise
+zmodule kiesman99/zim-zoxide
+zmodule fzf
+zmodule joke/zim-github-cli
+zmodule joke/zim-minikube
+zmodule k # Kubernetes aliases
+
+# UI/UX - Must be last
+zmodule zsh-users/zsh-syntax-highlighting
+zmodule zsh-users/zsh-history-substring-search
+zmodule zsh-users/zsh-autosuggestions
