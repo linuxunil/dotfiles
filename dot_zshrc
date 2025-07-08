@@ -1,0 +1,40 @@
+# ~/.zshrc - Interactive shell configuration
+
+# --- Source Local Config ---
+# Load machine-specific or sensitive settings from a local file.
+if [ -f ~/.zshrc.local ]; then
+  source ~/.zshrc.local
+fi
+
+# --- Exports ---
+# This is for personal binaries and scripts.
+export PATH="$HOME/.local/bin:$PATH"
+
+# Set the default editor.
+export EDITOR='nvim'
+
+# --- Aliases ---
+# Use modern, improved commands
+alias cat='bat --paging=never'
+alias grep='rg'
+alias find='fd'
+alias top='btm'
+
+# For podman users
+alias docker-compose='podman-compose'
+
+# Use zoxide for directory changes
+alias cd='z'
+
+# --- Tooling Activation ---
+# Activate mise to manage tool versions
+eval "$(mise activate zsh)"
+
+# Activate Atuin for shell history
+eval "$(atuin init zsh)"
+
+# Activate Zoxide for directory jumping
+eval "$(zoxide init zsh)"
+
+# Initialize Starship prompt
+eval "$(starship init zsh)"
