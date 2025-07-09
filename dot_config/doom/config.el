@@ -21,8 +21,8 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;
-(setq doom-font (font-spec :family "JetBrains Mono" :size 13)
-      doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 13))
+(setq doom-font (font-spec :family "JetBrainsMono" :size 13)
+      doom-variable-pitch-font (font-spec :family "JetBrainsMono" :size 13))
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -76,6 +76,12 @@
 ;; they are implemented.
 
 ;; ===== CUSTOM KEYBINDINGS =====
-(map! :n "S-l" #'next-buffer)
+(map! :n "S-j" #'next-buffer)
 (map! :n "S-h" #'previous-buffer)
 (map! :n "SPC e" #'treemacs)
+(map! :n "C-x s" #'split-window-below)
+(map! :n "C-x v" #'split-window-right)
+(map! :n "C-x h" #'evil-window-left)
+(map! :n "C-x j" #'evil-window-down)
+(map! :n "C-x k" #'evil-window-up)
+(map! :n "C-x l" #'evil-window-right)

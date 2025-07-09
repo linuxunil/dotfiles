@@ -2,22 +2,26 @@
 
 [tools]
 ansible = "latest"
-"cargo:atuin" = "latest"
 bat = "latest"
 bottom = "latest"
 chezmoi = "latest"
 eza = "latest"
 fd = "latest"
 go = "latest"
+golangci-lint = "latest"
+gofumpt = "latest"
 jq = "latest"
 node = "latest"
 npm = "latest"
+pandoc = "latest"
 pipx = "latest"
 python = "latest"
 ripgrep = "latest"
 rust = "latest"
+shellcheck = "latest"
+shfmt = "latest"
+starship = "latest"
 watchexec = "latest"
-zellij = "latest"
 zig = "latest"
 zls = "latest"
 zoxide = "latest"
@@ -25,16 +29,22 @@ zoxide = "latest"
 # Go Tools
 "go:github.com/sqlc-dev/sqlc/cmd/sqlc" = "latest"
 "go:golang.org/x/tools/gopls" = "latest"
-"go:mvdan.cc/gofumpt" = "latest"
+"go:github.com/x-motemen/gore/cmd/gore" = "latest"
+"go:github.com/stamblerre/gocode" = "latest"
+ "go:golang.org/x/tools/cmd/godoc" = "latest"
+ "go:golang.org/x/tools/cmd/goimports" = "latest"
+ "go:github.com/fatih/gomodifytags" = "latest"
+"go:github.com/cweill/gotests/..." = "latest"
 
 # Python Tools
 "pipx:mypy" = "latest"
 "pipx:ruff" = "latest"
-"pipx:ruff-lsp" = "latest"
 
 # Node Tools
 "npm:@bitwarden/cli" = "latest"
 "npm:@google/gemini-cli" = "latest"
+zellij = "latest"
+fzf = "latest"
 
 [settings]
 experimental = true

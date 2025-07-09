@@ -8,24 +8,27 @@ theme "tokyo-night"
 // Set the default layout
 default_layout "compact"
 show_startup_tips false
-// Keybindings: Zellij uses Ctrl+g as its default "lock" key,
-// which avoids conflicts with our Super/Alt bindings.
+// Use Alt+n as the prefix for all keybindings
 keybinds {
-  locked {
-    // Pane managment
-    bind "n" { NewPane; }
-    bind "d" { NewPane "Down"; }
-    bind "s" { NewPane "Right"; }
-    bind "h" { MoveFocus "Left"; }
-    bind "l" { MoveFocus "Right"; }
-    bind "k" { MoveFocus "Up"; }
-    bind "j" { MoveFocus "Down"; }
+    // Set the default mode to "locked"
+    default_mode "locked"
+    // Define the keybindings for the locked mode
+    locked {
+        // Pane management
+        bind "c" { NewPane; } // c for create
+        bind "s" { NewPane "Down"; } // s for split down
+        bind "v" { NewPane "Right"; } // v for vertical split
+        bind "h" { MoveFocus "Left"; }
+        bind "l" { MoveFocus "Right"; }
+        bind "k" { MoveFocus "Up"; }
+        bind "j" { MoveFocus "Down"; }
 
-    // Tab managment
-    bind "[" { GoToPreviousTab; }
-    bind "]" { GoToNextTab; }
+        // Tab management
+        bind "h" { GoToPreviousTab; } // h for previous
+        bind "j" { GoToNextTab; } // j for next
 
-    // Exit
-    bind "q" { Quit; }
-  }
+        // Exit
+        bind "q" { Quit; }
+    }
 }
+
