@@ -32,7 +32,7 @@ zoxide = "latest"
 "go:github.com/x-motemen/gore/cmd/gore" = "latest"
 "go:github.com/stamblerre/gocode" = "latest"
  "go:golang.org/x/tools/cmd/godoc" = "latest"
- "go:golang.org/x/tools/cmd/goimports" = "latest"
+# "go:golang.org/x/tools/cmd/goimports" = "latest"
  "go:github.com/fatih/gomodifytags" = "latest"
 "go:github.com/cweill/gotests/..." = "latest"
 
@@ -45,6 +45,7 @@ zoxide = "latest"
 "npm:@google/gemini-cli" = "latest"
 zellij = "latest"
 fzf = "latest"
+lazygit = "latest"
 
 [settings]
 experimental = true

@@ -1,3 +1,0 @@
-0000000000000000000000000000000000000000 700bafcc12e8bef282a1e7d87072fd6175b752a0 Matthew <linuxunil@gmail.com> 1751897632 -0500	clone: from https://github.com/linuxunil/nvim.git
-700bafcc12e8bef282a1e7d87072fd6175b752a0 0e37d795a9c1bc33ac5df5fba1885b11dac7d29b Matthew <linuxunil@gmail.com> 1751897747 -0500	pull: Fast-forward
-0e37d795a9c1bc33ac5df5fba1885b11dac7d29b 84a64f383de5d96945e227834f4216e11cdc976e Matthew <linuxunil@gmail.com> 1751940290 -0500	commit: feat(config): Replace snacks.nvim explorer with oil.nvim

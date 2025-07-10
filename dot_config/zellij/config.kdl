@@ -10,8 +10,6 @@ default_layout "compact"
 show_startup_tips false
 // Use Alt+n as the prefix for all keybindings
 keybinds {
-    // Set the default mode to "locked"
-    default_mode "locked"
     // Define the keybindings for the locked mode
     locked {
         // Pane management

@@ -7,9 +7,8 @@ font-size = 14
 
 # --- Theme & Appearance ---
 # Using the built-in "tokyonight" theme.
-theme = "tokyonight"
-background-opacity = 0.95
-window-decoration = "none"
+theme = "AtomOneDark"
+background-opacity = 0.85
 window-padding-x = 10
 window-padding-y = 10
 
@@ -30,3 +29,4 @@ keybind = "super+6=goto_tab:6"
 keybind = "super+7=goto_tab:7"
 keybind = "super+8=goto_tab:8"
 keybind = "super+9=goto_tab:9"
+keybind = shift+enter=text:\n

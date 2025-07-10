@@ -6,7 +6,8 @@
 # -----------------
 # Zsh configuration
 # -----------------
-
+export HOMEBREW_NO_ENV_HINTS="true"
+export PATH="$HOME/.local/bin:$PATH"
 #
 # History
 #
@@ -138,10 +139,10 @@ fi
 
 # --- Exports ---
 # This is for personal binaries and scripts.
-export PATH="$HOME/.local/bin:/.config/emacs/bin:$PATH"
+# export PATH="$HOME/.local/bin:/.config/emacs/bin:$PATH"
 
 # Set the default editor.
-export EDITOR='emacsclient -t -a ""'
+export EDITOR='nvim'
 export VISUAL="$EDITOR"
 
 # --- Aliases ---
@@ -169,7 +170,8 @@ eval "$(zoxide init zsh)"
 # Initialize Starship prompt
 eval "$(starship init zsh)"
 
-ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
-[ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
-[ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
-source "${ZINIT_HOME}/zinit.zsh"
+# ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+# [ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
+# [ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+# s
+# ource "${ZINIT_HOME}/zinit.zsh"
