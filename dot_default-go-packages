@@ -1,0 +1,23 @@
+github.com/pressly/goose/v3/cmd/goose@latest
+github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+
+# Import management
+golang.org/x/tools/cmd/goimports@latest
+
+# Debugging
+github.com/go-delve/delve/cmd/dlv@latest
+
+# Testing and mocking
+github.com/golang/mock/mockgen@latest
+
+# Static analysis
+honnef.co/go/tools/cmd/staticcheck@latest
+
+# Security vulnerability checking
+golang.org/x/vuln/cmd/govulncheck@latest
+
+# Code generation
+golang.org/x/tools/cmd/stringer@latest
+
+# Module management
+github.com/oligot/go-mod-upgrade@latest

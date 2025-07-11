@@ -1,0 +1,42 @@
+# Development tools
+pip-tools
+build
+twine
+wheel
+
+# Testing
+pytest
+pytest-cov
+pytest-xdist
+pytest-mock
+tox
+
+# Code quality
+pre-commit
+bandit
+safety
+
+# Documentation
+sphinx
+mkdocs
+mkdocs-material
+
+# Data science basics
+ipython
+jupyter
+notebook
+
+# Debugging
+ipdb
+pdbpp
+
+# HTTP and API development
+httpx
+requests
+httpie
+
+# Utilities
+python-dotenv
+click
+rich
+typer

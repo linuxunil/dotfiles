@@ -36,6 +36,7 @@ zoxide = "latest"
 # Python Tools
 "pipx:mypy" = "latest"
 "pipx:ruff" = "latest"
+uv = "latest"
 
 # Secrets Management
 sops = "latest"
@@ -47,6 +48,7 @@ lazygit = "latest"
 
 [settings]
 experimental = true
+<<<<<<< Updated upstream
 # Performance optimizations
 jobs = 6
 # Better task output
@@ -59,3 +61,14 @@ rops = true
 
 # Cargo backend settings are in the [settings] section
 # cargo.binstall = true
+=======
+auto_install = true
+task_output = "prefix"
+task_timings = true
+jobs = 16
+http_timeout = "30s"
+fetch_remote_versions_timeout = "10s"
+
+[settings.python]
+uv_venv_auto = true
+>>>>>>> Stashed changes
