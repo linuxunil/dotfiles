@@ -153,7 +153,7 @@ alias find='fd'
 alias top='btm'
 alias e="$EDITOR"
 alias nvim="$EDITOR"
-
+# Keybinding cheatsheet (moved to bottom)
 # For podman users
 alias docker-compose='podman-compose'
 
@@ -169,9 +169,5 @@ eval "$(zoxide init zsh)"
 
 # Initialize Starship prompt
 eval "$(starship init zsh)"
-
-# ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
-# [ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
-# [ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
-# s
-# ource "${ZINIT_HOME}/zinit.zsh"
+eval "$(zellij setup --generate-auto-start zsh)"
+alias cheat="zellij run -fc --floating --width 35% --height 90% --x 65% --y 5% -- glow -t -s dark -w 80 ~/keybinding_cheat_sheet.md"
