@@ -1,7 +1,15 @@
 # ~/.config/mise/config.toml
+[env]
+MISE_AUTO_INSTALL = true
+MISE_EXPERIMENTAL = true
+# Performance and output settings
+MISE_TASK_OUTPUT = "prefix"  # Shows task names with output, useful for parallel tasks
+MISE_TASK_TIMINGS = true     # Show elapsed time for each task
+MISE_JOBS = 6                # Run up to 4 tasks concurrently
+MISE_HTTP_TIMEOUT = "30s"   # Faster timeout for HTTP requests
+MISE_FETCH_REMOTE_VERSIONS_TIMEOUT = "10s"  # Faster timeout for version checks
 
 [tools]
-ansible = "latest"
 bat = "latest"
 bottom = "latest"
 chezmoi = "latest"
@@ -11,41 +19,43 @@ go = "latest"
 golangci-lint = "latest"
 gofumpt = "latest"
 jq = "latest"
-node = "latest"
-npm = "latest"
 pandoc = "latest"
 pipx = "latest"
 python = "latest"
 ripgrep = "latest"
-rust = "latest"
 shellcheck = "latest"
 shfmt = "latest"
 starship = "latest"
 watchexec = "latest"
-zig = "latest"
-zls = "latest"
 zoxide = "latest"
 
 # Go Tools
 "go:github.com/sqlc-dev/sqlc/cmd/sqlc" = "latest"
 "go:golang.org/x/tools/gopls" = "latest"
-"go:github.com/x-motemen/gore/cmd/gore" = "latest"
-"go:github.com/stamblerre/gocode" = "latest"
- "go:golang.org/x/tools/cmd/godoc" = "latest"
-# "go:golang.org/x/tools/cmd/goimports" = "latest"
- "go:github.com/fatih/gomodifytags" = "latest"
-"go:github.com/cweill/gotests/..." = "latest"
 
 # Python Tools
 "pipx:mypy" = "latest"
 "pipx:ruff" = "latest"
 
-# Node Tools
-"npm:@bitwarden/cli" = "latest"
-"npm:@google/gemini-cli" = "latest"
+# Secrets Management
+sops = "latest"
+age = "latest"
+
 zellij = "latest"
 fzf = "latest"
 lazygit = "latest"
 
 [settings]
 experimental = true
+# Performance optimizations
+jobs = 6
+# Better task output
+task_output = "prefix"
+task_timings = true
+
+# SOPS settings - use rops for TOML support
+[settings.sops]
+rops = true
+
+# Cargo backend settings are in the [settings] section
+# cargo.binstall = true
