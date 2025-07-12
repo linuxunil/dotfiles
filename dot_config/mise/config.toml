@@ -19,26 +19,24 @@ go = "latest"
 golangci-lint = "latest"
 gofumpt = "latest"
 jq = "latest"
+node = "latest"
 pandoc = "latest"
-pipx = "latest"
 python = "latest"
 ripgrep = "latest"
 shellcheck = "latest"
 shfmt = "latest"
 starship = "latest"
+uv = "latest"
 watchexec = "latest"
 zoxide = "latest"
 
 # Go Tools
-"go:github.com/sqlc-dev/sqlc/cmd/sqlc" = "latest"
 "go:golang.org/x/tools/gopls" = "latest"
 "go:github.com/cosmtrek/air" = "latest"
 "go:github.com/pressly/goose/v3/cmd/goose" = "latest"
 
-# Python Tools
-"pipx:mypy" = "latest"
-"pipx:ruff" = "latest"
-uv = "latest"
+# AI Tools
+"npm:@anthropic-ai/claude-code"= "latest"
 
 # Secrets Management
 sops = "latest"
@@ -47,14 +45,17 @@ age = "latest"
 zellij = "latest"
 fzf = "latest"
 lazygit = "latest"
+glow = "latest"
 
 [settings]
 experimental = true
 # Performance optimizations
-jobs = 6
+jobs = 16
 # Better task output
 task_output = "prefix"
 task_timings = true
+http_timeout = "30s"
+fetch_remote_versions_timeout = "10s"
 
 # SOPS settings - use rops for TOML support
 [settings.sops]
