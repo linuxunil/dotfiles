@@ -1,19 +1,8 @@
 -- lua/custom/autocommands.lua
--- Project-specific autocommands
+-- Essential autocommands only
 
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
-
--- ===== GENERAL BEHAVIORS =====
-
--- Highlight on yank (already in kickstart but worth keeping)
-autocmd('TextYankPost', {
-  group = augroup('YankHighlight', { clear = true }),
-  callback = function()
-    vim.highlight.on_yank({ timeout = 200 })
-  end,
-  desc = "Highlight yanked text"
-})
 
 -- Return to last edit position when opening files
 autocmd('BufReadPost', {
@@ -50,147 +39,17 @@ autocmd('VimResized', {
   desc = "Auto-resize splits on terminal resize"
 })
 
--- ===== LANGUAGE SPECIFIC =====
-
--- Go configuration
-autocmd('FileType', {
-  group = augroup('GoSettings', { clear = true }),
-  pattern = 'go',
-  callback = function()
-    -- Go uses tabs, not spaces
-    vim.opt_local.expandtab = false
-    vim.opt_local.tabstop = 4
-    vim.opt_local.shiftwidth = 4
-    
-    -- Manual formatting keybind will be in keymaps
-    -- Format on commit via mise/git hooks
-  end,
-  desc = "Go specific settings"
-})
-
--- Python configuration (with ruff)
-autocmd('FileType', {
-  group = augroup('PythonSettings', { clear = true }),
-  pattern = 'python',
-  callback = function()
-    -- Python uses 4 spaces
-    vim.opt_local.expandtab = true
-    vim.opt_local.tabstop = 4
-    vim.opt_local.shiftwidth = 4
-    
-    -- Set colorcolumn at 88 (ruff's default line length)
-    vim.opt_local.colorcolumn = "88"
-    
-    -- Manual formatting via <leader>f or git hooks with ruff
-    
-    -- Configure virtual environment detection for uv
-    if vim.fn.isdirectory('.venv') == 1 then
-      vim.env.VIRTUAL_ENV = vim.fn.getcwd() .. '/.venv'
-      vim.env.PATH = vim.env.VIRTUAL_ENV .. '/bin:' .. vim.env.PATH
-    end
-  end,
-  desc = "Python specific settings with ruff/uv"
-})
-
--- SQL configuration
-autocmd('FileType', {
-  group = augroup('SQLSettings', { clear = true }),
-  pattern = { 'sql', 'mysql', 'plsql' },
-  callback = function()
-    -- SQL uses 2 spaces (common convention)
-    vim.opt_local.expandtab = true
-    vim.opt_local.tabstop = 2
-    vim.opt_local.shiftwidth = 2
-    
-    -- SQL keywords uppercase
-    vim.opt_local.formatoptions:append('r')
-  end,
-  desc = "SQL specific settings"
-})
-
--- Markdown configuration
-autocmd('FileType', {
-  group = augroup('MarkdownSettings', { clear = true }),
-  pattern = { 'markdown', 'md' },
-  callback = function()
-    -- Enable spell checking
-    vim.opt_local.spell = true
-    vim.opt_local.spelllang = 'en_us'
-    
-    -- Wrap at 80 characters
-    vim.opt_local.textwidth = 80
-    vim.opt_local.wrap = true
-    vim.opt_local.linebreak = true
-  end,
-  desc = "Markdown specific settings"
-})
-
--- Org mode configuration
-autocmd('FileType', {
-  group = augroup('OrgSettings', { clear = true }),
-  pattern = 'org',
-  callback = function()
-    -- Better folding display
-    vim.opt_local.conceallevel = 2
-    vim.opt_local.concealcursor = 'nc'
-    
-    -- Spell checking
-    vim.opt_local.spell = true
-    vim.opt_local.spelllang = 'en_us'
-  end,
-  desc = "Org mode specific settings"
-})
-
--- YAML configuration
-autocmd('FileType', {
-  group = augroup('YAMLSettings', { clear = true }),
-  pattern = { 'yaml', 'yml' },
-  callback = function()
-    -- YAML uses 2 spaces
-    vim.opt_local.expandtab = true
-    vim.opt_local.tabstop = 2
-    vim.opt_local.shiftwidth = 2
-  end,
-  desc = "YAML specific settings"
-})
-
--- ===== PROJECT SPECIFIC =====
-
--- Automatically set makeprg based on project type
-autocmd('BufEnter', {
-  group = augroup('ProjectMakeprg', { clear = true }),
-  pattern = '*',
-  callback = function()
-    -- Only set if we're in a project root
-    if vim.fn.filereadable('.mise.toml') == 1 then
-      vim.opt_local.makeprg = 'mise test'
-    elseif vim.fn.filereadable('Makefile') == 1 then
-      vim.opt_local.makeprg = 'make'
-    elseif vim.fn.filereadable('go.mod') == 1 then
-      vim.opt_local.makeprg = 'go build ./...'
-    elseif vim.fn.filereadable('pyproject.toml') == 1 then
-      vim.opt_local.makeprg = 'uv run pytest'
-    end
-  end,
-  desc = "Set makeprg based on project type"
-})
-
 -- Terminal specific settings
 autocmd('TermOpen', {
   group = augroup('TerminalSettings', { clear = true }),
   callback = function()
-    -- Disable line numbers in terminal
     vim.opt_local.number = false
     vim.opt_local.relativenumber = false
     vim.opt_local.signcolumn = 'no'
-    
-    -- Start in insert mode
     vim.cmd('startinsert')
   end,
   desc = "Terminal specific settings"
 })
-
--- ===== PERFORMANCE =====
 
 -- Disable certain features in large files
 autocmd('BufReadPre', {
