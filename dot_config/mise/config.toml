@@ -19,24 +19,22 @@ go = "latest"
 golangci-lint = "latest"
 gofumpt = "latest"
 jq = "latest"
+node = "latest"
 pandoc = "latest"
-pipx = "latest"
 python = "latest"
 ripgrep = "latest"
 shellcheck = "latest"
 shfmt = "latest"
 starship = "latest"
+uv = "latest"
 watchexec = "latest"
 zoxide = "latest"
 
 # Go Tools
-"go:github.com/sqlc-dev/sqlc/cmd/sqlc" = "latest"
 "go:golang.org/x/tools/gopls" = "latest"
 
-# Python Tools
-"pipx:mypy" = "latest"
-"pipx:ruff" = "latest"
-uv = "latest"
+# AI Tools
+"npm:@anthropic-ai/claude-code"= "latest"
 
 # Secrets Management
 sops = "latest"
@@ -45,15 +43,17 @@ age = "latest"
 zellij = "latest"
 fzf = "latest"
 lazygit = "latest"
+glow = "latest"
 
 [settings]
 experimental = true
-<<<<<<< Updated upstream
 # Performance optimizations
-jobs = 6
+jobs = 16
 # Better task output
 task_output = "prefix"
 task_timings = true
+http_timeout = "30s"
+fetch_remote_versions_timeout = "10s"
 
 # SOPS settings - use rops for TOML support
 [settings.sops]
@@ -61,14 +61,6 @@ rops = true
 
 # Cargo backend settings are in the [settings] section
 # cargo.binstall = true
-=======
-auto_install = true
-task_output = "prefix"
-task_timings = true
-jobs = 16
-http_timeout = "30s"
-fetch_remote_versions_timeout = "10s"
 
 [settings.python]
 uv_venv_auto = true
->>>>>>> Stashed changes
