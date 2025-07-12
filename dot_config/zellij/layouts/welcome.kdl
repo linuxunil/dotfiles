@@ -1,0 +1,6 @@
+layout {
+    pane borderless=true {
+        plugin location="welcome-screen"
+    }
+}
+session_serialization false

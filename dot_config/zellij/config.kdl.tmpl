@@ -1,0 +1,148 @@
+// Zellij configuration
+// For a full list of options, see the Zellij documentation:
+// https://zellij.dev/documentation/configuration.html
+
+// Use the custom tokyo-night theme
+theme "tokyo-night"
+default_shell "zsh"
+show_startup_tips false
+default_layout "compact"
+ui {
+    pane_frames {
+        rounded_corners true
+    }
+}
+// Use Alt n as the prefix for all keybindings
+keybinds {
+    // Disable default keybindings to avoid conflicts
+    unbind "Ctrl p"
+    unbind "Ctrl o"
+    unbind "Ctrl n"
+    unbind "Ctrl h"
+    unbind "Ctrl g"
+    
+{{- if eq .chezmoi.os "darwin" }}
+    // macOS - Use Super (Cmd) key for ergonomic single-modifier shortcuts
+    normal {
+        // Vim-style pane navigation
+        bind "Super h" { MoveFocus "Left"; }
+        bind "Super j" { MoveFocus "Down"; }
+        bind "Super k" { MoveFocus "Up"; }
+        bind "Super l" { MoveFocus "Right"; }
+        
+        // Move panes (using arrow keys)
+        bind "Super Left" { MovePane "Left"; }
+        bind "Super Down" { MovePane "Down"; }
+        bind "Super Up" { MovePane "Up"; }
+        bind "Super Right" { MovePane "Right"; }
+        
+        // Number keys - Switch tabs
+        bind "Super 1" { GoToTab 1; }
+        bind "Super 2" { GoToTab 2; }
+        bind "Super 3" { GoToTab 3; }
+        bind "Super 4" { GoToTab 4; }
+        bind "Super 5" { GoToTab 5; }
+        
+        // Move pane to tab (avoiding Cmd+C/V conflicts)
+        bind "Super z" { MovePane; GoToTab 1; }
+        bind "Super x" { MovePane; GoToTab 2; }
+        bind "Super b" { MovePane; GoToTab 3; }  // Skip C/V
+        bind "Super n" { MovePane; GoToTab 4; }
+        bind "Super m" { MovePane; GoToTab 5; }
+        
+        // Layout/pane management
+        bind "Super q" { NewPane; }
+        bind "Super w" { NewPane "Down"; }
+        bind "Super e" { NewPane "Right"; }
+        bind "Super r" { TogglePaneFrames; }
+        bind "Super t" { NewTab; }
+        
+        // Quick actions
+        bind "Super Enter" { NewPane; }
+        bind "Super Space" { ToggleFloatingPanes; }
+        
+        // Layout shortcuts
+        bind "Super 1" { NewTab { layout "dev"; }; }
+        bind "Super 2" { NewTab { layout "containers"; }; }
+        
+        // Session management
+        bind "Super Shift 1" { SwitchToMode "Session"; }
+        
+        // Git workflow
+        bind "Super Shift g" { SwitchToMode "Tab"; }
+        
+        // Database access
+        bind "Super d" { NewPane "Down" { command "sqlite3"; }; ToggleFloatingPanes; }
+    }
+{{- else }}
+    // Linux - Use Meh key bindings (Ctrl Alt Shift) for hardware Meh key
+    normal {
+        // Vim-style pane navigation (consistent with Neovim and Sway)
+        bind "Ctrl Alt Shift h" { MoveFocus "Left"; }
+        bind "Ctrl Alt Shift j" { MoveFocus "Down"; }
+        bind "Ctrl Alt Shift k" { MoveFocus "Up"; }
+        bind "Ctrl Alt Shift l" { MoveFocus "Right"; }
+        
+        // Move panes (using arrow keys)
+        bind "Ctrl Alt Shift Left" { MovePane "Left"; }
+        bind "Ctrl Alt Shift Down" { MovePane "Down"; }
+        bind "Ctrl Alt Shift Up" { MovePane "Up"; }
+        bind "Ctrl Alt Shift Right" { MovePane "Right"; }
+        
+        // Number keys - Switch tabs
+        bind "Ctrl Alt Shift 1" { GoToTab 1; }
+        bind "Ctrl Alt Shift 2" { GoToTab 2; }
+        bind "Ctrl Alt Shift 3" { GoToTab 3; }
+        bind "Ctrl Alt Shift 4" { GoToTab 4; }
+        bind "Ctrl Alt Shift 5" { GoToTab 5; }
+        
+        // Row below - Move pane to tab
+        bind "Ctrl Alt Shift z" { MovePane; GoToTab 1; }
+        bind "Ctrl Alt Shift x" { MovePane; GoToTab 2; }
+        bind "Ctrl Alt Shift c" { MovePane; GoToTab 3; }
+        bind "Ctrl Alt Shift v" { MovePane; GoToTab 4; }
+        bind "Ctrl Alt Shift b" { MovePane; GoToTab 5; }
+        
+        // Row above - Layout/pane management
+        bind "Ctrl Alt Shift q" { NewPane; }
+        bind "Ctrl Alt Shift w" { NewPane "Down"; }
+        bind "Ctrl Alt Shift e" { NewPane "Right"; }
+        bind "Ctrl Alt Shift r" { TogglePaneFrames; }
+        bind "Ctrl Alt Shift t" { NewTab; }
+        
+        // Quick actions
+        bind "Ctrl Alt Shift Enter" { NewPane; }
+        bind "Ctrl Alt Shift Space" { ToggleFloatingPanes; }
+        
+        // Layout shortcuts
+        bind "Ctrl Alt Shift 1" { NewTab { layout "dev"; }; }
+        bind "Ctrl Alt Shift 2" { NewTab { layout "containers"; }; }
+        
+        // Session management
+        bind "Ctrl Alt Shift F1" { SwitchToMode "Session"; }
+        
+        // Git workflow
+        bind "Ctrl Alt Shift g" { SwitchToMode "Tab"; }
+        
+        // Database access
+        bind "Ctrl Alt Shift d" { NewPane "Down" { command "sqlite3"; }; ToggleFloatingPanes; }
+    }
+{{- end }}
+}
+
+// Copy mode improvements
+copy_command "pbcopy"  // macOS clipboard
+copy_clipboard "primary"  // Better clipboard integration
+
+// Plugin aliases for session management and welcome screen
+plugins {
+    tab-bar location="zellij:tab-bar"
+    status-bar location="zellij:status-bar"
+    strider location="zellij:strider"
+    compact-bar location="zellij:compact-bar"
+    session-manager location="zellij:session-manager"
+    welcome-screen location="zellij:session-manager" {
+        welcome_screen true
+    }
+}
+
