@@ -62,8 +62,8 @@ keybinds {
         bind "Super Space" { ToggleFloatingPanes; }
         
         // Layout shortcuts
-        bind "Super 1" { NewTab { layout "dev"; }; }
-        bind "Super 2" { NewTab { layout "containers"; }; }
+        bind "Super d" { NewTab { layout "dev"; }; }
+        bind "Super p" { NewTab { layout "containers"; }; }
         
         // Session management
         bind "Super Shift 1" { SwitchToMode "Session"; }
@@ -72,7 +72,7 @@ keybinds {
         bind "Super Shift g" { SwitchToMode "Tab"; }
         
         // Database access
-        bind "Super d" { NewPane "Down" { command "sqlite3"; }; ToggleFloatingPanes; }
+        bind "Super Shift d" { NewPane "Down" { command "lazysql"; }; ToggleFloatingPanes; }
     }
 {{- else }}
     // Linux - Use Meh key bindings (Ctrl Alt Shift) for hardware Meh key
