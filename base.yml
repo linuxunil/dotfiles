@@ -1,0 +1,22 @@
+---
+- name: Install Base System Packages
+  hosts: all
+  gather_facts: true
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+  
+  pre_tasks:
+    - name: Update package cache
+      ansible.builtin.include_tasks: tasks/update_cache.yml
+      tags: always
+  
+  roles:
+    - role: package_manager
+      tags: ['package_manager']
+    - role: base
+      tags: ['base']
+  
+  post_tasks:
+    - name: Verify base installation
+      ansible.builtin.debug:
+        msg: "Base system packages installed successfully"

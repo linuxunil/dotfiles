@@ -1,0 +1,38 @@
+---
+- name: Install Node.js (macOS)
+  community.general.homebrew:
+    name: node
+    state: present
+  when: ansible_os_family == "Darwin"
+
+- name: Install Node.js (Linux)
+  ansible.builtin.package:
+    name: 
+      - nodejs
+      - npm
+    state: present
+  become: true
+  when: ansible_os_family != "Darwin"
+
+- name: Install pnpm
+  ansible.builtin.npm:
+    name: pnpm
+    global: true
+    state: present
+
+- name: Configure npm to use pnpm
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+    line: 'export NPM_CONFIG_PACKAGE_MANAGER="pnpm"'
+    create: true
+
+- name: Install common Node.js tools
+  ansible.builtin.shell: |
+    pnpm add -g {{ item }}
+  loop:
+    - typescript
+    - "@types/node"
+    - eslint
+    - prettier
+    - vite
+  ignore_errors: true

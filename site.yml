@@ -1,47 +1,19 @@
 ---
-- name: Configure Development Environment
-  hosts: all
-  gather_facts: yes
-  environment:
-    HOMEBREW_NO_AUTO_UPDATE: "1"
-  
-  pre_tasks:
-    - name: Update package cache (Debian/Ubuntu)
-      ansible.builtin.apt:
-        update_cache: yes
-        cache_valid_time: 3600
-      become: yes
-      when: ansible_os_family == "Debian"
-      tags: always
-    
-    - name: Update package cache (Fedora/RedHat)
-      ansible.builtin.dnf:
-        update_cache: yes
-      become: yes
-      when: ansible_os_family == "RedHat"
-      tags: always
-    
-    - name: Check if Homebrew is installed
-      ansible.builtin.command: which brew
-      register: homebrew_check
-      failed_when: false
-      changed_when: false
-      when: ansible_os_family == "Darwin"
-      tags: always
-    
-  
-  roles:
-    - { role: base, tags: ['base', 'all'] }
-    - { role: dev, tags: ['dev', 'all'] }
-    - { role: gui, tags: ['gui', 'all'], when: "ansible_env.DISPLAY is defined or ansible_os_family == 'Darwin'" }
-    - { role: hyprland, tags: ['hyprland', 'wm'], when: "ansible_os_family != 'Darwin' and ansible_env.DISPLAY is defined" }
-    - { role: dotfiles, tags: ['dotfiles', 'all'] }
-    - { role: shell, tags: ['shell', 'all'] }
+# Main site playbook - orchestrates all configuration
+- import_playbook: bootstrap.yml
+  tags: ['bootstrap', 'all']
 
-  post_tasks:
-    - name: Update Homebrew at the end
-      community.general.homebrew:
-        update_homebrew: yes
-      when: ansible_os_family == "Darwin" and homebrew_check.rc == 0
-      ignore_errors: yes
-      tags: always
+- import_playbook: base.yml
+  tags: ['base']
+
+- import_playbook: dev.yml
+  tags: ['dev']
+
+- import_playbook: gui.yml
+  tags: ['gui']
+
+- import_playbook: dotfiles.yml
+  tags: ['dotfiles']
+
+- import_playbook: maintenance.yml
+  tags: ['maintenance']

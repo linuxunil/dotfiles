@@ -1,0 +1,40 @@
+---
+- name: Install Python (macOS)
+  community.general.homebrew:
+    name: 
+      - python@3.11
+      - python@3.12
+    state: present
+  when: ansible_os_family == "Darwin"
+
+- name: Install Python (Linux)
+  ansible.builtin.package:
+    name: 
+      - python3
+      - python3-pip
+      - python3-venv
+    state: present
+  become: true
+  when: ansible_os_family != "Darwin"
+
+- name: Install uv (Python package manager)
+  ansible.builtin.shell: |
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+  args:
+    creates: "{{ ansible_env.HOME }}/.local/bin/uv"
+
+- name: Add uv to PATH
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+    line: 'export PATH="$HOME/.local/bin:$PATH"'
+    create: true
+
+- name: Install common Python tools with uv
+  ansible.builtin.shell: |
+    {{ ansible_env.HOME }}/.local/bin/uv tool install {{ item }}
+  loop:
+    - ruff
+    - black
+    - mypy
+    - pytest
+  ignore_errors: true

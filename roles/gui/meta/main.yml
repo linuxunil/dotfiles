@@ -1,0 +1,33 @@
+---
+galaxy_info:
+  author: disco
+  description: GUI applications and desktop environment
+  company: Personal
+  license: MIT
+  min_ansible_version: 2.9
+  platforms:
+    - name: MacOSX
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+    - name: Fedora
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+  galaxy_tags:
+    - gui
+    - desktop
+    - applications
+
+dependencies:
+  - role: base
+  - role: dev
+  - role: package_manager
+
+collections:
+  - community.general
+  - ansible.builtin

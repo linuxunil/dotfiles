@@ -1,0 +1,24 @@
+---
+- name: System Maintenance
+  hosts: all
+  gather_facts: true
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+  
+  tasks:
+    - name: Update package managers
+      ansible.builtin.include_tasks: tasks/update_system.yml
+      tags: ['update']
+    
+    - name: Clean up broken symlinks
+      ansible.builtin.shell: |
+        find {{ ansible_env.HOME }} -type l -exec test ! -e {} \; -delete 2>/dev/null || true
+      tags: ['cleanup']
+    
+    - name: Clean package manager cache
+      ansible.builtin.include_tasks: tasks/clean_cache.yml
+      tags: ['cleanup']
+    
+    - name: Show system status
+      ansible.builtin.include_tasks: tasks/show_status.yml
+      tags: ['status']

@@ -1,0 +1,28 @@
+---
+- name: Install Development Environment
+  hosts: all
+  gather_facts: true
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+  
+  pre_tasks:
+    - name: Update package cache
+      ansible.builtin.include_tasks: tasks/update_cache.yml
+      tags: always
+  
+  roles:
+    - role: package_manager
+      tags: ['package_manager']
+    - role: base
+      tags: ['base']
+    - role: dev
+      tags: ['dev']
+    - role: dotfiles
+      tags: ['dotfiles']
+    - role: shell
+      tags: ['shell']
+  
+  post_tasks:
+    - name: Verify development environment
+      ansible.builtin.debug:
+        msg: "Development environment installed successfully"

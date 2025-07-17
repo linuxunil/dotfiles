@@ -1,0 +1,32 @@
+---
+- name: Install Go (macOS)
+  community.general.homebrew:
+    name: go
+    state: present
+  when: ansible_os_family == "Darwin"
+
+- name: Install Go (Linux)
+  ansible.builtin.package:
+    name: golang-go
+    state: present
+  become: true
+  when: ansible_os_family != "Darwin"
+
+- name: Set up Go environment
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+    line: "{{ item }}"
+    create: true
+  loop:
+    - 'export GOPATH="$HOME/go"'
+    - 'export PATH="$GOPATH/bin:$PATH"'
+
+- name: Install common Go tools
+  ansible.builtin.shell: |
+    go install {{ item }}
+  loop:
+    - golang.org/x/tools/gopls@latest
+    - github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+  environment:
+    GOPATH: "{{ ansible_env.HOME }}/go"
+    PATH: "{{ ansible_env.HOME }}/go/bin:{{ ansible_env.PATH }}"

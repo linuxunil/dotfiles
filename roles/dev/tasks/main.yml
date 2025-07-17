@@ -1,54 +1,36 @@
 ---
-- name: Install development packages (macOS)
-  community.general.homebrew:
-    name: "{{ item }}"
-    state: present
-  loop: "{{ dev_packages.common + dev_packages.darwin }}"
-  ignore_errors: yes
-  when: ansible_os_family == "Darwin"
+- name: Create development directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop: "{{ dev_directories }}"
 
-- name: Install development packages (Debian/Ubuntu)
-  ansible.builtin.apt:
-    name: "{{ dev_packages.common + dev_packages.debian }}"
-    state: present
-  become: yes
-  when: ansible_os_family == "Debian"
+- name: Install development packages
+  ansible.builtin.include_role:
+    name: package_manager
+  vars:
+    packages_to_install: "{{ dev_packages_combined }}"
 
-- name: Install development packages (Fedora/RedHat)
-  ansible.builtin.dnf:
-    name: "{{ dev_packages.common + dev_packages.redhat }}"
-    state: present
-  become: yes
-  when: ansible_os_family == "RedHat"
+- name: Set up Go environment
+  ansible.builtin.include_tasks: go.yml
+  when: language_setup.go.enabled
+
+- name: Set up Python environment
+  ansible.builtin.include_tasks: python.yml
+  when: language_setup.python.enabled
+
+- name: Set up Node.js environment
+  ansible.builtin.include_tasks: node.yml
+  when: language_setup.node.enabled
+
+- name: Set up Rust environment
+  ansible.builtin.include_tasks: rust.yml
+  when: language_setup.rust.enabled
 
 - name: Setup container runtime (Linux)
-  block:
-    - name: Install Podman
-      ansible.builtin.package:
-        name:
-          - podman
-          - podman-compose
-        state: present
-      become: yes
-    
-    - name: Enable podman socket for user
-      ansible.builtin.systemd:
-        name: podman.socket
-        scope: user
-        enabled: yes
-        state: started
-      when: ansible_service_mgr == "systemd"
-    
-    - name: Create virtiofsd symlink for Podman (RedHat/Fedora)
-      ansible.builtin.file:
-        src: /usr/libexec/virtiofsd
-        dest: /usr/local/bin/virtiofsd
-        state: link
-        force: yes
-      become: yes
-      when: ansible_os_family == "RedHat"
+  ansible.builtin.include_tasks: container.yml
   when: ansible_os_family != "Darwin"
-
 
 - name: Configure Git
   community.general.git_config:
@@ -59,3 +41,9 @@
     - { name: "init.defaultBranch", value: "main" }
     - { name: "pull.rebase", value: "true" }
     - { name: "fetch.prune", value: "true" }
+
+- name: Configure development shell
+  ansible.builtin.template:
+    src: dev_aliases.j2
+    dest: "{{ ansible_env.HOME }}/.dev_aliases"
+    mode: '0644'

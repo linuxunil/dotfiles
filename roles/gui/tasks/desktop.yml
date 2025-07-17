@@ -1,0 +1,21 @@
+---
+- name: Configure Hyprland window manager
+  ansible.builtin.include_tasks: hyprland.yml
+  when: window_manager == "hyprland"
+
+- name: Set up display manager
+  ansible.builtin.systemd:
+    name: "{{ display_manager }}"
+    enabled: true
+    state: started
+  become: true
+  when: display_manager is defined
+
+- name: Configure desktop services
+  ansible.builtin.systemd:
+    name: "{{ item.name }}"
+    enabled: "{{ item.enabled | default(true) }}"
+    state: "{{ item.state | default('started') }}"
+    scope: "{{ item.scope | default('system') }}"
+  loop: "{{ desktop_services | default([]) }}"
+  become: "{{ item.scope | default('system') == 'system' }}"

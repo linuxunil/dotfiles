@@ -1,42 +1,24 @@
 ---
-dev_packages:
-  common:
-    - neovim
-    - direnv
-    - go-task
-    - gh
-    - uv
-  
-  darwin:
-    - ghostty
-    - lazygit
-    - starship
-    - zoxide
-    - zellij
-    - podman
-    - podman-compose
-  
-  debian:
-    - gcc
-    - make
-    - pkg-config
-    - golang-go
-    - nodejs
-    - npm
-  
-  redhat:
-    - gcc
-    - gcc-c++
-    - make
-    - pkgconf
-    - golang
-    - nodejs
-    - npm
-    - podman
-    - podman-compose
-    - gvisor-tap-vsock
-    - qemu-system-x86
-    - qemu-kvm
-    - virtiofsd
+# Development packages - combined from group_vars
+dev_packages_combined: "{{ development_tools | default([]) + developer_packages | default([]) + container_tools | default([]) }}"
 
-container_runtime: podman
+# Programming language setup
+language_setup:
+  go:
+    enabled: "{{ programming_languages.go.enabled | default(true) }}"
+    version: "{{ programming_languages.go.version | default('latest') }}"
+  python:
+    enabled: "{{ programming_languages.python.enabled | default(true) }}"
+    version: "{{ programming_languages.python.version | default('3.11') }}"
+  node:
+    enabled: "{{ programming_languages.node.enabled | default(true) }}"
+    version: "{{ programming_languages.node.version | default('lts') }}"
+  rust:
+    enabled: "{{ programming_languages.rust.enabled | default(false) }}"
+
+# Development directories
+dev_directories:
+  - "{{ ansible_env.HOME }}/projects"
+  - "{{ ansible_env.HOME }}/go/src"
+  - "{{ ansible_env.HOME }}/go/bin"
+  - "{{ ansible_env.HOME }}/.local/share/nvim"

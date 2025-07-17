@@ -8,7 +8,8 @@ This is a standardized Ansible-based system configuration management repository 
 - Ansible Galaxy collections for community-maintained modules
 - Standard Ansible roles structure for better organization
 - Go-task as the primary interface for user commands
-- Cross-platform support (macOS, Fedora, and Debian/Ubuntu)
+- Cross-platform support (macOS and Fedora/RedHat)
+- Proper inventory structure for easy machine declaration
 
 ## Key Commands
 
@@ -16,10 +17,11 @@ This is a standardized Ansible-based system configuration management repository 
 ```bash
 task install-deps  # Install Ansible Galaxy collections
 task base          # Install essential CLI tools (zsh, git, neovim, etc.)
-task dev           # Install development tools (docker, languages, databases)
+task dev           # Install development tools (containers, languages, databases)
+task dotfiles      # Configure dotfiles and shell
 task gui           # Install GUI applications
 task all           # Complete setup for current platform
-task bootstrap     # Quick setup for new machines
+task bootstrap     # Quick setup for new machines (recommended)
 ```
 
 ### Development and Maintenance

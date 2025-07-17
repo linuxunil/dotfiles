@@ -1,0 +1,44 @@
+---
+- name: Update DNF cache
+  ansible.builtin.dnf:
+    update_cache: true
+  become: true
+  when: package_manager_update_cache
+
+- name: Enable RPM Fusion repositories (Fedora)
+  ansible.builtin.dnf:
+    name:
+      - "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_version }}.noarch.rpm"
+      - "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_version }}.noarch.rpm"
+    state: present
+    disable_gpg_check: true
+  become: true
+  when: 
+    - ansible_distribution == "Fedora"
+    - enable_rpmfusion | default(true)
+
+- name: Install DNF packages
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ packages_to_install | default([]) }}"
+  become: true
+  when: packages_to_install is defined
+
+- name: Add DNF repositories
+  ansible.builtin.yum_repository:
+    name: "{{ item.name }}"
+    description: "{{ item.description }}"
+    baseurl: "{{ item.baseurl }}"
+    gpgcheck: "{{ item.gpgcheck | default(true) }}"
+    enabled: "{{ item.enabled | default(true) }}"
+  loop: "{{ dnf_repositories | default([]) }}"
+  become: true
+  when: dnf_repositories is defined
+
+- name: Upgrade all packages
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+  become: true
+  when: package_manager_upgrade_packages

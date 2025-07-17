@@ -1,0 +1,24 @@
+---
+- name: Install Rust via rustup
+  ansible.builtin.shell: |
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  args:
+    creates: "{{ ansible_env.HOME }}/.cargo/bin/rustc"
+
+- name: Add Rust to PATH
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+    line: 'export PATH="$HOME/.cargo/bin:$PATH"'
+    create: true
+
+- name: Install common Rust tools
+  ansible.builtin.shell: |
+    {{ ansible_env.HOME }}/.cargo/bin/cargo install {{ item }}
+  loop:
+    - cargo-edit
+    - cargo-watch
+    - cargo-audit
+    - ripgrep
+    - fd-find
+    - bat
+  ignore_errors: true

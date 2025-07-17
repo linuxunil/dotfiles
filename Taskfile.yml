@@ -3,7 +3,7 @@
 version: '3'
 
 vars:
-  SETUP_PLAYBOOK: site.yml
+  INVENTORY: inventory/hosts.yml
   ANSIBLE_CONFIG: ansible.cfg
   OS: '{{OS}}'
   ARCH: '{{ARCH}}'
@@ -36,106 +36,93 @@ tasks:
     desc: Install base packages only (git, curl, bat, etc.)
     deps: [install-deps]
     cmds:
-      - ansible-playbook {{.SETUP_PLAYBOOK}} --tags base
+      - ansible-playbook -i {{.INVENTORY}} base.yml
     sources:
-      - "{{.SETUP_PLAYBOOK}}"
+      - "base.yml"
       - "roles/base/**/*"
+      - "roles/package_manager/**/*"
 
   dev:
     desc: Install development environment (base + neovim, go, python, etc.)
-    deps: [base]
+    deps: [install-deps]
     cmds:
-      - ansible-playbook {{.SETUP_PLAYBOOK}} --tags dev,dotfiles,shell
+      - ansible-playbook -i {{.INVENTORY}} dev.yml
     sources:
-      - "{{.SETUP_PLAYBOOK}}"
+      - "dev.yml"
       - "roles/dev/**/*"
       - "roles/dotfiles/**/*"
       - "roles/shell/**/*"
 
   gui:
-    desc: Install GUI applications (dev + firefox, vscode, discord, etc.)
-    deps: [dev]
+    desc: Install GUI applications (firefox, vscode, discord, etc.)
+    deps: [install-deps]
     cmds:
-      - ansible-playbook {{.SETUP_PLAYBOOK}} --tags gui
+      - ansible-playbook -i {{.INVENTORY}} gui.yml
     sources:
-      - "{{.SETUP_PLAYBOOK}}"
+      - "gui.yml"
       - "roles/gui/**/*"
 
-  hyprland:
-    desc: Install Hyprland window manager and utilities
-    deps: [gui]
-    platforms: [linux]
+  dotfiles:
+    desc: Configure dotfiles and shell
+    deps: [install-deps]
     cmds:
-      - ansible-playbook {{.SETUP_PLAYBOOK}} --tags hyprland
+      - ansible-playbook -i {{.INVENTORY}} dotfiles.yml
     sources:
-      - "{{.SETUP_PLAYBOOK}}"
-      - "roles/hyprland/**/*"
+      - "dotfiles.yml"
+      - "roles/dotfiles/**/*"
+      - "roles/shell/**/*"
+      - "dotfiles/**/*"
 
-  macos:
-    desc: Full macOS setup (all + platform-specific configurations)
-    deps: [gui]
-    platforms: [darwin]
+  # Machine setup tasks
+  bootstrap:
+    desc: Quick bootstrap for new machine (recommended)
+    deps: [install-deps]
     cmds:
-      - ansible-playbook {{.SETUP_PLAYBOOK}} --tags platform,macos
-    sources:
-      - "{{.SETUP_PLAYBOOK}}"
-
-  linux:
-    desc: Full Linux setup (all + hyprland, docker, desktop environment)
-    deps: [hyprland]
-    platforms: [linux]
-    cmds:
-      - ansible-playbook {{.SETUP_PLAYBOOK}} --tags platform,linux
-    sources:
-      - "{{.SETUP_PLAYBOOK}}"
-      - "dotfiles/wm/hyprland/*"
+      - echo "🚀 Bootstrapping new machine..."
+      - ansible-playbook -i {{.INVENTORY}} bootstrap.yml
+      - echo "✅ Bootstrap complete!"
 
   all:
-    desc: Setup all machines (macOS + Linux)
+    desc: Setup all machines (runs site.yml)
+    deps: [install-deps]
     cmds:
       - echo "🚀 Setting up all machines..."
-      - ansible-playbook {{.SETUP_PLAYBOOK}} --tags base,dev,dotfiles,shell
-      - ansible-playbook {{.SETUP_PLAYBOOK}} --tags gui --limit macos
-      - ansible-playbook {{.SETUP_PLAYBOOK}} --tags platform,macos --limit macos
-      - ansible-playbook {{.SETUP_PLAYBOOK}} --tags platform,linux --limit linux
+      - ansible-playbook -i {{.INVENTORY}} site.yml
       - echo "✅ All machines configured!"
 
   # Maintenance tasks
   clean:
     desc: Clean up broken symlinks and temporary files
+    deps: [install-deps]
     cmds:
-      - echo "Cleaning broken symlinks..."
-      - find ~ -type l -exec test ! -e {} \; -delete 2>/dev/null || true
-      - echo "Cleaning Ansible cache..."
-      - rm -rf ~/.ansible/tmp/* 2>/dev/null || true
-      - echo "Done!"
+      - ansible-playbook -i {{.INVENTORY}} maintenance.yml --tags cleanup
 
   update:
     desc: Update package managers and system
+    deps: [install-deps]
     cmds:
-      - |
-        if [[ "{{.OS}}" == "darwin" ]]; then
-          echo "Updating Homebrew..."
-          brew update && brew upgrade
-        else
-          echo "Updating apt packages..."
-          sudo apt update && sudo apt upgrade -y
-        fi
+      - ansible-playbook -i {{.INVENTORY}} maintenance.yml --tags update
+
+  maintenance:
+    desc: Run full system maintenance
+    deps: [install-deps]
+    cmds:
+      - ansible-playbook -i {{.INVENTORY}} maintenance.yml
 
   # Validation tasks
   check:
     desc: Test Ansible syntax and validate configuration
     cmds:
       - echo "Checking Ansible syntax..."
-      - ansible-playbook {{.SETUP_PLAYBOOK}} --syntax-check
+      - ansible-playbook -i {{.INVENTORY}} site.yml --syntax-check
       - echo "Validating inventory..."
-      - ansible-inventory --list > /dev/null
+      - ansible-inventory -i {{.INVENTORY}} --list > /dev/null
       - echo "All checks passed!"
 
   dry-run:
     desc: Show what would be done (dry run)
     cmds:
-      - ansible-playbook {{.SETUP_PLAYBOOK}} --check --diff --tags all
+      - ansible-playbook -i {{.INVENTORY}} site.yml --check --diff
 
   test:
     desc: Test setup on current system (safe dry run)
@@ -145,153 +132,18 @@ tasks:
       - echo "Test completed successfully!"
 
   # Information tasks
-  info:
-    desc: Show system and configuration information
-    silent: true
-    cmds:
-      - echo "System Information:"
-      - echo "==================="
-      - echo "OS {{.OS}}"
-      - echo "Architecture {{.ARCH}}"
-      - echo "User $USER"
-      - echo "Home $HOME"
-      - echo "Shell $SHELL"
-      - echo ""
-      - echo "Tool Versions:"
-      - echo "=============="
-      - ansible --version | head -1
-      - task --version
-      - |
-        if command -v go >/dev/null; then
-          go version
-        else
-          echo "Go: not installed"
-        fi
-
   status:
     desc: Show current system setup status
+    deps: [install-deps]
     cmds:
-      - echo "Checking installed tools..."
-      - |
-        tools=("git" "curl" "bat" "rg" "fzf" "nvim" "tmux" "go" "python3" "node")
-        for tool in "${tools[@]}"; do
-          if command -v "$tool" >/dev/null 2>&1; then
-            echo "✅ $tool"
-          else
-            echo "❌ $tool"
-          fi
-        done
+      - ansible-playbook -i {{.INVENTORY}} maintenance.yml --tags status
 
-  # Development workflow tasks
-  bootstrap:
-    desc: Quick bootstrap for new machine (base + essential dev tools)
-    cmds:
-      - echo "Bootstrapping new machine..."
-      - task base
-      - task dev
-      - echo "Bootstrap complete! Run 'task gui' for GUI apps."
-
-  bootstrap-macos:
-    desc: Complete macOS bootstrap from scratch (runs external script)
-    platforms: [darwin]
-    cmds:
-      - ./scripts/bootstrap-macos.sh bootstrap
-
-  minimal:
-    desc: Minimal setup (just base tools)
-    cmds:
-      - task base
-
-  # Project creation helpers (using built-in tools)
-  new-go:
-    desc: Show Go project creation commands
-    silent: true
-    cmds:
-      - echo "Go Project Setup:"
-      - echo "=================="
-      - echo "mkdir myproject && cd myproject"
-      - echo "go mod init github.com/$(whoami)/myproject"
-      - echo "echo 'package main' > main.go"
-      - echo "echo 'func main() { println(\"Hello, World!\") }' >> main.go"
-      - echo "go run main.go"
-
-  new-python:
-    desc: Show Python project creation commands
-    silent: true
-    cmds:
-      - echo "Python Project Setup:"
-      - echo "===================="
-      - echo "uv init myproject && cd myproject"
-      - echo "uv add --dev pytest ruff mypy"
-      - echo "uv run python -m myproject"
-
-  new-node:
-    desc: Show Node.js project creation commands
-    silent: true
-    cmds:
-      - echo "Node.js Project Setup:"
-      - echo "======================"
-      - echo "mkdir myproject && cd myproject"
-      - echo "pnpm init"
-      - echo "pnpm add -D typescript @types/node"
-      - echo "echo 'console.log(\"Hello, World!\");' > index.js"
-      - echo "node index.js"
-
-  new-web:
-    desc: Show web project creation commands
-    silent: true
-    cmds:
-      - echo "Web Project Setup:"
-      - echo "=================="
-      - echo "pnpm create vite myproject --template vanilla-ts"
-      - echo "cd myproject && pnpm install && pnpm dev"
-
-  # Ansible-specific tasks
   inventory:
     desc: Show Ansible inventory
     cmds:
-      - ansible-inventory --list --yaml
+      - ansible-inventory -i {{.INVENTORY}} --list --yaml
 
   facts:
     desc: Gather and display system facts
     cmds:
-      - ansible localhost -m setup | rg "(ansible_os_family|ansible_distribution|ansible_architecture)"
-
-  # Migration and utility tasks
-  migration-backup:
-    desc: Complete pre-migration backup
-    cmds:
-      - ./scripts/migration-backup.sh
-
-  nix-cleanup:
-    desc: Remove Nix completely (DESTRUCTIVE - backup first!)
-    cmds:
-      - ./scripts/nix-cleanup.sh
-
-  backup-dotfiles:
-    desc: Quick dotfiles backup
-    cmds:
-      - |
-        backup_dir="$HOME/.dotfiles-backup-$(date +%Y%m%d-%H%M%S)"
-        echo "Creating backup at $backup_dir"
-        mkdir -p "$backup_dir"
-        for file in .zshrc .gitconfig .vimrc .tmux.conf; do
-          if [[ -f "$HOME/$file" ]]; then
-            cp "$HOME/$file" "$backup_dir/"
-            echo "Backed up $file"
-          fi
-        done
-        echo "Backup complete!"
-
-  restore-dotfiles:
-    desc: Restore dotfiles from most recent backup
-    cmds:
-      - |
-        backup_dir=$(ls -td ~/.dotfiles-backup-* 2>/dev/null | head -1)
-        if [[ -n "$backup_dir" ]]; then
-          echo "Restoring from $backup_dir"
-          cp "$backup_dir"/* ~/
-          echo "Restore complete!"
-        else
-          echo "No backup found"
-        fi
+      - ansible -i {{.INVENTORY}} localhost -m setup | rg "(ansible_os_family|ansible_distribution|ansible_architecture)"

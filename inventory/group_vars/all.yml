@@ -1,0 +1,31 @@
+---
+# Global variables for all machines
+ansible_python_interpreter: auto_silent
+
+# Common directories
+common_directories:
+  - "{{ ansible_env.HOME }}/.local/bin"
+  - "{{ ansible_env.HOME }}/.config"
+  - "{{ ansible_env.HOME }}/.cache"
+
+# Dotfiles configuration
+dotfiles_repo_path: "{{ playbook_dir }}/dotfiles"
+
+# Common packages across all machines
+base_packages:
+  - git
+  - curl
+  - wget
+  - unzip
+  - zip
+  - htop
+  - tree
+
+# Package managers by OS
+package_managers:
+  Darwin: homebrew
+  RedHat: dnf
+  Fedora: dnf
+
+# Container runtime preference
+container_runtime: podman

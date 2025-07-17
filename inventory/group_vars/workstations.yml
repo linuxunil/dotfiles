@@ -1,0 +1,40 @@
+---
+# Variables for all workstation machines
+machine_type: workstation
+
+# Workstation-specific packages
+workstation_packages:
+  - jq
+  - bat
+  - ripgrep
+  - fzf
+  - fd
+
+# GUI applications for workstations
+gui_applications:
+  darwin:
+    - firefox
+    - visual-studio-code
+    - discord
+    - slack
+    - obsidian
+    - ghostty
+  linux:
+    - firefox
+    - code
+    - discord
+    - slack
+    - obsidian
+
+# Development tools for workstations
+development_tools:
+  - neovim
+  - tmux
+  - git
+  - gh
+  - direnv
+
+# Shell configuration
+shell_config:
+  default_shell: zsh
+  install_oh_my_zsh: true

@@ -1,0 +1,37 @@
+---
+# Variables for macOS machines
+os_family: Darwin
+
+# macOS-specific packages using Homebrew
+darwin_packages:
+  - coreutils
+  - findutils
+  - gnu-sed
+  - gawk
+  - grep
+  - fd
+
+# Homebrew configuration
+homebrew:
+  taps:
+    - homebrew/cask
+    - homebrew/cask-fonts
+  install_path: /opt/homebrew
+
+# macOS-specific applications
+macos_applications:
+  - ghostty
+  - raycast
+  - 1password
+  - cleanmymac
+
+# System preferences
+macos_preferences:
+  dock:
+    autohide: true
+    position: bottom
+  finder:
+    show_extensions: true
+    show_hidden: true
+  trackpad:
+    tap_to_click: true

@@ -1,0 +1,24 @@
+---
+- name: Update system packages (macOS)
+  block:
+    - name: Update Homebrew
+      community.general.homebrew:
+        update_homebrew: true
+    
+    - name: Upgrade Homebrew packages
+      community.general.homebrew:
+        upgrade_all: true
+  when: ansible_os_family == "Darwin"
+
+- name: Update system packages (Fedora/RedHat)
+  block:
+    - name: Update DNF cache
+      ansible.builtin.dnf:
+        update_cache: true
+    
+    - name: Upgrade DNF packages
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+  become: true
+  when: ansible_os_family == "RedHat"

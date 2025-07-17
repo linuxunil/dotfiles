@@ -1,0 +1,32 @@
+---
+- name: Install container runtime packages
+  ansible.builtin.package:
+    name:
+      - podman
+      - podman-compose
+    state: present
+  become: true
+
+- name: Enable podman socket for user
+  ansible.builtin.systemd:
+    name: podman.socket
+    scope: user
+    enabled: true
+    state: started
+  when: ansible_service_mgr == "systemd"
+
+- name: Create virtiofsd symlink for Podman (RedHat/Fedora)
+  ansible.builtin.file:
+    src: /usr/libexec/virtiofsd
+    dest: /usr/local/bin/virtiofsd
+    state: link
+    force: true
+  become: true
+  when: ansible_os_family == "RedHat"
+
+- name: Configure podman to use Docker API
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+    line: 'export DOCKER_HOST="unix://$(podman machine inspect --format {{.ConnectionInfo.PodmanSocket.Path}})"'
+    create: true
+  when: ansible_os_family == "Darwin"

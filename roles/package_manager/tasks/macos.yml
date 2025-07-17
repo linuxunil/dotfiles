@@ -1,0 +1,48 @@
+---
+- name: Check if Homebrew is installed
+  ansible.builtin.stat:
+    path: "{{ homebrew_install_path }}/bin/brew"
+  register: homebrew_installed
+
+- name: Install Homebrew
+  ansible.builtin.shell: |
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  when: not homebrew_installed.stat.exists
+  become: false
+
+- name: Add Homebrew to PATH
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+    line: 'eval "$(/opt/homebrew/bin/brew shellenv)"'
+    create: true
+  when: not homebrew_installed.stat.exists
+
+- name: Source Homebrew environment
+  ansible.builtin.shell: eval "$(/opt/homebrew/bin/brew shellenv)"
+  when: not homebrew_installed.stat.exists
+
+- name: Update Homebrew
+  community.general.homebrew:
+    update_homebrew: true
+  when: package_manager_update_cache
+
+- name: Add Homebrew taps
+  community.general.homebrew_tap:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ homebrew_taps }}"
+  when: homebrew_taps | length > 0
+
+- name: Install packages via Homebrew
+  community.general.homebrew:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ packages_to_install | default([]) }}"
+  when: packages_to_install is defined
+
+- name: Install cask applications via Homebrew
+  community.general.homebrew_cask:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ cask_packages_to_install | default([]) }}"
+  when: cask_packages_to_install is defined

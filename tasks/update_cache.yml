@@ -1,0 +1,21 @@
+---
+- name: Update package cache (Fedora/RedHat)
+  ansible.builtin.dnf:
+    update_cache: true
+  become: true
+  when: ansible_os_family == "RedHat"
+
+- name: Check if Homebrew is installed
+  ansible.builtin.command: which brew
+  register: homebrew_check
+  failed_when: false
+  changed_when: false
+  when: ansible_os_family == "Darwin"
+
+- name: Update Homebrew
+  community.general.homebrew:
+    update_homebrew: true
+  when: 
+    - ansible_os_family == "Darwin"
+    - homebrew_check.rc == 0
+  ignore_errors: true

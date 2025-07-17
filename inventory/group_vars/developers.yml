@@ -1,0 +1,46 @@
+---
+# Variables for developer machines
+machine_profile: developer
+
+# Development-specific packages
+developer_packages:
+  - go-task
+  - lazygit
+  - starship
+  - zoxide
+  - zellij
+  - uv
+
+# Programming languages and tools
+programming_languages:
+  go:
+    enabled: true
+    version: latest
+  python:
+    enabled: true
+    version: "3.11"
+  node:
+    enabled: true
+    version: lts
+  rust:
+    enabled: true
+
+# Container and virtualization tools
+container_tools:
+  - podman
+  - podman-compose
+
+# Development services
+development_services:
+  docker_desktop: false  # Use podman instead
+  
+# Database tools
+database_tools:
+  - postgresql
+  - redis
+
+# Cloud tools
+cloud_tools:
+  - kubectl
+  - terraform
+  - ansible

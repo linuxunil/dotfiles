@@ -1,33 +1,10 @@
 ---
-base_packages:
-  common:
-    - git
-    - curl
-    - wget
-    - jq
-    - unzip
-    - zip
-    - htop
-    - bat
-    - ripgrep
-    - fzf
-    - tree
-  
-  darwin:
-    - fd
-    - coreutils
-    - findutils
-    - gnu-sed
-    - gawk
-    - grep
-  
-  debian:
-    - fd-find
-    - build-essential
-  
-  redhat:
-    - fd-find
-    - gcc
-    - gcc-c++
-    - make
-    - qemu-img
+# Base system packages - combined from group_vars
+base_packages_combined: "{{ base_packages + workstation_packages | default([]) + darwin_packages | default([]) + linux_packages | default([]) + custom_packages | default([]) }}"
+
+# Core directories to create
+base_directories:
+  - "{{ ansible_env.HOME }}/.local/bin"
+  - "{{ ansible_env.HOME }}/.config"
+  - "{{ ansible_env.HOME }}/.cache"
+  - "{{ ansible_env.HOME }}/.local/share"

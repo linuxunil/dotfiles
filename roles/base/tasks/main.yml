@@ -1,69 +1,28 @@
 ---
-- name: Include OS-specific variables
-  ansible.builtin.include_vars: "{{ item }}"
-  with_first_found:
-    - files:
-        - "{{ ansible_distribution }}.yml"
-        - "{{ ansible_os_family }}.yml"
-        - default.yml
-      paths:
-        - ../vars
-      skip: true
-
-- name: Check if Homebrew is available
-  ansible.builtin.command: which brew
-  register: brew_check
-  ignore_errors: yes
-  when: ansible_os_family == "Darwin"
-
-- name: Debug brew path
-  ansible.builtin.debug:
-    msg: "Brew found at: {{ brew_check.stdout if brew_check.rc == 0 else 'Not found' }}"
-  when: ansible_os_family == "Darwin"
-
-- name: Install Homebrew (macOS)
-  ansible.builtin.shell: |
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  become: yes
-  when: 
-    - ansible_os_family == "Darwin"
-    - brew_check.rc != 0
-
-- name: Install base packages (macOS)
-  community.general.homebrew:
-    name: "{{ base_packages.common + base_packages.darwin }}"
-    state: present
-  when: ansible_os_family == "Darwin"
-
-- name: Install base packages (Debian/Ubuntu)
-  ansible.builtin.apt:
-    name: "{{ base_packages.common + base_packages.debian }}"
-    state: present
-  become: yes
-  when: ansible_os_family == "Debian"
-
-- name: Install base packages (Fedora/RedHat)
-  ansible.builtin.dnf:
-    name: "{{ base_packages.common + base_packages.redhat }}"
-    state: present
-  become: yes
-  when: ansible_os_family == "RedHat"
-
-- name: Enable RPM Fusion repositories (Fedora)
-  ansible.builtin.dnf:
-    name:
-      - "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_version }}.noarch.rpm"
-      - "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_version }}.noarch.rpm"
-    state: present
-    disable_gpg_check: yes
-  become: yes
-  when: ansible_distribution == "Fedora"
-
-- name: Ensure common directories exist
+- name: Create base directories
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: '0755'
-  loop:
-    - "{{ ansible_env.HOME }}/.local/bin"
-    - "{{ ansible_env.HOME }}/.config"
+  loop: "{{ base_directories }}"
+
+- name: Install base packages
+  ansible.builtin.include_role:
+    name: package_manager
+  vars:
+    packages_to_install: "{{ base_packages_combined }}"
+    cask_packages_to_install: "{{ macos_applications | default([]) }}"
+
+- name: Add local bin to PATH
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+    line: 'export PATH="$HOME/.local/bin:$PATH"'
+    create: true
+  when: ansible_os_family != "Darwin"
+
+- name: Set up shell environment
+  ansible.builtin.template:
+    src: environment.j2
+    dest: "{{ ansible_env.HOME }}/.environment"
+    mode: '0644'
+  when: create_environment_file | default(true)

@@ -1,22 +1,15 @@
 ---
-gui_packages:
-  common: []
-  
-  darwin:
-    - firefox
-    - discord
-    - obsidian
-    - zed
-  
-  debian:
-    - firefox-esr
-    - hyprland
-  
-  redhat:
-    - firefox
-    - hyprland
+# GUI applications - combined from group_vars
+gui_packages_combined: "{{ gui_applications[ansible_os_family] | default([]) + macos_applications | default([]) + custom_packages | default([]) }}"
 
-flatpak_apps:
-  - com.discordapp.Discord
-  - md.obsidian.Obsidian
-  - dev.zed.Zed
+# Flatpak applications for Linux
+flatpak_apps: "{{ flatpak_applications | default([]) }}"
+
+# macOS App Store applications
+mas_apps: "{{ mas_applications | default([]) }}"
+
+# Desktop environment packages
+desktop_packages: "{{ desktop_packages | default([]) }}"
+
+# Only install GUI apps if display is available
+has_display: "{{ ansible_env.DISPLAY is defined or ansible_os_family == 'Darwin' }}"

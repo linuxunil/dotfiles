@@ -1,0 +1,29 @@
+---
+- name: Install Hyprland and related packages
+  ansible.builtin.package:
+    name:
+      - hyprland
+      - waybar
+      - mako
+      - wofi
+      - grim
+      - slurp
+      - wl-clipboard
+    state: present
+  become: true
+
+- name: Create Hyprland config directory
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/hypr"
+    state: directory
+    mode: '0755'
+
+- name: Configure Hyprland
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ ansible_env.HOME }}/.config/{{ item.dest }}"
+    mode: '0644'
+  loop:
+    - { src: hyprland.conf.j2, dest: hypr/hyprland.conf }
+    - { src: waybar.json.j2, dest: waybar/config }
+    - { src: mako.conf.j2, dest: mako/config }

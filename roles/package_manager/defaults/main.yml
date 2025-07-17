@@ -1,0 +1,25 @@
+---
+# Default variables for package manager role
+
+# Package manager configuration
+package_manager_update_cache: true
+package_manager_upgrade_packages: false
+
+# Homebrew configuration
+homebrew_taps: "{{ homebrew.taps | default([]) }}"
+homebrew_install_path: "{{ homebrew.install_path | default('/opt/homebrew') }}"
+homebrew_user: "{{ ansible_user_id }}"
+
+# APT configuration
+apt_cache_valid_time: 3600
+apt_update_cache: true
+
+# DNF configuration
+dnf_update_cache: true
+
+# Flatpak configuration
+flatpak_remote_name: flathub
+flatpak_remote_url: https://flathub.org/repo/flathub.flatpakrepo
+
+# Package installation timeout
+package_install_timeout: 300

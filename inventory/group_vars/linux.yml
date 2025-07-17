@@ -1,0 +1,41 @@
+---
+# Variables for Linux machines
+os_family: Linux
+
+# Linux-specific packages
+linux_packages:
+  - gcc
+  - gcc-c++
+  - make
+  - pkgconf
+  - fd-find
+
+# Package manager specifics
+redhat_packages:
+  - gcc
+  - gcc-c++
+  - make
+  - pkgconf
+
+# Flatpak applications for Linux GUI
+flatpak_applications:
+  - org.mozilla.firefox
+  - com.visualstudio.code
+  - com.discordapp.Discord
+  - com.slack.Slack
+  - md.obsidian.Obsidian
+
+# System services
+system_services:
+  - name: podman
+    state: started
+    enabled: true
+
+# Desktop environment packages
+desktop_packages:
+  - hyprland
+  - waybar
+  - mako
+  - wofi
+  - grim
+  - slurp

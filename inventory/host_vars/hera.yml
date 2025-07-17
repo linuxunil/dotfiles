@@ -1,0 +1,40 @@
+---
+# Variables specific to hera (macOS development machine)
+ansible_host: localhost
+ansible_connection: local
+
+# Machine-specific configuration
+machine_name: hera
+machine_profile: developer
+machine_environment: local
+
+# Custom package additions
+custom_packages:
+  - mas  # Mac App Store CLI
+  - rectangle  # Window manager
+  - imageoptim  # Image optimization
+
+# macOS App Store applications
+mas_applications:
+  - { id: 497799835, name: "Xcode" }
+  - { id: 1451685025, name: "WireGuard" }
+
+# Custom dotfiles for this machine
+custom_dotfiles:
+  - src: macos/hammerspoon
+    dest: .hammerspoon
+
+# Override default settings
+shell_config:
+  default_shell: zsh
+  install_oh_my_zsh: true
+  zsh_theme: "starship"
+
+# Development setup
+development_setup:
+  xcode_tools: true
+  python_versions:
+    - "3.11"
+    - "3.12"
+  node_version: "20"
+  go_version: "1.21"
