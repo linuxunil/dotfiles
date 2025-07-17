@@ -1,0 +1,52 @@
+[user]
+    # Set your name and email
+    name = Your Name
+    email = your.email@example.com
+
+[core]
+    editor = nvim
+    pager = bat
+    autocrlf = input
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = true
+
+[push]
+    default = simple
+    autoSetupRemote = true
+
+[alias]
+    st = status
+    co = checkout
+    br = branch
+    ci = commit
+    df = diff
+    lg = log --oneline --graph --decorate
+    unstage = reset HEAD --
+    last = log -1 HEAD
+    visual = !gitk
+
+[color]
+    ui = auto
+
+[diff]
+    tool = vimdiff
+
+[merge]
+    tool = vimdiff
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+[fetch]
+	prune = true
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential

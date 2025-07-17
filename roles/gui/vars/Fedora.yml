@@ -1,0 +1,11 @@
+---
+# Fedora-specific GUI packages
+gui_packages:
+  common:
+    - firefox
+
+# Flatpak apps work the same on Fedora
+flatpak_apps:
+  - com.discordapp.Discord
+  - md.obsidian.Obsidian
+  - dev.zed.Zed

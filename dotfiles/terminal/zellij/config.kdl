@@ -1,0 +1,75 @@
+// Zellij configuration
+// Vim style navigation and tab management
+
+// Theme configuration (Rose Pine)
+themes {
+    rose_pine {
+        fg "#e0def4"
+        bg "#191724" 
+        red "#eb6f92"
+        green "#31748f"
+        blue "#9ccfd8"
+        yellow "#f6c177"
+        magenta "#c4a7e7"
+        orange "#ebbcba"
+        cyan "#9ccfd8"
+        black "#26233a"
+        white "#e0def4"
+    }
+}
+
+theme "rose_pine"
+
+// UI configuration
+simplified_ui true
+pane_frames false
+default_shell "zsh"
+show_startup_tips false
+
+// Session configuration  
+default_layout "compact"
+session_serialization true
+pane_viewport_serialization true
+
+// Status bar configuration
+status_bar true
+status_bar_location "bottom"
+
+// Key bindings
+keybinds {
+    normal {
+        bind "Alt h" { MoveFocus "Left"; }
+        bind "Alt j" { MoveFocus "Down"; }
+        bind "Alt k" { MoveFocus "Up"; }
+        bind "Alt l" { MoveFocus "Right"; }
+        bind "Alt n" { NewPane "Down"; }
+        bind "Alt v" { NewPane "Right"; }
+        bind "Alt t" { NewTab; }
+        bind "Alt q" { CloseTab; }
+        bind "Alt 1" { GoToTab 1; }
+        bind "Alt 2" { GoToTab 2; }
+        bind "Alt 3" { GoToTab 3; }
+        bind "Alt 4" { GoToTab 4; }
+        bind "Alt 5" { GoToTab 5; }
+        
+        // Floating panes
+        bind "Alt f" { ToggleFloatingPanes; }
+        bind "Alt F" { NewPane "Down" { floating true; }; }
+        
+        // Session management
+        bind "Alt s" { Detach; }
+        bind "Alt r" { SwitchToMode "Scroll"; }
+        
+        // Layout switching
+        bind "Alt z" { ToggleFocusFullscreen; }
+        bind "Alt x" { NextSwapLayout; }
+        
+        // Built-in session management
+        bind "Alt o" { 
+            LaunchOrFocusPlugin "session-manager" {
+                floating true
+                move_to_focused_tab true
+            }
+        }
+    }
+}

@@ -1,0 +1,24 @@
+---
+- name: Create configuration directories
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/{{ item }}"
+    state: directory
+    mode: '0755'
+  loop: "{{ config_directories }}"
+
+- name: Copy dotfiles to remote hosts
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/dotfiles/{{ item.src }}"
+    dest: "{{ ansible_env.HOME }}/{{ item.dest }}"
+    backup: yes
+  loop: "{{ dotfiles_links }}"
+  when: inventory_hostname != "localhost"
+
+- name: Create dotfile symlinks (localhost only)
+  ansible.builtin.file:
+    src: "{{ playbook_dir }}/dotfiles/{{ item.src }}"
+    dest: "{{ ansible_env.HOME }}/{{ item.dest }}"
+    state: link
+    force: yes
+  loop: "{{ dotfiles_links }}"
+  when: inventory_hostname == "localhost"

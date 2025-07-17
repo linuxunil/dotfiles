@@ -1,0 +1,30 @@
+# Task runner aliases for quick access
+alias t="task"
+alias tl="task --list"
+alias tb="task base"
+alias td="task dev"
+alias tg="task gui"
+alias tm="task macos"
+alias ta="task all"
+alias tc="task clean"
+alias ts="task status"
+alias ti="task info"
+
+# System setup shortcuts
+alias setup-base="task base"
+alias setup-dev="task dev"
+alias setup-gui="task gui"
+alias setup-all="task all"
+alias setup-status="task status"
+alias setup-clean="task clean"
+
+# Project creation helpers (show commands)
+alias new-go="task new-go"
+alias new-python="task new-python"
+alias new-node="task new-node"
+alias new-web="task new-web"
+
+# Quick project creation using built-in tools
+alias go-init='mkdir -p "$1" && cd "$1" && go mod init "github.com/$(whoami)/$1"'
+alias py-init='uv init "$1" && cd "$1"'
+alias node-init='mkdir -p "$1" && cd "$1" && pnpm init'

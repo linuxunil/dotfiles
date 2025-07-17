@@ -1,0 +1,22 @@
+---
+gui_packages:
+  common: []
+  
+  darwin:
+    - firefox
+    - discord
+    - obsidian
+    - zed
+  
+  debian:
+    - firefox-esr
+    - hyprland
+  
+  redhat:
+    - firefox
+    - hyprland
+
+flatpak_apps:
+  - com.discordapp.Discord
+  - md.obsidian.Obsidian
+  - dev.zed.Zed

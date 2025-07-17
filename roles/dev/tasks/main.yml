@@ -1,0 +1,61 @@
+---
+- name: Install development packages (macOS)
+  community.general.homebrew:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ dev_packages.common + dev_packages.darwin }}"
+  ignore_errors: yes
+  when: ansible_os_family == "Darwin"
+
+- name: Install development packages (Debian/Ubuntu)
+  ansible.builtin.apt:
+    name: "{{ dev_packages.common + dev_packages.debian }}"
+    state: present
+  become: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install development packages (Fedora/RedHat)
+  ansible.builtin.dnf:
+    name: "{{ dev_packages.common + dev_packages.redhat }}"
+    state: present
+  become: yes
+  when: ansible_os_family == "RedHat"
+
+- name: Setup container runtime (Linux)
+  block:
+    - name: Install Podman
+      ansible.builtin.package:
+        name:
+          - podman
+          - podman-compose
+        state: present
+      become: yes
+    
+    - name: Enable podman socket for user
+      ansible.builtin.systemd:
+        name: podman.socket
+        scope: user
+        enabled: yes
+        state: started
+      when: ansible_service_mgr == "systemd"
+    
+    - name: Create virtiofsd symlink for Podman (RedHat/Fedora)
+      ansible.builtin.file:
+        src: /usr/libexec/virtiofsd
+        dest: /usr/local/bin/virtiofsd
+        state: link
+        force: yes
+      become: yes
+      when: ansible_os_family == "RedHat"
+  when: ansible_os_family != "Darwin"
+
+
+- name: Configure Git
+  community.general.git_config:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    scope: global
+  loop:
+    - { name: "init.defaultBranch", value: "main" }
+    - { name: "pull.rebase", value: "true" }
+    - { name: "fetch.prune", value: "true" }

@@ -1,0 +1,33 @@
+---
+base_packages:
+  common:
+    - git
+    - curl
+    - wget
+    - jq
+    - unzip
+    - zip
+    - htop
+    - bat
+    - ripgrep
+    - fzf
+    - tree
+  
+  darwin:
+    - fd
+    - coreutils
+    - findutils
+    - gnu-sed
+    - gawk
+    - grep
+  
+  debian:
+    - fd-find
+    - build-essential
+  
+  redhat:
+    - fd-find
+    - gcc
+    - gcc-c++
+    - make
+    - qemu-img

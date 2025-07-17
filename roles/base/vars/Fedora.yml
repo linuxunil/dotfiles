@@ -1,0 +1,25 @@
+---
+# Fedora-specific overrides
+base_packages:
+  common:
+    - git
+    - curl
+    - wget
+    - jq
+    - unzip
+    - zip
+    - htop
+    - bat
+    - ripgrep
+    - fzf
+    - tree
+  
+  darwin: []
+  
+  debian: []
+  
+  redhat:
+    - fd-find
+    - gcc
+    - gcc-c++
+    - make

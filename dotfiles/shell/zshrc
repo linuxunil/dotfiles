@@ -1,0 +1,104 @@
+# Simple, fast zsh configuration
+# Everything in one file for easy maintenance
+
+# Environment variables
+export EDITOR="nvim"
+export BROWSER="firefox"
+export TERMINAL="ghostty"
+export PAGER="bat"
+export LANG="en_US.UTF-8"
+
+# Local bin paths
+export PATH="$HOME/.local/bin:$PATH"
+
+# Development paths
+export GOPATH="$HOME/go"
+export GOBIN="$HOME/go/bin"
+export PATH="$GOBIN:$PATH"
+export NPM_CONFIG_PREFIX="$HOME/.npm-global"
+export PATH="$HOME/.npm-global/bin:$PATH"
+
+# Platform-specific paths
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+    export HOMEBREW_NO_ANALYTICS=1
+fi
+
+# Essential aliases
+alias ll="ls -la"
+alias la="ls -la"
+alias cat="bat"
+alias grep="rg"
+alias find="fd"
+alias ..="cd .."
+alias ...="cd ../.."
+
+# Git aliases
+alias g="git"
+alias gs="git status"
+alias ga="git add"
+alias gc="git commit"
+alias gp="git push"
+alias gl="git pull"
+alias gd="git diff"
+alias gb="git branch"
+alias gco="git checkout"
+alias glog="git log --oneline --graph --decorate"
+
+# Development aliases
+alias v="nvim"
+alias vim="nvim"
+alias lg="lazygit"
+alias zj="TERM=xterm-256color zellij"
+alias t="task"
+
+# Language shortcuts
+alias go-run="go run ."
+alias go-test="go test ./..."
+alias py="python3"
+alias nr="npm run"
+alias ni="npm install"
+
+# Platform-specific aliases
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    alias ports="lsof -i -P -n | grep LISTEN"
+    alias showfiles="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+    alias hidefiles="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+    alias docker="podman"
+    alias dc="podman-compose"
+else
+    alias ports="netstat -tulanp"
+    alias open="xdg-open"
+    alias pbcopy="xclip -selection clipboard"
+    alias pbpaste="xclip -selection clipboard -o"
+    alias d="docker"
+    alias dc="docker-compose"
+fi
+
+# Shell enhancements (only if available)
+command -v starship >/dev/null && eval "$(starship init zsh)"
+command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
+command -v direnv >/dev/null && eval "$(direnv hook zsh)"
+
+# Load task aliases if available
+[[ -f ~/.config/shell/aliases ]] && source ~/.config/shell/aliases
+
+# Auto-completion
+autoload -Uz compinit && compinit
+
+# History
+HISTSIZE=10000
+SAVEHIST=10000
+HISTFILE=~/.zsh_history
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_DUPS
+
+# FZF configuration
+if command -v fzf >/dev/null; then
+    [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+    export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+fi
+
+# opencode (user-specific)
+export PATH=/Users/disco/.opencode/bin:$PATH

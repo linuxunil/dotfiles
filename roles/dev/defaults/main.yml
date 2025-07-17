@@ -1,0 +1,42 @@
+---
+dev_packages:
+  common:
+    - neovim
+    - direnv
+    - go-task
+    - gh
+    - uv
+  
+  darwin:
+    - ghostty
+    - lazygit
+    - starship
+    - zoxide
+    - zellij
+    - podman
+    - podman-compose
+  
+  debian:
+    - gcc
+    - make
+    - pkg-config
+    - golang-go
+    - nodejs
+    - npm
+  
+  redhat:
+    - gcc
+    - gcc-c++
+    - make
+    - pkgconf
+    - golang
+    - nodejs
+    - npm
+    - podman
+    - podman-compose
+    - gvisor-tap-vsock
+    - qemu-system-x86
+    - qemu-kvm
+    - virtiofsd
+
+container_runtime: podman

@@ -1,0 +1,28 @@
+# Ansible
+*.retry
+.ansible/
+ansible.log
+
+# Backups
+*backup*
+*.backup
+*.bak
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp
+
+# Local overrides
+ansible.cfg.local
+hosts.local
+*.local.yml

@@ -1,0 +1,47 @@
+---
+- name: Install GUI packages (macOS)
+  community.general.homebrew_cask:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ gui_packages.common + gui_packages.darwin }}"
+  ignore_errors: yes
+  when: ansible_os_family == "Darwin"
+
+- name: Install GUI packages (Linux)
+  block:
+    - name: Install native packages (Debian)
+      ansible.builtin.apt:
+        name: "{{ gui_packages.debian }}"
+        state: present
+      become: yes
+      when: ansible_os_family == "Debian"
+    
+    - name: Install native packages (Fedora)
+      ansible.builtin.dnf:
+        name: "{{ gui_packages.redhat }}"
+        state: present
+      become: yes
+      when: ansible_os_family == "RedHat"
+    
+    - name: Setup Flatpak
+      ansible.builtin.package:
+        name: flatpak
+        state: present
+      become: yes
+    
+    - name: Add Flathub repository
+      community.general.flatpak_remote:
+        name: flathub
+        state: present
+        flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+        method: system
+      become: yes
+    
+    - name: Install Flatpak applications
+      community.general.flatpak:
+        name: "{{ item }}"
+        state: present
+        method: system
+      loop: "{{ flatpak_apps }}"
+      become: yes
+  when: ansible_os_family != "Darwin"

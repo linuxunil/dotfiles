@@ -1,0 +1,23 @@
+---
+# Fedora-specific development packages
+dev_packages:
+  common:
+    - neovim
+    - direnv
+    - go-task
+  
+  darwin: []
+  
+  debian: []
+  
+  redhat:
+    - gcc
+    - gcc-c++
+    - make
+    - pkgconf
+    - golang
+    - nodejs
+    - npm
+    - podman
+    - podman-compose
+    - zsh

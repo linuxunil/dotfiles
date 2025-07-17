@@ -1,0 +1,27 @@
+---
+dotfiles_repo_path: "{{ playbook_dir }}/dotfiles"
+
+config_directories:
+  - .config
+  - .config/nvim
+  - .config/ghostty
+  - .config/zellij
+  - .config/hypr
+  - .local/share
+  - Library/Application Support/Firefox
+
+dotfiles_links:
+  - src: shell/zshrc
+    dest: .zshrc
+  - src: git/gitconfig
+    dest: .gitconfig
+  - src: nvim/init.lua
+    dest: .config/nvim/init.lua
+  - src: terminal/ghostty/config
+    dest: .config/ghostty/config
+  - src: terminal/zellij/config.kdl
+    dest: .config/zellij/config.kdl
+  - src: firefox/profiles.ini
+    dest: Library/Application Support/Firefox/profiles.ini
+  - src: wm/hyprland/hyprland.conf
+    dest: .config/hypr/hyprland.conf
