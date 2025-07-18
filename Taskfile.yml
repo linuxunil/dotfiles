@@ -26,8 +26,10 @@ tasks:
     desc: Install Ansible dependencies from Galaxy
     cmds:
       - echo "Installing Ansible Galaxy collections..."
-      - ansible-galaxy collection install -r requirements.yml
-      - echo "Collections installed!"
+      - ansible-galaxy collection install -r requirements.yml --force --upgrade
+      - echo "Collections installed successfully!"
+      - echo "Verifying installed collections..."
+      - ansible-galaxy collection list | grep -E "(community.general|ansible.posix|community.docker)"
     sources:
       - requirements.yml
 
@@ -172,6 +174,39 @@ tasks:
       - echo "🧪 Testing all roles..."
       - task test-dev
       - echo "✅ All role tests completed!"
+
+  # Local machine tasks
+  local:
+    desc: Install packages for current local machine only
+    deps: [install-deps]
+    cmds:
+      - echo "🏠 Configuring local machine only..."
+      - ansible-playbook -i {{.INVENTORY}} site.yml --limit localhost
+      - echo "✅ Local machine configuration complete!"
+
+  local-base:
+    desc: Install only base packages for current local machine
+    deps: [install-deps]
+    cmds:
+      - echo "🏠 Installing base packages for local machine..."
+      - ansible-playbook -i {{.INVENTORY}} base.yml --limit localhost
+      - echo "✅ Base packages installed!"
+
+  local-dev:
+    desc: Install only dev packages for current local machine
+    deps: [install-deps]
+    cmds:
+      - echo "🏠 Installing dev packages for local machine..."
+      - ansible-playbook -i {{.INVENTORY}} dev.yml --limit localhost
+      - echo "✅ Dev packages installed!"
+
+  local-gui:
+    desc: Install only GUI packages for current local machine
+    deps: [install-deps]
+    cmds:
+      - echo "🏠 Installing GUI packages for local machine..."
+      - ansible-playbook -i {{.INVENTORY}} gui.yml --limit localhost
+      - echo "✅ GUI packages installed!"
 
   # Information tasks
   status:

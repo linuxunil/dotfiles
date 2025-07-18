@@ -26,18 +26,28 @@ task bootstrap     # Quick setup for new machines (recommended)
 
 ### Development and Maintenance
 ```bash
-task check      # Validate Ansible playbook syntax
-task dry-run    # Preview changes without applying
-task test       # Safe test run with --check flag
-task clean      # Clean broken symlinks
-task update     # Update package managers (brew/apt)
-task status     # Show what's installed
+task check         # Validate Ansible playbook syntax
+task dry-run       # Preview changes without applying
+task test          # Safe test run with --check flag
+task clean         # Clean broken symlinks
+task update        # Update package managers (brew/apt)
+task status        # Show what's installed
+task maintenance   # Run full system maintenance
 ```
 
-### Platform-Specific
+### Testing Commands
 ```bash
-task macos      # macOS-specific configurations
-task linux      # Linux-specific configurations
+task test-dev         # Test dev role with Molecule (containerized testing)
+task test-dev-quick   # Quick test of dev role (converge + verify only)
+task test-dev-verify  # Run verification tests only
+task test-dev-clean   # Clean up dev role test containers
+task test-all-roles   # Test all roles with Molecule
+```
+
+### Information Commands
+```bash
+task inventory    # Show Ansible inventory
+task facts        # Gather and display system facts
 ```
 
 ## Architecture
@@ -55,13 +65,14 @@ task linux      # Linux-specific configurations
 ├── site.yml           # Main playbook
 ├── requirements.yml   # Galaxy dependencies
 ├── ansible.cfg        # Ansible configuration
+├── Taskfile.yml       # Go-task configuration
 ├── inventory/         # Inventory files
-│   └── hosts         # Host definitions
+│   └── hosts.yml     # Host definitions
 ├── roles/            # Standard Ansible roles
 │   ├── base/         # Core system packages
-│   ├── dev/          # Development tools
+│   ├── dev/          # Development tools (with Molecule testing)
 │   ├── gui/          # GUI applications
-│   ├── hyprland/     # Hyprland window manager
+│   ├── package_manager/ # Package manager setup
 │   ├── dotfiles/     # Configuration management
 │   └── shell/        # Shell configuration
 ├── dotfiles/         # Configuration files
@@ -70,7 +81,8 @@ task linux      # Linux-specific configurations
 │   ├── nvim/         # Neovim configuration
 │   ├── terminal/     # Terminal configs
 │   └── wm/           # Window manager configs
-└── scripts/          # Utility scripts
+├── tasks/            # Common Ansible tasks
+└── *.yml             # Individual playbooks (base.yml, dev.yml, etc.)
 ```
 
 ### Role Structure
@@ -141,6 +153,31 @@ task test       # Safe test run
 - **ansible.posix**: File operations, system configuration
 - **community.docker**: Container management (works with Podman)
 - **ansible.builtin**: Core Ansible functionality
+
+## Testing and Quality Assurance
+
+### Molecule Testing
+The dev role includes comprehensive Molecule testing for containerized validation:
+- **Full test suite**: `task test-dev` - runs create, converge, verify, destroy
+- **Quick testing**: `task test-dev-quick` - converge and verify only
+- **Verification only**: `task test-dev-verify` - run tests on existing container
+- **Cleanup**: `task test-dev-clean` - destroy test containers
+- **Direct script**: `./test-dev-role.sh [scenario]` - alternative test runner
+
+### Python/UV Environment
+- Uses UV for Python package management and virtual environments
+- Dev dependencies managed in `pyproject.toml`:
+  - `ansible-lint` for linting playbooks
+  - `molecule[podman]` for containerized testing
+  - `yamllint` for YAML validation
+- Install dev dependencies: `uv sync --dev`
+
+### Linting and Validation
+```bash
+task check         # Ansible syntax validation
+uv run ansible-lint site.yml  # Lint playbooks
+uv run yamllint .  # Validate YAML syntax
+```
 
 ## Best Practices
 
