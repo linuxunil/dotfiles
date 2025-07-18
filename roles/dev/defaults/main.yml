@@ -16,7 +16,7 @@ language_setup:
   rust:
     enabled: "{{ programming_languages.rust.enabled | default(false) }}"
   ruby:
-    enabled: "{{ programming_languages.ruby.enabled | default(true) }}"
+    enabled: "{{ programming_languages.ruby.enabled | default(false) }}"
     version: "{{ programming_languages.ruby.version | default('3.2') }}"
 
 # Development directories

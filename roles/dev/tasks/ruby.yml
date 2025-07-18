@@ -1,7 +1,10 @@
 ---
 # Ruby development environment setup using rbenv
 
-
+- name: Skip Ruby installation if disabled
+  ansible.builtin.debug:
+    msg: "Ruby installation is disabled. Skipping Ruby setup."
+  when: not language_setup.ruby.enabled
 
 - name: Install rbenv (Linux)
   block:
@@ -18,7 +21,9 @@
         dest: "{{ ansible_env.HOME }}/.rbenv/plugins/ruby-build"
         version: master
         force: true
-  when: ansible_os_family != "Darwin"
+  when: 
+    - ansible_os_family != "Darwin"
+    - language_setup.ruby.enabled
 
 - name: Add rbenv to PATH
   ansible.builtin.lineinfile:
@@ -26,7 +31,9 @@
     line: 'export PATH="$HOME/.rbenv/bin:$PATH"'
     create: true
     state: present
-  when: ansible_os_family != "Darwin"
+  when: 
+    - ansible_os_family != "Darwin"
+    - language_setup.ruby.enabled
 
 - name: Add rbenv init to shell
   ansible.builtin.lineinfile:
@@ -34,21 +41,24 @@
     line: 'eval "$(rbenv init -)"'
     create: true
     state: present
+  when: language_setup.ruby.enabled
 
 - name: Set rbenv binary path
   ansible.builtin.set_fact:
     rbenv_bin: "{{ '/opt/homebrew/bin/rbenv' if ansible_os_family == 'Darwin' else ansible_env.HOME + '/.rbenv/bin/rbenv' }}"
+  when: language_setup.ruby.enabled
 
 - name: Install Ruby versions with rbenv
   ansible.builtin.shell: |
     {{ rbenv_bin }} install {{ item }}
-  loop: "{{ development_setup.ruby_versions | default(['3.2.0', '3.1.0']) }}"
+  loop: "{{ development_setup.ruby_versions | default(['3.2.0']) }}"
   retries: 1
   delay: 5
   ignore_errors: true
-  timeout: 1800  # 30 minutes timeout for Ruby compilation
+  timeout: 600  # 10 minutes timeout (reduced from 30)
   args:
     creates: "{{ ansible_env.HOME }}/.rbenv/versions/{{ item }}"
+  when: language_setup.ruby.enabled
 
 - name: Check current global Ruby version
   ansible.builtin.shell: |
@@ -56,13 +66,17 @@
   register: current_ruby_version
   changed_when: false
   failed_when: false
+  when: language_setup.ruby.enabled
 
 - name: Set global Ruby version
   ansible.builtin.shell: |
     {{ rbenv_bin }} global {{ language_setup.ruby.version }}
   register: ruby_global
   changed_when: ruby_global.rc == 0
-  when: current_ruby_version.stdout != language_setup.ruby.version
+  when: 
+    - language_setup.ruby.enabled
+    - current_ruby_version is defined
+    - current_ruby_version.stdout != language_setup.ruby.version
 
 - name: Check if Ruby gems are installed
   ansible.builtin.shell: |
@@ -78,12 +92,16 @@
   register: gem_check
   changed_when: false
   failed_when: false
+  when: language_setup.ruby.enabled
 
 - name: Install common Ruby gems
   ansible.builtin.shell: |
     {{ rbenv_bin }} exec gem install {{ item.item }}
   loop: "{{ gem_check.results }}"
-  when: item.rc != 0
+  when: 
+    - language_setup.ruby.enabled
+    - gem_check is defined
+    - item.rc != 0
   retries: 1
   delay: 3
   ignore_errors: true
@@ -95,3 +113,4 @@
   register: ruby_version
   failed_when: ruby_version.rc != 0
   changed_when: false
+  when: language_setup.ruby.enabled

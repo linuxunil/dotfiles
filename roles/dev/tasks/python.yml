@@ -9,32 +9,35 @@
 
 - name: Install UV (Linux)
   block:
-    - name: Download UV installer
-      ansible.builtin.get_url:
-        url: https://astral.sh/uv/install.sh
-        dest: /tmp/uv-install.sh
-        mode: '0755'
-        timeout: 30
-        backup: true
-      retries: 3
-      delay: 5
-    
-    - name: Verify installer exists
-      ansible.builtin.stat:
-        path: /tmp/uv-install.sh
-      register: uv_installer
-    
-    - name: Install UV from downloaded script
-      ansible.builtin.shell: /tmp/uv-install.sh
+    - name: Download and install UV in one step
+      ansible.builtin.shell: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
       args:
         creates: "{{ ansible_env.HOME }}/.local/bin/uv"
-      when: uv_installer.stat.exists
+      environment:
+        UV_INSTALL_DIR: "{{ ansible_env.HOME }}/.local/bin"
+      retries: 3
+      delay: 5
+      timeout: 120
+    
+    - name: Verify UV installation
+      ansible.builtin.stat:
+        path: "{{ ansible_env.HOME }}/.local/bin/uv"
+      register: uv_installed
+    
+    - name: Alternative UV installation via pip
+      ansible.builtin.shell: |
+        python3 -m pip install --user uv
+      args:
+        creates: "{{ ansible_env.HOME }}/.local/bin/uv"
+      when: not uv_installed.stat.exists
+      ignore_errors: true
       
-    - name: Clean up installer
-      ansible.builtin.file:
-        path: /tmp/uv-install.sh
-        state: absent
-      when: uv_installer.stat.exists
+    - name: Final verification of UV installation
+      ansible.builtin.command: "{{ ansible_env.HOME }}/.local/bin/uv --version"
+      register: uv_test
+      failed_when: uv_test.rc != 0
+      changed_when: false
   when: ansible_os_family != "Darwin"
 
 - name: Add UV to PATH
@@ -48,13 +51,21 @@
   ansible.builtin.set_fact:
     uv_bin: "{{ '/opt/homebrew/bin/uv' if ansible_os_family == 'Darwin' else ansible_env.HOME + '/.local/bin/uv' }}"
 
+- name: Check if UV is available
+  ansible.builtin.command: "{{ uv_bin }} --version"
+  register: uv_available
+  failed_when: false
+  changed_when: false
+
 - name: Install Python versions with UV
   ansible.builtin.shell: |
     {{ uv_bin }} python install {{ item }}
-  loop: "{{ development_setup.python_versions | default(['3.11', '3.12']) }}"
+  loop: "{{ development_setup.python_versions | default(['3.12']) }}"
   retries: 2
-  delay: 10
+  delay: 5
   ignore_errors: true
+  timeout: 300  # 5 minutes timeout
+  when: uv_available.rc == 0
 
 - name: Install common Python tools with UV
   ansible.builtin.shell: |
@@ -64,17 +75,23 @@
     - black
     - mypy
     - pytest
-    - ipython
-    - jupyterlab
   retries: 2
-  delay: 5
+  delay: 3
   ignore_errors: true
+  timeout: 180  # 3 minutes timeout
+  when: uv_available.rc == 0
+
+- name: Warn if UV installation failed
+  ansible.builtin.debug:
+    msg: "UV installation failed. Python environment setup skipped. Install manually with: curl -LsSf https://astral.sh/uv/install.sh | sh"
+  when: uv_available.rc != 0
 
 - name: Set up UV shell completion
   ansible.builtin.shell: |
     {{ uv_bin }} generate-shell-completion zsh > {{ ansible_env.HOME }}/.config/uv_completion.zsh
   args:
     creates: "{{ ansible_env.HOME }}/.config/uv_completion.zsh"
+  when: uv_available.rc == 0
 
 - name: Add UV completion to shell environment
   ansible.builtin.lineinfile:
@@ -82,9 +99,9 @@
     line: '[ -f ~/.config/uv_completion.zsh ] && source ~/.config/uv_completion.zsh'
     create: true
     state: present
+  when: uv_available.rc == 0
 
-- name: Verify UV installation
-  ansible.builtin.command: "{{ uv_bin }} --version"
-  register: uv_version
-  failed_when: uv_version.rc != 0
-  changed_when: false
+- name: Display UV version if successful
+  ansible.builtin.debug:
+    msg: "UV installed successfully: {{ uv_available.stdout }}"
+  when: uv_available.rc == 0
