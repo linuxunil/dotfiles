@@ -11,12 +11,8 @@ custom_packages:
 
 # Custom configuration
 window_manager: hyprland
-display_manager: gdm
-desktop_services:
-  - name: gdm
-    enabled: true
-    state: started
-    scope: system
+display_manager: none  # TTY launch
+desktop_services: []   # No display manager services
 
 # Development setup
 development_setup:

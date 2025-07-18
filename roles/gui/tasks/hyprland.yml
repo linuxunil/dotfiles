@@ -43,3 +43,22 @@
     - { src: waybar.css.j2, dest: waybar/style.css }
     - { src: mako.conf.j2, dest: mako/config }
     - { src: wofi.css.j2, dest: wofi/style.css }
+
+- name: Install Hyprland launch script
+  ansible.builtin.template:
+    src: start-hyprland.sh.j2
+    dest: "{{ ansible_env.HOME }}/.local/bin/start-hyprland.sh"
+    mode: '0755'
+
+- name: Add Hyprland auto-launch to shell profile
+  ansible.builtin.template:
+    src: hyprland-tty-launch.sh.j2
+    dest: "{{ ansible_env.HOME }}/.hyprland-tty-launch"
+    mode: '0644'
+
+- name: Source Hyprland TTY launch in zshrc
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: "source ~/.hyprland-tty-launch"
+    create: true
+    state: present
