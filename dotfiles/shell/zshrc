@@ -112,6 +112,33 @@ else
     alias open="xdg-open"
     alias pbcopy="xclip -selection clipboard"
     alias pbpaste="xclip -selection clipboard -o"
+    
+    # Linux desktop/WM aliases
+    alias hypr="Hyprland"
+    alias waybar-reload="killall waybar && waybar &"
+    alias mako-reload="killall mako && mako &"
+    alias wofi-run="wofi --show drun"
+    alias wofi-window="wofi --show window"
+    alias lock="hyprlock"
+    alias suspend="systemctl suspend"
+    alias hibernate="systemctl hibernate"
+    alias reboot="systemctl reboot"
+    alias shutdown="systemctl poweroff"
+    
+    # System monitoring (Linux)
+    alias cpu="htop"
+    alias mem="free -h"
+    alias disk="df -h"
+    alias temp="sensors"
+    alias gpu="nvidia-smi"
+    
+    # Package management shortcuts
+    alias update="sudo dnf update"
+    alias install="sudo dnf install"
+    alias search="dnf search"
+    alias remove="sudo dnf remove"
+    alias autoremove="sudo dnf autoremove"
+    alias clean="sudo dnf clean all"
 fi
 
 # Shell enhancements (only if available)
