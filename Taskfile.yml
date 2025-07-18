@@ -7,6 +7,7 @@ vars:
   ANSIBLE_CONFIG: ansible.cfg
   OS: '{{OS}}'
   ARCH: '{{ARCH}}'
+  CURRENT_HOST: '{{if eq .OS "darwin"}}hera{{else}}athena{{end}}'
 
 env:
   ANSIBLE_HOST_KEY_CHECKING: "False"
@@ -180,32 +181,32 @@ tasks:
     desc: Install packages for current local machine only
     deps: [install-deps]
     cmds:
-      - echo "🏠 Configuring local machine only..."
-      - ansible-playbook -i {{.INVENTORY}} site.yml --limit localhost
+      - echo "🏠 Configuring local machine ({{.CURRENT_HOST}})..."
+      - ansible-playbook -i {{.INVENTORY}} site.yml --limit {{.CURRENT_HOST}}
       - echo "✅ Local machine configuration complete!"
 
   local-base:
     desc: Install only base packages for current local machine
     deps: [install-deps]
     cmds:
-      - echo "🏠 Installing base packages for local machine..."
-      - ansible-playbook -i {{.INVENTORY}} base.yml --limit localhost
+      - echo "🏠 Installing base packages for local machine ({{.CURRENT_HOST}})..."
+      - ansible-playbook -i {{.INVENTORY}} base.yml --limit {{.CURRENT_HOST}}
       - echo "✅ Base packages installed!"
 
   local-dev:
     desc: Install only dev packages for current local machine
     deps: [install-deps]
     cmds:
-      - echo "🏠 Installing dev packages for local machine..."
-      - ansible-playbook -i {{.INVENTORY}} dev.yml --limit localhost
+      - echo "🏠 Installing dev packages for local machine ({{.CURRENT_HOST}})..."
+      - ansible-playbook -i {{.INVENTORY}} dev.yml --limit {{.CURRENT_HOST}}
       - echo "✅ Dev packages installed!"
 
   local-gui:
     desc: Install only GUI packages for current local machine
     deps: [install-deps]
     cmds:
-      - echo "🏠 Installing GUI packages for local machine..."
-      - ansible-playbook -i {{.INVENTORY}} gui.yml --limit localhost
+      - echo "🏠 Installing GUI packages for local machine ({{.CURRENT_HOST}})..."
+      - ansible-playbook -i {{.INVENTORY}} gui.yml --limit {{.CURRENT_HOST}}
       - echo "✅ GUI packages installed!"
 
   # Information tasks
