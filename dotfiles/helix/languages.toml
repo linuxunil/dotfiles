@@ -77,8 +77,8 @@ indent = { tab-width = 2, unit = "  " }
 language-servers = ["marksman", "harper"]
 soft-wrap = { enable = true, wrap-at-text-width = true }
 text-width = 80
-completion-timeout = 250
-file-types = ["md", "markdown", "mkd", "mdx", "mdwn", "mdown", "markdn", "mdtxt", "mdtext", "workbook"]
+#completion-timeout = 250
+#file-types = ["md", "markdown", "mkd", "mdx", "mdwn", "mdown", "markdn", "mdtxt", "mdtext", "workbook"]
 
 # Bash/Shell configuration
 [[language]]

@@ -108,7 +108,7 @@ o = "wonly"
 "C-j" = "completion"
 "C-space" = "completion"
 # Markdown link insertion
-"A-l" = "insert_char('[[')"
+#"A-l" = "insert_char('[[')"
 
 # Select mode mappings
 [keys.select]
@@ -118,8 +118,8 @@ o = "wonly"
 "c" = ["change_selection"]
 
 # Markdown-specific settings
-[editor.file-types]
-[editor.file-types.markdown]
-soft-wrap = { enable = true, wrap-at-text-width = true }
-text-width = 80
-completion-timeout = 250
+#[editor.file-types]
+#[editor.file-types.markdown]
+#soft-wrap = { enable = true, wrap-at-text-width = true }
+#text-width = 80
+#completion-timeout = 250

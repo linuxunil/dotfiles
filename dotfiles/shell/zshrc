@@ -17,6 +17,7 @@ export GOBIN="$HOME/go/bin"
 export PATH="$GOBIN:$PATH"
 export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 export PATH="$HOME/.npm-global/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 
 # Platform-specific paths
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -63,8 +64,6 @@ alias emacs="emacs -nw"
 alias emacsg="emacs"
 alias goland="open -a GoLand"
 alias pycharm="open -a PyCharm"
-alias zed="zed"
-alias hx="helix"
 
 # IDE workflow shortcuts
 alias ide="ide-launcher"
