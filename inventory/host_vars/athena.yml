@@ -27,7 +27,5 @@ system_config:
   timezone: "America/New_York"
   locale: "en_US.UTF-8"
   
-# Custom dotfiles for this machine
-custom_dotfiles:
-  - src: linux/hyprland
-    dest: .config/hypr
+# Custom dotfiles for this machine (none currently needed)
+# custom_dotfiles: []

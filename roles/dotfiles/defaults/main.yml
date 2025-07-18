@@ -8,6 +8,9 @@ config_directories:
   - .config/zellij
   - .config/zellij/layouts
   - .config/hypr
+  - .config/waybar
+  - .config/mako
+  - .config/wofi
   - .config/bat
   - .config/direnv
   - .config/ruff
@@ -15,6 +18,7 @@ config_directories:
   - .config/helix
   - .emacs.d
   - .local/share
+  - .local/bin
   - Library/Application Support/Firefox
   - .jetbrains
   - .jetbrains/goland

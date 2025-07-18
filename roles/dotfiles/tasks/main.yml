@@ -6,19 +6,28 @@
     mode: '0755'
   loop: "{{ config_directories }}"
 
-- name: Copy dotfiles to remote hosts
-  ansible.builtin.copy:
-    src: "{{ playbook_dir }}/dotfiles/{{ item.src }}"
-    dest: "{{ ansible_env.HOME }}/{{ item.dest }}"
-    backup: yes
-  loop: "{{ dotfiles_links }}"
-  when: inventory_hostname != "localhost"
-
-- name: Create dotfile symlinks (localhost only)
+- name: Create dotfile symlinks for all hosts
   ansible.builtin.file:
     src: "{{ playbook_dir }}/dotfiles/{{ item.src }}"
     dest: "{{ ansible_env.HOME }}/{{ item.dest }}"
     state: link
     force: yes
   loop: "{{ dotfiles_links }}"
-  when: inventory_hostname == "localhost"
+
+- name: Create custom dotfile symlinks
+  ansible.builtin.file:
+    src: "{{ playbook_dir }}/dotfiles/{{ item.src }}"
+    dest: "{{ ansible_env.HOME }}/{{ item.dest }}"
+    state: link
+    force: yes
+  loop: "{{ custom_dotfiles | default([]) }}"
+  when: custom_dotfiles is defined
+
+- name: Make shell scripts executable
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/{{ item.dest }}"
+    mode: '0755'
+  loop: "{{ dotfiles_links }}"
+  when: 
+    - item.dest.startswith('.local/bin/')
+    - item.dest | basename in ['dev-session', 'editor-test', 'ide-launcher']

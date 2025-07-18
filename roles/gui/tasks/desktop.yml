@@ -9,7 +9,9 @@
     enabled: true
     state: started
   become: true
-  when: display_manager is defined
+  when: 
+    - display_manager is defined
+    - display_manager != "none"
 
 - name: Configure desktop services
   ansible.builtin.systemd:

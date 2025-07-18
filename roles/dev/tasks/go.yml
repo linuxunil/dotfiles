@@ -15,18 +15,28 @@
 - name: Set up Go environment
   ansible.builtin.lineinfile:
     path: "{{ ansible_env.HOME }}/.zprofile"
-    line: "{{ item }}"
+    line: "{{ item.line }}"
+    regexp: "{{ item.regexp }}"
     create: true
   loop:
-    - 'export GOPATH="$HOME/go"'
-    - 'export PATH="$GOPATH/bin:$PATH"'
+    - { line: 'export GOPATH="$HOME/go"', regexp: '^export GOPATH=' }
+    - { line: 'export PATH="$GOPATH/bin:$PATH"', regexp: '^export PATH=.*GOPATH.*' }
+
+- name: Check if Go tools are installed
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/go/bin/{{ item | basename }}"
+  loop:
+    - gopls
+    - golangci-lint
+  register: go_tools_check
 
 - name: Install common Go tools
   ansible.builtin.shell: |
-    go install {{ item }}
+    go install {{ item.item }}
   loop:
-    - golang.org/x/tools/gopls@latest
-    - github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+    - { item: "golang.org/x/tools/gopls@latest", basename: "gopls" }
+    - { item: "github.com/golangci/golangci-lint/cmd/golangci-lint@latest", basename: "golangci-lint" }
   environment:
     GOPATH: "{{ ansible_env.HOME }}/go"
     PATH: "{{ ansible_env.HOME }}/go/bin:{{ ansible_env.PATH }}"
+  when: not (go_tools_check.results | selectattr('item', 'equalto', item.basename) | first).stat.exists

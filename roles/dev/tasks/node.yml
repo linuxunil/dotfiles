@@ -57,6 +57,18 @@
     - 'export NPM_CONFIG_PACKAGE_MANAGER="pnpm"'
   when: ansible_os_family != "Darwin"
 
+- name: Check if pnpm is already set up
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/.local/share/pnpm/pnpm"
+  register: pnpm_setup_check
+  when: ansible_os_family != "Darwin"
+
+- name: Check if pnpm is already set up (macOS)
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/Library/pnpm/pnpm"
+  register: pnpm_setup_check_macos
+  when: ansible_os_family == "Darwin"
+
 - name: Setup pnpm global directory
   ansible.builtin.shell: |
     export PATH="$HOME/.local/share/pnpm:$HOME/Library/pnpm:$PATH"
@@ -65,7 +77,28 @@
       export PNPM_HOME="${HOME}/Library/pnpm"
     fi
     pnpm setup --force
+  when: >
+    (ansible_os_family != "Darwin" and not pnpm_setup_check.stat.exists) or
+    (ansible_os_family == "Darwin" and not pnpm_setup_check_macos.stat.exists)
   ignore_errors: true
+
+- name: Check if Node.js tools are installed
+  ansible.builtin.shell: |
+    export PATH="$HOME/.local/share/pnpm:$HOME/Library/pnpm:$PATH"
+    export PNPM_HOME="${HOME}/.local/share/pnpm"
+    if [[ "{{ ansible_os_family }}" == "Darwin" ]]; then
+      export PNPM_HOME="${HOME}/Library/pnpm"
+    fi
+    pnpm list -g {{ item }} --depth=0 2>/dev/null || echo "NOT_INSTALLED"
+  loop:
+    - typescript
+    - "@types/node"
+    - eslint
+    - prettier
+    - vite
+  register: node_tools_check
+  changed_when: false
+  failed_when: false
 
 - name: Install common Node.js tools
   ansible.builtin.shell: |
@@ -74,13 +107,9 @@
     if [[ "{{ ansible_os_family }}" == "Darwin" ]]; then
       export PNPM_HOME="${HOME}/Library/pnpm"
     fi
-    pnpm add -g {{ item }}
-  loop:
-    - typescript
-    - "@types/node"
-    - eslint
-    - prettier
-    - vite
+    pnpm add -g {{ item.item }}
+  loop: "{{ node_tools_check.results }}"
+  when: "'NOT_INSTALLED' in item.stdout"
   retries: 2
   delay: 5
   ignore_errors: true
