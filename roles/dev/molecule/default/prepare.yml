@@ -1,0 +1,62 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: true
+  become: true
+  
+  tasks:
+    - name: Install EPEL repository (if RedHat family)
+      ansible.builtin.dnf:
+        name: epel-release
+        state: present
+      when: ansible_os_family == "RedHat"
+    
+    - name: Install development packages
+      ansible.builtin.dnf:
+        name:
+          - gcc
+          - gcc-c++
+          - make
+          - openssl-devel
+          - libffi-devel
+          - python3-devel
+          - git
+          - curl
+          - tar
+          - gzip
+          - which
+          - sudo
+          - zsh
+          - dnf-plugins-core
+        state: present
+      when: ansible_os_family == "RedHat"
+    
+    - name: Enable PowerTools repository (CentOS 8/Stream)
+      ansible.builtin.command: dnf config-manager --enable powertools
+      when: 
+        - ansible_os_family == "RedHat"
+        - ansible_distribution == "CentOS"
+      failed_when: false
+      changed_when: false
+    
+    - name: Create necessary directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - /home/testuser/.local/bin
+        - /home/testuser/.config
+        - /home/testuser/.cache
+        - /home/testuser/.local/share
+        - /home/testuser/go
+        - /home/testuser/projects
+      when: ansible_user_id == "root"
+    
+    - name: Set ownership of test user directories
+      ansible.builtin.file:
+        path: /home/testuser
+        owner: testuser
+        group: wheel
+        recurse: true
+      when: ansible_user_id == "root"

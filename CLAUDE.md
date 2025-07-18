@@ -133,6 +133,7 @@ task test       # Safe test run
 - Platform detection is automatic via Ansible facts
 - GUI applications only installed on systems with displays
 - Container runtime: Podman (cross-platform)
+- Python management: UV (modern Python package manager)
 
 ## Key Ansible Collections Used
 

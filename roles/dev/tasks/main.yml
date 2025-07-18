@@ -6,11 +6,7 @@
     mode: '0755'
   loop: "{{ dev_directories }}"
 
-- name: Install development packages
-  ansible.builtin.include_role:
-    name: package_manager
-  vars:
-    packages_to_install: "{{ dev_packages_combined }}"
+# Note: Development packages are now installed by package_manager role to avoid duplicates
 
 - name: Set up Go environment
   ansible.builtin.include_tasks: go.yml
@@ -27,6 +23,10 @@
 - name: Set up Rust environment
   ansible.builtin.include_tasks: rust.yml
   when: language_setup.rust.enabled
+
+- name: Set up Ruby environment
+  ansible.builtin.include_tasks: ruby.yml
+  when: language_setup.ruby.enabled
 
 - name: Setup container runtime (Linux)
   ansible.builtin.include_tasks: container.yml

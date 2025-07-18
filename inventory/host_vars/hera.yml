@@ -8,16 +8,16 @@ machine_name: hera
 machine_profile: developer
 machine_environment: local
 
-# Custom package additions
-custom_packages:
+# Additional Homebrew packages for this machine
+homebrew_installed_packages_extra:
   - mas  # Mac App Store CLI
-  - rectangle  # Window manager
+
+# Additional Homebrew cask applications
+homebrew_cask_apps_extra:
   - imageoptim  # Image optimization
 
 # macOS App Store applications
-mas_applications:
-  - { id: 497799835, name: "Xcode" }
-  - { id: 1451685025, name: "WireGuard" }
+mas_applications: []
 
 # Custom dotfiles for this machine
 custom_dotfiles:

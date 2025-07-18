@@ -1,9 +1,9 @@
 ---
-# GUI applications - combined from group_vars
+# GUI applications - consolidated list
 gui_packages_combined: "{{ gui_applications[ansible_os_family] | default([]) + macos_applications | default([]) + custom_packages | default([]) }}"
 
-# Flatpak applications for Linux
-flatpak_apps: "{{ flatpak_applications | default([]) }}"
+# Flatpak applications for Linux (consolidated)
+flatpak_apps: "{{ gui_applications.Linux | default([]) }}"
 
 # macOS App Store applications
 mas_apps: "{{ mas_applications | default([]) }}"
@@ -13,3 +13,7 @@ desktop_packages: "{{ desktop_packages | default([]) }}"
 
 # Only install GUI apps if display is available
 has_display: "{{ ansible_env.DISPLAY is defined or ansible_os_family == 'Darwin' }}"
+
+# Font configuration for GUI applications
+gui_font_family: "JetBrains Mono"
+gui_font_size: "12"

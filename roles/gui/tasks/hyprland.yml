@@ -1,20 +1,31 @@
 ---
 - name: Install Hyprland and related packages
   ansible.builtin.package:
-    name:
-      - hyprland
-      - waybar
-      - mako
-      - wofi
-      - grim
-      - slurp
-      - wl-clipboard
+    name: "{{ desktop_packages }}"
     state: present
   become: true
 
 - name: Create Hyprland config directory
   ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/.config/hypr"
+    state: directory
+    mode: '0755'
+
+- name: Create Waybar config directory
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/waybar"
+    state: directory
+    mode: '0755'
+
+- name: Create Mako config directory
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/mako"
+    state: directory
+    mode: '0755'
+
+- name: Create Wofi config directory
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/wofi"
     state: directory
     mode: '0755'
 
@@ -25,5 +36,10 @@
     mode: '0644'
   loop:
     - { src: hyprland.conf.j2, dest: hypr/hyprland.conf }
+    - { src: hyprlock.conf.j2, dest: hypr/hyprlock.conf }
+    - { src: hypridle.conf.j2, dest: hypr/hypridle.conf }
+    - { src: hyprpaper.conf.j2, dest: hypr/hyprpaper.conf }
     - { src: waybar.json.j2, dest: waybar/config }
+    - { src: waybar.css.j2, dest: waybar/style.css }
     - { src: mako.conf.j2, dest: mako/config }
+    - { src: wofi.css.j2, dest: wofi/style.css }

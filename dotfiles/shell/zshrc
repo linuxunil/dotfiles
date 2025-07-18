@@ -26,14 +26,14 @@ fi
 
 # Essential aliases
 alias ll="ls -la"
-alias la="ls -la"
 alias cat="bat"
 alias grep="rg"
 alias find="fd"
 alias ..="cd .."
 alias ...="cd ../.."
+alias ....="cd ../../.."
 
-# Git aliases
+# Git aliases (core only)
 alias g="git"
 alias gs="git status"
 alias ga="git add"
@@ -45,34 +45,73 @@ alias gb="git branch"
 alias gco="git checkout"
 alias glog="git log --oneline --graph --decorate"
 
-# Development aliases
+# Extended git aliases
+alias gst="git stash"
+alias gm="git merge"
+alias grs="git reset"
+alias gcp="git cherry-pick"
+
+# Development tools
 alias v="nvim"
 alias vim="nvim"
 alias lg="lazygit"
 alias zj="TERM=xterm-256color zellij"
-alias t="task"
+alias zjhg="zj --layout helix-glow"
 
-# Language shortcuts
-alias go-run="go run ."
-alias go-test="go test ./..."
-alias py="python3"
+# Additional editors
+alias emacs="emacs -nw"
+alias emacsg="emacs"
+alias goland="open -a GoLand"
+alias pycharm="open -a PyCharm"
+alias zed="zed"
+alias hx="helix"
+
+# IDE workflow shortcuts
+alias ide="ide-launcher"
+alias ide-go="ide-launcher . --goland"
+alias ide-py="ide-launcher . --pycharm"
+alias ide-zed="ide-launcher . --zed"
+alias ide-hx="ide-launcher . --helix"
+alias ide-z="ide-launcher . --zellij"
+
+# Task runner (core commands only)
+alias t="task"
+alias tl="task --list"
+alias tb="task base"
+alias td="task dev"
+alias tg="task gui"
+alias ta="task all"
+alias tc="task clean"
+alias ts="task status"
+alias tu="task update"
+alias tfacts="task facts"
+
+# Modern Python (standardize on UV)
+alias py="uv run python"
+alias python="uv run python"
+alias pip="uv pip"
+
+# Node.js essentials
 alias nr="npm run"
 alias ni="npm install"
+alias pn="pnpm"
+
+# Container aliases (standardized on podman)
+alias docker="podman"
+alias d="podman"
+alias dc="podman-compose"
+alias pc="podman-compose"
 
 # Platform-specific aliases
 if [[ "$OSTYPE" == "darwin"* ]]; then
     alias ports="lsof -i -P -n | grep LISTEN"
     alias showfiles="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
     alias hidefiles="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
-    alias docker="podman"
-    alias dc="podman-compose"
 else
     alias ports="netstat -tulanp"
     alias open="xdg-open"
     alias pbcopy="xclip -selection clipboard"
     alias pbpaste="xclip -selection clipboard -o"
-    alias d="docker"
-    alias dc="docker-compose"
 fi
 
 # Shell enhancements (only if available)
@@ -93,11 +132,36 @@ HISTFILE=~/.zsh_history
 setopt SHARE_HISTORY
 setopt HIST_IGNORE_DUPS
 
-# FZF configuration
+# FZF configuration with Catppuccin Macchiato theme
 if command -v fzf >/dev/null; then
     [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-    export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+    
+    # Catppuccin Macchiato color scheme for FZF
+    export FZF_DEFAULT_OPTS="
+      --height 60%
+      --layout reverse
+      --border top
+      --multi
+      --preview-window right:50%
+      --bind ctrl-u:preview-page-up
+      --bind ctrl-d:preview-page-down
+      --bind ctrl-a:select-all
+      --bind ctrl-/:change-preview-window(down|hidden|)
+      --color=bg+:#363a4f,bg:#24273a,spinner:#f4dbd6,hl:#ed8796
+      --color=fg:#cad3f5,header:#c6a0f6,info:#8bd5ca,pointer:#f4dbd6
+      --color=marker:#f4dbd6,fg+:#cad3f5,prompt:#8bd5ca,hl+:#ed8796"
+    
+    # Use fd with hidden files and syntax highlighting preview
+    export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --exclude .git'
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    export FZF_CTRL_T_OPTS="
+      --walker-skip .git,node_modules,target,.venv,__pycache__
+      --preview 'bat --style=numbers --color=always --line-range=:500 {}'
+      --bind 'ctrl-/:change-preview-window(down|hidden|)'"
+    
+    # Directory selection with tree preview
+    export FZF_ALT_C_COMMAND='fd --type d --strip-cwd-prefix --hidden --follow --exclude .git'
+    export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -50'"
 fi
 
 # opencode (user-specific)

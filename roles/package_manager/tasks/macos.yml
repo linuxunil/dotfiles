@@ -1,7 +1,27 @@
 ---
-- name: Check if Homebrew is installed
+# Homebrew installation and management following Geerling's best practices
+
+- name: Install Xcode command line tools
+  ansible.builtin.shell: |
+    if ! xcode-select -p >/dev/null 2>&1; then
+      xcode-select --install
+      # Wait for installation to complete
+      until xcode-select -p >/dev/null 2>&1; do
+        sleep 5
+      done
+    fi
+  changed_when: false
+  failed_when: false
+
+- name: Set Homebrew paths based on architecture
+  ansible.builtin.set_fact:
+    homebrew_prefix: "{{ '/opt/homebrew' if ansible_architecture == 'arm64' else '/usr/local' }}"
+    homebrew_install_path: "{{ '/opt/homebrew' if ansible_architecture == 'arm64' else '/usr/local' }}"
+    homebrew_brew_bin_path: "{{ '/opt/homebrew' if ansible_architecture == 'arm64' else '/usr/local' }}/bin"
+
+- name: Check if Homebrew is already installed
   ansible.builtin.stat:
-    path: "{{ homebrew_install_path }}/bin/brew"
+    path: "{{ homebrew_brew_bin_path }}/brew"
   register: homebrew_installed
 
 - name: Install Homebrew
@@ -9,40 +29,94 @@
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   when: not homebrew_installed.stat.exists
   become: false
+  timeout: 600  # 10 minutes timeout for Homebrew installation
+  environment:
+    NONINTERACTIVE: 1
 
-- name: Add Homebrew to PATH
-  ansible.builtin.lineinfile:
+- name: Configure Homebrew in shell profile
+  ansible.builtin.blockinfile:
     path: "{{ ansible_env.HOME }}/.zprofile"
-    line: 'eval "$(/opt/homebrew/bin/brew shellenv)"'
     create: true
-  when: not homebrew_installed.stat.exists
+    block: |
+      # Homebrew
+      if [[ -f {{ homebrew_brew_bin_path }}/brew ]]; then
+        eval "$({{ homebrew_brew_bin_path }}/brew shellenv)"
+      fi
+      export HOMEBREW_NO_AUTO_UPDATE=1
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - Homebrew"
 
-- name: Source Homebrew environment
-  ansible.builtin.shell: eval "$(/opt/homebrew/bin/brew shellenv)"
-  when: not homebrew_installed.stat.exists
-
-- name: Update Homebrew
-  community.general.homebrew:
-    update_homebrew: true
-  when: package_manager_update_cache
-
-- name: Add Homebrew taps
+- name: Add configured taps
   community.general.homebrew_tap:
     name: "{{ item }}"
     state: present
-  loop: "{{ homebrew_taps }}"
-  when: homebrew_taps | length > 0
+  loop: "{{ homebrew_taps | default([]) }}"
+  when: homebrew_taps is defined and homebrew_taps | length > 0
 
-- name: Install packages via Homebrew
+- name: Uninstall configured Homebrew packages
   community.general.homebrew:
     name: "{{ item }}"
-    state: present
-  loop: "{{ packages_to_install | default([]) }}"
-  when: packages_to_install is defined
+    state: absent
+  loop: "{{ homebrew_uninstalled_packages | default([]) }}"
+  when: homebrew_uninstalled_packages is defined and homebrew_uninstalled_packages | length > 0
 
-- name: Install cask applications via Homebrew
+- name: Install configured Homebrew packages
+  community.general.homebrew:
+    name: "{{ homebrew_installed_packages | default([]) }}"
+    state: present
+  when: homebrew_installed_packages is defined and homebrew_installed_packages | length > 0
+  timeout: 600  # 10 minutes timeout for package installation
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: 1
+
+- name: Upgrade all Homebrew packages
+  community.general.homebrew:
+    upgrade_all: true
+  when: homebrew_upgrade_all_packages | default(false)
+
+- name: Uninstall configured Homebrew cask applications
   community.general.homebrew_cask:
     name: "{{ item }}"
-    state: present
-  loop: "{{ cask_packages_to_install | default([]) }}"
-  when: cask_packages_to_install is defined
+    state: absent
+  loop: "{{ homebrew_cask_uninstalled_apps | default([]) }}"
+  when: homebrew_cask_uninstalled_apps is defined and homebrew_cask_uninstalled_apps | length > 0
+
+- name: Install configured Homebrew cask applications
+  block:
+    - name: Install cask applications
+      community.general.homebrew_cask:
+        name: "{{ item }}"
+        state: present
+        install_options: "appdir={{ homebrew_cask_appdir | default('/Applications') }}"
+      loop: "{{ homebrew_cask_apps | default([]) }}"
+      register: cask_install_result
+      failed_when: false
+      timeout: 600  # 10 minutes timeout for cask installation
+      environment:
+        HOMEBREW_NO_AUTO_UPDATE: 1
+    
+    - name: Report cask installation issues
+      ansible.builtin.debug:
+        msg: "Warning: Failed to install cask {{ item.item }} - {{ item.stderr | default('Unknown error') }}"
+      loop: "{{ cask_install_result.results | default([]) }}"
+      when: 
+        - item.failed is defined
+        - item.failed
+        - "'already installed' not in (item.stderr | default(''))"
+  when: homebrew_cask_apps is defined and homebrew_cask_apps | length > 0
+
+- name: Create Brewfile if enabled
+  ansible.builtin.template:
+    src: Brewfile.j2
+    dest: "{{ homebrew_brewfile_dir | default(ansible_env.HOME) }}/Brewfile"
+    mode: '0644'
+  when: homebrew_use_brewfile | default(false)
+
+- name: Install packages from Brewfile
+  ansible.builtin.shell: |
+    {{ homebrew_brew_bin_path }}/brew bundle install --file="{{ homebrew_brewfile_dir | default(ansible_env.HOME) }}/Brewfile"
+  when: homebrew_use_brewfile | default(false)
+
+- name: Clear Homebrew cache
+  ansible.builtin.shell: |
+    {{ homebrew_brew_bin_path }}/brew cleanup --prune=all
+  when: homebrew_clear_cache | default(false)

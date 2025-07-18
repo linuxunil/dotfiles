@@ -131,6 +131,48 @@ tasks:
       - task dry-run
       - echo "Test completed successfully!"
 
+  # Molecule testing tasks
+  test-dev:
+    desc: Test dev role with Molecule (containerized testing)
+    cmds:
+      - echo "🧪 Testing dev role with Molecule..."
+      - cd roles/dev && uv run molecule test
+      - echo "✅ Dev role tests passed!"
+    sources:
+      - "roles/dev/**/*"
+      - "roles/dev/molecule/**/*"
+
+  test-dev-quick:
+    desc: Quick test of dev role (converge + verify only)
+    cmds:
+      - echo "🚀 Quick testing dev role..."
+      - cd roles/dev && uv run molecule converge
+      - cd roles/dev && uv run molecule verify
+      - echo "✅ Quick test completed!"
+    sources:
+      - "roles/dev/**/*"
+
+  test-dev-verify:
+    desc: Run verification tests only (assumes container exists)
+    cmds:
+      - echo "🔍 Running dev role verification tests..."
+      - cd roles/dev && uv run molecule verify
+      - echo "✅ Verification completed!"
+
+  test-dev-clean:
+    desc: Clean up dev role test containers
+    cmds:
+      - echo "🧹 Cleaning up test containers..."
+      - cd roles/dev && uv run molecule destroy
+      - echo "✅ Cleanup completed!"
+
+  test-all-roles:
+    desc: Test all roles with Molecule (future expansion)
+    cmds:
+      - echo "🧪 Testing all roles..."
+      - task test-dev
+      - echo "✅ All role tests completed!"
+
   # Information tasks
   status:
     desc: Show current system setup status

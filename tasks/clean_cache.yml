@@ -1,8 +1,11 @@
 ---
 - name: Clean package manager cache (macOS)
   ansible.builtin.shell: |
-    brew cleanup --prune=all
+    {{ homebrew_path | default('/opt/homebrew') }}/bin/brew cleanup --prune=all
+    {{ homebrew_path | default('/opt/homebrew') }}/bin/brew autoremove
   when: ansible_os_family == "Darwin"
+  environment:
+    PATH: "{{ homebrew_path | default('/opt/homebrew') }}/bin:{{ ansible_env.PATH }}"
 
 - name: Clean package manager cache (Fedora/RedHat)
   ansible.builtin.dnf:

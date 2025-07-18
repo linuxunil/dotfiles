@@ -24,8 +24,8 @@ galaxy_info:
     - tools
 
 dependencies:
-  - role: base
   - role: package_manager
+  - role: base
 
 collections:
   - community.general

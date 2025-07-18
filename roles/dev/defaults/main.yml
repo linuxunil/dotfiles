@@ -15,6 +15,9 @@ language_setup:
     version: "{{ programming_languages.node.version | default('lts') }}"
   rust:
     enabled: "{{ programming_languages.rust.enabled | default(false) }}"
+  ruby:
+    enabled: "{{ programming_languages.ruby.enabled | default(true) }}"
+    version: "{{ programming_languages.ruby.version | default('3.2') }}"
 
 # Development directories
 dev_directories:

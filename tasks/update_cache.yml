@@ -12,10 +12,31 @@
   changed_when: false
   when: ansible_os_family == "Darwin"
 
-- name: Update Homebrew
-  community.general.homebrew:
-    update_homebrew: true
+- name: Check last Homebrew update
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/.homebrew_last_update"
+  register: homebrew_update_check
+  when: ansible_os_family == "Darwin"
+
+- name: Update Homebrew (only if not updated in last 24 hours)
+  block:
+    - name: Update Homebrew
+      community.general.homebrew:
+        update_homebrew: true
+      timeout: 300  # 5 minutes timeout
+      environment:
+        HOMEBREW_NO_AUTO_UPDATE: 1
+    
+    - name: Mark Homebrew as updated
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/.homebrew_last_update"
+        state: touch
+        mode: '0644'
+  rescue:
+    - name: Homebrew update failed - continuing without update
+      ansible.builtin.debug:
+        msg: "Homebrew update failed due to network issues. Continuing with existing version."
   when: 
     - ansible_os_family == "Darwin"
     - homebrew_check.rc == 0
-  ignore_errors: true
+    - not homebrew_update_check.stat.exists or (ansible_date_time.epoch|int - homebrew_update_check.stat.mtime|int) > 86400

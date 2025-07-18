@@ -1,0 +1,189 @@
+#!/usr/bin/env bash
+
+# Smart IDE Launcher
+# Automatically opens the best IDE for your project type
+
+set -e
+
+PROJECT_PATH="${1:-$(pwd)}"
+FORCE_IDE="$2"
+
+# Change to project directory
+cd "$PROJECT_PATH"
+
+# Function to detect project type
+detect_project_type() {
+    if [[ -f "go.mod" || -f "main.go" || -f "*.go" ]]; then
+        echo "go"
+    elif [[ -f "pyproject.toml" || -f "requirements.txt" || -f "setup.py" || -f "*.py" ]]; then
+        echo "python"
+    elif [[ -f "package.json" || -f "tsconfig.json" || -f "*.ts" ]]; then
+        echo "typescript"
+    elif [[ -f "Cargo.toml" || -f "*.rs" ]]; then
+        echo "rust"
+    else
+        echo "general"
+    fi
+}
+
+# Function to check if IDE is available
+check_ide() {
+    local ide="$1"
+    case "$ide" in
+        "goland")
+            command -v goland >/dev/null 2>&1 || { echo "GoLand not found. Install with: brew install goland"; return 1; }
+            ;;
+        "pycharm")
+            command -v pycharm >/dev/null 2>&1 || { echo "PyCharm not found. Install with: brew install pycharm"; return 1; }
+            ;;
+        "code")
+            command -v code >/dev/null 2>&1 || { echo "VS Code not found. Install with: brew install visual-studio-code"; return 1; }
+            ;;
+        "zed")
+            command -v zed >/dev/null 2>&1 || { echo "Zed not found. Install with: brew install zed"; return 1; }
+            ;;
+        "helix")
+            command -v hx >/dev/null 2>&1 || { echo "Helix not found. Install with: brew install helix"; return 1; }
+            ;;
+    esac
+}
+
+# Function to launch IDE
+launch_ide() {
+    local ide="$1"
+    local project_path="$2"
+    local project_name="$(basename "$project_path")"
+    
+    echo "🚀 Launching $ide for project: $project_name"
+    
+    case "$ide" in
+        "goland")
+            if [[ "$OSTYPE" == "darwin"* ]]; then
+                open -a "GoLand" "$project_path"
+            else
+                goland "$project_path" &
+            fi
+            ;;
+        "pycharm")
+            if [[ "$OSTYPE" == "darwin"* ]]; then
+                open -a "PyCharm" "$project_path"
+            else
+                pycharm "$project_path" &
+            fi
+            ;;
+        "code")
+            code "$project_path"
+            ;;
+        "zed")
+            zed "$project_path"
+            ;;
+        "helix")
+            hx "$project_path"
+            ;;
+    esac
+}
+
+# Function to launch with zellij layout
+launch_with_zellij() {
+    local ide="$1"
+    local project_path="$2"
+    local project_name="$(basename "$project_path")"
+    local layout="${ide}-dev"
+    
+    echo "🖥️  Launching $ide with zellij layout: $layout"
+    
+    if [[ -f "$HOME/.config/zellij/layouts/${layout}.kdl" ]]; then
+        cd "$project_path"
+        zellij --session "${project_name}-${ide}" --layout "$layout"
+    else
+        echo "⚠️  Layout $layout not found, launching IDE directly"
+        launch_ide "$ide" "$project_path"
+    fi
+}
+
+# Main logic
+main() {
+    local project_type
+    local recommended_ide
+    
+    # Show usage if no arguments and not in a project
+    if [[ -z "$1" && ! -f "go.mod" && ! -f "pyproject.toml" && ! -f "package.json" ]]; then
+        echo "🎯 Smart IDE Launcher"
+        echo ""
+        echo "Usage: ide-launcher [project-path] [force-ide]"
+        echo ""
+        echo "Auto-detects project type and launches appropriate IDE:"
+        echo "  Go projects      → GoLand"
+        echo "  Python projects  → PyCharm"
+        echo "  TypeScript/JS    → Zed"
+        echo "  Rust projects    → Zed"
+        echo "  Other projects   → Zed"
+        echo ""
+        echo "Options:"
+        echo "  --zellij, -z     Launch with zellij layout"
+        echo "  --goland         Force GoLand"
+        echo "  --pycharm        Force PyCharm"
+        echo "  --code           Force VS Code"
+        echo "  --zed            Force Zed"
+        echo "  --helix          Force Helix"
+        echo ""
+        echo "Examples:"
+        echo "  ide-launcher ~/projects/myapp"
+        echo "  ide-launcher . --goland"
+        echo "  ide-launcher ~/projects/webapp --zellij"
+        exit 0
+    fi
+    
+    project_type=$(detect_project_type)
+    
+    # Handle force IDE option
+    if [[ "$FORCE_IDE" == "--goland" ]]; then
+        recommended_ide="goland"
+    elif [[ "$FORCE_IDE" == "--pycharm" ]]; then
+        recommended_ide="pycharm"
+    elif [[ "$FORCE_IDE" == "--code" ]]; then
+        recommended_ide="code"
+    elif [[ "$FORCE_IDE" == "--zed" ]]; then
+        recommended_ide="zed"
+    elif [[ "$FORCE_IDE" == "--helix" ]]; then
+        recommended_ide="helix"
+    else
+        # Auto-detect based on project type
+        case "$project_type" in
+            "go")
+                recommended_ide="goland"
+                ;;
+            "python")
+                recommended_ide="pycharm"
+                ;;
+            "typescript")
+                recommended_ide="zed"
+                ;;
+            "rust")
+                recommended_ide="zed"
+                ;;
+            *)
+                recommended_ide="zed"
+                ;;
+        esac
+    fi
+    
+    # Check if IDE is available
+    if ! check_ide "$recommended_ide"; then
+        echo "⚠️  Recommended IDE not available, falling back to Zed"
+        recommended_ide="zed"
+        if ! check_ide "$recommended_ide"; then
+            echo "❌ No suitable IDE found"
+            exit 1
+        fi
+    fi
+    
+    # Launch with or without zellij
+    if [[ "$FORCE_IDE" == "--zellij" || "$FORCE_IDE" == "-z" ]]; then
+        launch_with_zellij "$recommended_ide" "$PROJECT_PATH"
+    else
+        launch_ide "$recommended_ide" "$PROJECT_PATH"
+    fi
+}
+
+main "$@"

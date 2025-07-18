@@ -1,0 +1,88 @@
+---
+# Ruby development environment setup using rbenv
+
+
+
+- name: Install rbenv (Linux)
+  block:
+    - name: Clone rbenv repository
+      ansible.builtin.git:
+        repo: https://github.com/rbenv/rbenv.git
+        dest: "{{ ansible_env.HOME }}/.rbenv"
+        version: master
+        force: true
+    
+    - name: Clone ruby-build repository
+      ansible.builtin.git:
+        repo: https://github.com/rbenv/ruby-build.git
+        dest: "{{ ansible_env.HOME }}/.rbenv/plugins/ruby-build"
+        version: master
+        force: true
+  when: ansible_os_family != "Darwin"
+
+- name: Add rbenv to PATH
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+    line: 'export PATH="$HOME/.rbenv/bin:$PATH"'
+    create: true
+    state: present
+  when: ansible_os_family != "Darwin"
+
+- name: Add rbenv init to shell
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+    line: 'eval "$(rbenv init -)"'
+    create: true
+    state: present
+
+- name: Set rbenv binary path
+  ansible.builtin.set_fact:
+    rbenv_bin: "{{ '/opt/homebrew/bin/rbenv' if ansible_os_family == 'Darwin' else ansible_env.HOME + '/.rbenv/bin/rbenv' }}"
+
+- name: Install Ruby versions with rbenv
+  ansible.builtin.shell: |
+    {{ rbenv_bin }} install {{ item }}
+  loop: "{{ development_setup.ruby_versions | default(['3.2.0', '3.1.0']) }}"
+  retries: 1
+  delay: 5
+  ignore_errors: true
+  timeout: 1800  # 30 minutes timeout for Ruby compilation
+  args:
+    creates: "{{ ansible_env.HOME }}/.rbenv/versions/{{ item }}"
+
+- name: Check current global Ruby version
+  ansible.builtin.shell: |
+    {{ rbenv_bin }} global
+  register: current_ruby_version
+  changed_when: false
+  failed_when: false
+
+- name: Set global Ruby version
+  ansible.builtin.shell: |
+    {{ rbenv_bin }} global {{ language_setup.ruby.version }}
+  register: ruby_global
+  changed_when: ruby_global.rc == 0
+  when: current_ruby_version.stdout != language_setup.ruby.version
+
+- name: Install common Ruby gems
+  ansible.builtin.shell: |
+    {{ rbenv_bin }} exec gem install {{ item }}
+  loop:
+    - bundler
+    - rails
+    - rspec
+    - rubocop
+    - pry
+    - rake
+    - yard
+  retries: 1
+  delay: 3
+  ignore_errors: true
+  timeout: 300  # 5 minutes timeout for gem installation
+
+- name: Verify Ruby installation
+  ansible.builtin.shell: |
+    {{ rbenv_bin }} exec ruby --version
+  register: ruby_version
+  failed_when: ruby_version.rc != 0
+  changed_when: false

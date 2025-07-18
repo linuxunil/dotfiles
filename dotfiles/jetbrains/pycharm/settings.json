@@ -1,0 +1,127 @@
+{
+  "ide.general.settings": {
+    "theme": "Catppuccin Macchiato",
+    "font.family": "JetBrains Mono",
+    "font.size": 14,
+    "line.spacing": 1.2,
+    "editor.tabs.placement": "top",
+    "editor.tabs.limit": 10,
+    "auto.import": true,
+    "optimize.imports": true,
+    "show.line.numbers": true,
+    "show.whitespaces": false,
+    "soft.wrap": false,
+    "indent.size": 4,
+    "use.spaces": true
+  },
+  "python.specific.settings": {
+    "interpreter.auto.detect": true,
+    "virtual.env.support": true,
+    "conda.support": true,
+    "poetry.support": true,
+    "uv.support": true,
+    "requirements.auto.install": true,
+    "black.formatting": true,
+    "isort.imports": true,
+    "flake8.linting": true,
+    "mypy.type.checking": true,
+    "pytest.test.runner": true,
+    "django.support": true,
+    "flask.support": true,
+    "fastapi.support": true,
+    "scientific.mode": true,
+    "jupyter.support": true
+  },
+  "version.control": {
+    "git.integration": true,
+    "show.git.log": true,
+    "commit.message.spell.check": true,
+    "auto.add.unversioned": false,
+    "confirm.move.to.changelist": false
+  },
+  "code.style": {
+    "line.length": 88,
+    "continuation.indent": 4,
+    "keep.blank.lines": 1,
+    "blank.lines.around.class": 2,
+    "blank.lines.around.method": 1,
+    "blank.lines.around.top.level": 2,
+    "use.hanging.indent": true,
+    "align.multiline.parameters": true
+  },
+  "live.templates": {
+    "enable.custom.templates": true,
+    "python.templates": {
+      "main": "if __name__ == '__main__':\n    $END$",
+      "try": "try:\n    $SELECTION$\nexcept $EXCEPTION$ as e:\n    $END$",
+      "class": "class $NAME$:\n    def __init__(self):\n        $END$",
+      "def": "def $NAME$($PARAMS$):\n    \"\"\"$DOC$\"\"\"\n    $END$",
+      "property": "@property\ndef $NAME$(self):\n    return self._$NAME$\n\n@$NAME$.setter\ndef $NAME$(self, value):\n    self._$NAME$ = value",
+      "dataclass": "from dataclasses import dataclass\n\n@dataclass\nclass $NAME$:\n    $END$",
+      "test": "def test_$NAME$():\n    $END$",
+      "fixture": "@pytest.fixture\ndef $NAME$():\n    $END$",
+      "fastapi": "from fastapi import FastAPI\n\napp = FastAPI()\n\n@app.get('/')\ndef read_root():\n    return {'Hello': 'World'}"
+    }
+  },
+  "debugging": {
+    "show.values.inline": true,
+    "auto.variables.mode": true,
+    "collect.run.time.statistics": true,
+    "enable.gevent.support": true,
+    "enable.asyncio.support": true
+  },
+  "tools.integration": {
+    "terminal.shell": "/bin/zsh",
+    "git.executable": "/usr/bin/git",
+    "python.executable": "/usr/bin/python3",
+    "uv.executable": "/usr/local/bin/uv",
+    "external.tools": {
+      "black": {
+        "program": "black",
+        "arguments": "$FilePath$",
+        "working.directory": "$ProjectFileDir$"
+      },
+      "ruff": {
+        "program": "ruff",
+        "arguments": "check $FilePath$",
+        "working.directory": "$ProjectFileDir$"
+      },
+      "ruff-format": {
+        "program": "ruff",
+        "arguments": "format $FilePath$",
+        "working.directory": "$ProjectFileDir$"
+      },
+      "mypy": {
+        "program": "mypy",
+        "arguments": "$FilePath$",
+        "working.directory": "$ProjectFileDir$"
+      },
+      "task": {
+        "program": "task",
+        "arguments": "$Prompt$",
+        "working.directory": "$ProjectFileDir$"
+      },
+      "uv-run": {
+        "program": "uv",
+        "arguments": "run $FilePath$",
+        "working.directory": "$ProjectFileDir$"
+      }
+    }
+  },
+  "keybindings": {
+    "custom.keymap": "VSCode",
+    "additional.shortcuts": {
+      "Ctrl+Shift+T": "Run Task",
+      "Ctrl+Shift+R": "Run pytest",
+      "Ctrl+Shift+B": "Build Project",
+      "Ctrl+Shift+G": "Go to Test",
+      "Ctrl+Alt+L": "Reformat Code",
+      "Ctrl+Alt+O": "Optimize Imports",
+      "Ctrl+F12": "File Structure",
+      "Ctrl+Shift+F12": "Hide All Windows",
+      "Alt+F12": "Terminal",
+      "Ctrl+Shift+U": "UV Run",
+      "Ctrl+Shift+J": "Jupyter Console"
+    }
+  }
+}

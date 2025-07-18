@@ -15,14 +15,14 @@
     - gui_packages_combined | length > 0
 
 - name: Install GUI packages (Linux)
-  ansible.builtin.include_role:
-    name: package_manager
-  vars:
-    packages_to_install: "{{ desktop_packages }}"
-    flatpak_applications: "{{ flatpak_apps }}"
+  community.general.flatpak:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ flatpak_apps }}"
   when: 
     - ansible_os_family != "Darwin"
     - has_display
+    - flatpak_apps is defined
 
 - name: Install macOS App Store applications
   community.general.mas:

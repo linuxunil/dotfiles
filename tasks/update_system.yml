@@ -4,10 +4,21 @@
     - name: Update Homebrew
       community.general.homebrew:
         update_homebrew: true
+      environment:
+        PATH: "{{ homebrew_path | default('/opt/homebrew') }}/bin:{{ ansible_env.PATH }}"
     
     - name: Upgrade Homebrew packages
       community.general.homebrew:
         upgrade_all: true
+      environment:
+        PATH: "{{ homebrew_path | default('/opt/homebrew') }}/bin:{{ ansible_env.PATH }}"
+    
+    - name: Update via Brewfile if using bundle
+      ansible.builtin.shell: |
+        {{ homebrew_path | default('/opt/homebrew') }}/bin/brew bundle install --global
+      when: homebrew.use_brewfile | default(false)
+      environment:
+        PATH: "{{ homebrew_path | default('/opt/homebrew') }}/bin:{{ ansible_env.PATH }}"
   when: ansible_os_family == "Darwin"
 
 - name: Update system packages (Fedora/RedHat)

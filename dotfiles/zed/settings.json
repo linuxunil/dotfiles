@@ -1,0 +1,231 @@
+{
+  // Theme and appearance
+  "theme": "Catppuccin Macchiato",
+  "ui_font_size": 14,
+  "buffer_font_size": 14,
+  "buffer_font_family": "JetBrains Mono",
+  "ui_font_family": "JetBrains Mono",
+  
+  // Editor settings
+  "tab_size": 2,
+  "indent_guides": {
+    "enabled": true,
+    "line_width": 1,
+    "active_line_width": 2
+  },
+  "show_whitespaces": "selection",
+  "soft_wrap": "editor_width",
+  "preferred_line_length": 100,
+  "format_on_save": "on",
+  "autosave": "on_focus_change",
+  "scroll_beyond_last_line": "one_page",
+  "cursor_blink": false,
+  "relative_line_numbers": true,
+  "scrollbar": {
+    "show": "always",
+    "git_diff": true,
+    "search_results": true
+  },
+  
+  // File settings
+  "show_file_icons": true,
+  "auto_install_extensions": {
+    "go": true,
+    "python": true,
+    "typescript": true,
+    "javascript": true,
+    "rust": true,
+    "markdown": true,
+    "yaml": true,
+    "toml": true,
+    "json": true
+  },
+  "file_scan_exclusions": [
+    "**/.git",
+    "**/node_modules",
+    "**/target",
+    "**/.venv",
+    "**/__pycache__",
+    "**/dist",
+    "**/build"
+  ],
+  
+  // Git integration
+  "git": {
+    "git_gutter": "tracked_files",
+    "inline_blame": {
+      "enabled": true,
+      "delay_ms": 1000
+    }
+  },
+  
+  // LSP settings
+  "lsp": {
+    "gopls": {
+      "initialization_options": {
+        "gofumpt": true,
+        "staticcheck": true,
+        "usePlaceholders": true,
+        "completeUnimported": true,
+        "experimentalPostfixCompletions": true
+      }
+    },
+    "pyright": {
+      "settings": {
+        "python": {
+          "analysis": {
+            "typeCheckingMode": "basic",
+            "autoImportCompletions": true,
+            "autoSearchPaths": true
+          }
+        }
+      }
+    },
+    "rust-analyzer": {
+      "initialization_options": {
+        "check": {
+          "command": "clippy"
+        },
+        "cargo": {
+          "allFeatures": true
+        }
+      }
+    },
+    "typescript-language-server": {
+      "initialization_options": {
+        "preferences": {
+          "importModuleSpecifier": "relative"
+        }
+      }
+    }
+  },
+  
+  // Terminal integration
+  "terminal": {
+    "shell": {
+      "program": "zsh"
+    },
+    "font_size": 14,
+    "font_family": "JetBrains Mono",
+    "copy_on_select": true,
+    "blinking": "off"
+  },
+  
+  // Keybindings and vim mode
+  "vim_mode": true,
+  "base_keymap": "VSCode",
+  
+  // Project settings
+  "project_panel": {
+    "default_width": 240,
+    "git_status": true,
+    "auto_reveal_entries": true,
+    "auto_fold_dirs": true
+  },
+  
+  // Search settings
+  "search": {
+    "whole_word": false,
+    "case_sensitive": false,
+    "include_ignored": false,
+    "regex": false
+  },
+  
+  // Code completion
+  "completion": {
+    "trigger_on_input": true,
+    "show_completions_on_input": true
+  },
+  
+  // Collaboration (if using Zed's collab features)
+  "collaboration_panel": {
+    "default_width": 240
+  },
+  
+  // AI assistant settings
+  "assistant": {
+    "enabled": false,
+    "version": "2"
+  },
+  
+  // Language-specific settings
+  "languages": {
+    "Go": {
+      "tab_size": 4,
+      "hard_tabs": true,
+      "format_on_save": "on",
+      "enable_language_server": true
+    },
+    "Python": {
+      "tab_size": 4,
+      "format_on_save": "on",
+      "enable_language_server": true
+    },
+    "TypeScript": {
+      "tab_size": 2,
+      "format_on_save": "on",
+      "enable_language_server": true
+    },
+    "JavaScript": {
+      "tab_size": 2,
+      "format_on_save": "on",
+      "enable_language_server": true
+    },
+    "Rust": {
+      "tab_size": 4,
+      "format_on_save": "on",
+      "enable_language_server": true
+    },
+    "JSON": {
+      "tab_size": 2,
+      "format_on_save": "on"
+    },
+    "YAML": {
+      "tab_size": 2,
+      "format_on_save": "on"
+    },
+    "TOML": {
+      "tab_size": 2,
+      "format_on_save": "on"
+    },
+    "Markdown": {
+      "tab_size": 2,
+      "soft_wrap": "preferred_line_length",
+      "preferred_line_length": 80
+    }
+  },
+  
+  // Custom keybindings
+  "keymap": [
+    {
+      "context": "Editor && vim_mode == normal",
+      "bindings": {
+        "space f f": "file_finder::Toggle",
+        "space f r": "recent_projects::Toggle",
+        "space f g": "project_search::Toggle",
+        "space t": "terminal_panel::Toggle",
+        "space e": "project_panel::Toggle",
+        "space g": "git_panel::Toggle",
+        "space w": "workspace::Save",
+        "space q": "workspace::CloseWindow",
+        "space s": "workspace::Save",
+        "space h": "editor::MoveLeft",
+        "space j": "editor::MoveDown", 
+        "space k": "editor::MoveUp",
+        "space l": "editor::MoveRight"
+      }
+    },
+    {
+      "context": "ProjectPanel",
+      "bindings": {
+        "a": "project_panel::NewFile",
+        "A": "project_panel::NewDirectory",
+        "d": "project_panel::Delete",
+        "r": "project_panel::Rename",
+        "x": "project_panel::Cut",
+        "c": "project_panel::Copy",
+        "p": "project_panel::Paste"
+      }
+    }
+  ]
+}

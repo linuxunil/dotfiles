@@ -1,0 +1,51 @@
+layout {
+    default_tab_template {
+        children
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+    
+    tab name="Helix" focus=true {
+        pane split_direction="vertical" {
+            pane size="75%" name="Helix Editor" {
+                command "zsh"
+                args "-c" "echo 'Starting Helix...'; if command -v hx >/dev/null; then hx .; else echo 'Helix not found. Install via: brew install helix'; fi"
+            }
+            pane split_direction="horizontal" {
+                pane name="Terminal" {
+                    command "zsh"
+                }
+                pane name="Helix Tips" {
+                    command "zsh"
+                    args "-c" "echo 'Helix Key Bindings:'; echo 'Space f f - Find files'; echo 'Space b b - Switch buffers'; echo 'Space w w - Save all'; echo 'g d - Go to definition'; echo 'g r - Go to references'; echo 'Space a - Code actions'; echo 'Space r - Rename'; echo 'mip - Select in paragraph'; echo 'Alt-; - Remove selection'; exec zsh"
+                }
+            }
+        }
+    }
+    
+    tab name="Language Tools" {
+        pane split_direction="horizontal" {
+            pane name="LSP Status" {
+                command "zsh"
+                args "-c" "echo 'Language Server Status:'; echo 'Go: gopls'; echo 'Python: pyright'; echo 'TypeScript: typescript-language-server'; echo 'Rust: rust-analyzer'; echo 'JSON: Built-in'; echo 'YAML: yaml-language-server'; exec zsh"
+            }
+            pane name="Formatting" {
+                command "zsh"
+                args "-c" "echo 'Auto-formatting enabled for:'; echo '- Go (gofmt)'; echo '- Python (ruff)'; echo '- TypeScript/JS (prettier)'; echo '- Rust (rustfmt)'; echo '- JSON/YAML (prettier)'; exec zsh"
+            }
+        }
+    }
+    
+    tab name="Git" {
+        pane split_direction="horizontal" {
+            pane name="Git Status" {
+                command "zsh"
+                args "-c" "git status; exec zsh"
+            }
+            pane name="LazyGit" {
+                command "lazygit"
+            }
+        }
+    }
+}

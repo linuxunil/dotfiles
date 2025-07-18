@@ -1,40 +1,90 @@
 ---
-- name: Install Python (macOS)
+# UV is the modern Python package manager - we'll use it exclusively
+
+- name: Install Python via UV (macOS)
   community.general.homebrew:
-    name: 
-      - python@3.11
-      - python@3.12
+    name: uv
     state: present
   when: ansible_os_family == "Darwin"
 
-- name: Install Python (Linux)
-  ansible.builtin.package:
-    name: 
-      - python3
-      - python3-pip
-      - python3-venv
-    state: present
-  become: true
+- name: Install UV (Linux)
+  block:
+    - name: Download UV installer
+      ansible.builtin.get_url:
+        url: https://astral.sh/uv/install.sh
+        dest: /tmp/uv-install.sh
+        mode: '0755'
+        timeout: 30
+        backup: true
+      retries: 3
+      delay: 5
+    
+    - name: Verify installer exists
+      ansible.builtin.stat:
+        path: /tmp/uv-install.sh
+      register: uv_installer
+    
+    - name: Install UV from downloaded script
+      ansible.builtin.shell: /tmp/uv-install.sh
+      args:
+        creates: "{{ ansible_env.HOME }}/.local/bin/uv"
+      when: uv_installer.stat.exists
+      
+    - name: Clean up installer
+      ansible.builtin.file:
+        path: /tmp/uv-install.sh
+        state: absent
+      when: uv_installer.stat.exists
   when: ansible_os_family != "Darwin"
 
-- name: Install uv (Python package manager)
-  ansible.builtin.shell: |
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-  args:
-    creates: "{{ ansible_env.HOME }}/.local/bin/uv"
-
-- name: Add uv to PATH
+- name: Add UV to PATH
   ansible.builtin.lineinfile:
     path: "{{ ansible_env.HOME }}/.zprofile"
     line: 'export PATH="$HOME/.local/bin:$PATH"'
     create: true
+    state: present
 
-- name: Install common Python tools with uv
+- name: Set UV binary path
+  ansible.builtin.set_fact:
+    uv_bin: "{{ '/opt/homebrew/bin/uv' if ansible_os_family == 'Darwin' else ansible_env.HOME + '/.local/bin/uv' }}"
+
+- name: Install Python versions with UV
   ansible.builtin.shell: |
-    {{ ansible_env.HOME }}/.local/bin/uv tool install {{ item }}
+    {{ uv_bin }} python install {{ item }}
+  loop: "{{ development_setup.python_versions | default(['3.11', '3.12']) }}"
+  retries: 2
+  delay: 10
+  ignore_errors: true
+
+- name: Install common Python tools with UV
+  ansible.builtin.shell: |
+    {{ uv_bin }} tool install {{ item }}
   loop:
     - ruff
     - black
     - mypy
     - pytest
+    - ipython
+    - jupyterlab
+  retries: 2
+  delay: 5
   ignore_errors: true
+
+- name: Set up UV shell completion
+  ansible.builtin.shell: |
+    {{ uv_bin }} generate-shell-completion zsh > {{ ansible_env.HOME }}/.config/uv_completion.zsh
+  args:
+    creates: "{{ ansible_env.HOME }}/.config/uv_completion.zsh"
+
+- name: Add UV completion to shell environment
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+    line: '[ -f ~/.config/uv_completion.zsh ] && source ~/.config/uv_completion.zsh'
+    create: true
+    state: present
+
+- name: Verify UV installation
+  ansible.builtin.command: "{{ uv_bin }} --version"
+  register: uv_version
+  failed_when: uv_version.rc != 0
+  changed_when: false

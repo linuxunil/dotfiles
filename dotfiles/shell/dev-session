@@ -1,0 +1,97 @@
+#!/bin/bash
+# Development session launcher for zellij
+# Usage: dev-session [go|python|ts] [session-name]
+
+PROJECT_TYPE=${1:-default}
+SESSION_NAME=${2:-$(basename "$PWD")}
+
+case "$PROJECT_TYPE" in
+    go|golang)
+        echo "🐹 Starting Go development session: $SESSION_NAME"
+        zellij attach "$SESSION_NAME" --layout go-dev 2>/dev/null || zellij --session "$SESSION_NAME" --layout go-dev
+        ;;
+    py|python)
+        echo "🐍 Starting Python development session: $SESSION_NAME"
+        zellij attach "$SESSION_NAME" --layout python-dev 2>/dev/null || zellij --session "$SESSION_NAME" --layout python-dev
+        ;;
+    ts|typescript|js|javascript|node)
+        echo "📦 Starting TypeScript/JavaScript development session: $SESSION_NAME"
+        zellij attach "$SESSION_NAME" --layout ts-dev 2>/dev/null || zellij --session "$SESSION_NAME" --layout ts-dev
+        ;;
+    rust|rs)
+        echo "🦀 Starting Rust development session: $SESSION_NAME"
+        zellij attach "$SESSION_NAME" --layout rust-dev 2>/dev/null || zellij --session "$SESSION_NAME" --layout rust-dev
+        ;;
+    docker|container)
+        echo "🐳 Starting Docker development session: $SESSION_NAME"
+        zellij attach "$SESSION_NAME" --layout docker-dev 2>/dev/null || zellij --session "$SESSION_NAME" --layout docker-dev
+        ;;
+    ansible|playbook)
+        echo "⚙️ Starting Ansible development session: $SESSION_NAME"
+        zellij attach "$SESSION_NAME" --layout ansible-dev 2>/dev/null || zellij --session "$SESSION_NAME" --layout ansible-dev
+        ;;
+    general|dev)
+        echo "🔧 Starting general development session: $SESSION_NAME"
+        zellij attach "$SESSION_NAME" --layout general-dev 2>/dev/null || zellij --session "$SESSION_NAME" --layout general-dev
+        ;;
+    emacs)
+        echo "📝 Starting Emacs development session: $SESSION_NAME"
+        zellij attach "$SESSION_NAME" --layout emacs-dev 2>/dev/null || zellij --session "$SESSION_NAME" --layout emacs-dev
+        ;;
+    goland)
+        echo "🏗️ Starting GoLand development session: $SESSION_NAME"
+        zellij attach "$SESSION_NAME" --layout goland-dev 2>/dev/null || zellij --session "$SESSION_NAME" --layout goland-dev
+        ;;
+    pycharm)
+        echo "🐍 Starting PyCharm development session: $SESSION_NAME"
+        zellij attach "$SESSION_NAME" --layout pycharm-dev 2>/dev/null || zellij --session "$SESSION_NAME" --layout pycharm-dev
+        ;;
+    zed)
+        echo "⚡ Starting Zed development session: $SESSION_NAME"
+        zellij attach "$SESSION_NAME" --layout zed-dev 2>/dev/null || zellij --session "$SESSION_NAME" --layout zed-dev
+        ;;
+    helix|hx)
+        echo "🌟 Starting Helix development session: $SESSION_NAME"
+        zellij attach "$SESSION_NAME" --layout helix-dev 2>/dev/null || zellij --session "$SESSION_NAME" --layout helix-dev
+        ;;
+    list|ls)
+        echo "📋 Available sessions:"
+        zellij list-sessions
+        ;;
+    kill|stop)
+        if [ -n "$SESSION_NAME" ]; then
+            echo "🛑 Killing session: $SESSION_NAME"
+            zellij kill-session "$SESSION_NAME"
+        else
+            echo "🛑 Killing all sessions"
+            zellij kill-all-sessions
+        fi
+        ;;
+    help|--help|-h)
+        echo "🛠️ Development Session Launcher"
+        echo "Usage: dev-session [type] [session-name]"
+        echo ""
+        echo "Types:"
+        echo "  go, golang     - Go development layout"
+        echo "  py, python     - Python development layout"  
+        echo "  ts, typescript - TypeScript/JavaScript layout"
+        echo "  js, javascript - TypeScript/JavaScript layout"
+        echo "  node           - TypeScript/JavaScript layout"
+        echo "  zed            - Zed editor layout"
+        echo "  helix, hx      - Helix editor layout"
+        echo "  list, ls       - List active sessions"
+        echo "  kill, stop     - Kill session or all sessions"
+        echo "  help           - Show this help"
+        echo ""
+        echo "Examples:"
+        echo "  dev-session go myproject    # Start Go session"
+        echo "  dev-session python          # Start Python session with current dir name"
+        echo "  dev-session ts webapp       # Start TypeScript session"
+        echo "  dev-session list            # List all sessions"
+        echo "  dev-session kill myproject  # Kill specific session"
+        ;;
+    *)
+        echo "📺 Starting default zellij session: $SESSION_NAME"
+        zellij attach "$SESSION_NAME" 2>/dev/null || zellij --session "$SESSION_NAME"
+        ;;
+esac

@@ -12,19 +12,23 @@ workstation_packages:
 
 # GUI applications for workstations
 gui_applications:
-  darwin:
+  Darwin:
     - firefox
-    - visual-studio-code
     - discord
-    - slack
     - obsidian
     - ghostty
-  linux:
-    - firefox
-    - code
-    - discord
-    - slack
-    - obsidian
+    - raycast
+    - goland
+    - pycharm
+    - zed
+  Linux:
+    - org.mozilla.firefox
+    - com.visualstudio.code
+    - com.discordapp.Discord
+    - com.slack.Slack
+    - md.obsidian.Obsidian
+    - com.jetbrains.GoLand
+    - com.jetbrains.PyCharm-Community
 
 # Development tools for workstations
 development_tools:

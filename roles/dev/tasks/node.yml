@@ -19,15 +19,61 @@
     name: pnpm
     global: true
     state: present
+  become: "{{ ansible_os_family != 'Darwin' }}"
 
-- name: Configure npm to use pnpm
+- name: Create pnpm home directory
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/Library/pnpm"
+    state: directory
+    mode: '0755'
+  when: ansible_os_family == "Darwin"
+
+- name: Create pnpm home directory (Linux)
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.local/share/pnpm"
+    state: directory
+    mode: '0755'
+  when: ansible_os_family != "Darwin"
+
+- name: Configure pnpm environment (macOS)
   ansible.builtin.lineinfile:
     path: "{{ ansible_env.HOME }}/.zprofile"
-    line: 'export NPM_CONFIG_PACKAGE_MANAGER="pnpm"'
+    line: "{{ item }}"
     create: true
+  loop:
+    - 'export PNPM_HOME="$HOME/Library/pnpm"'
+    - 'case ":$PATH:" in *":$PNPM_HOME:"*) ;; *) export PATH="$PNPM_HOME:$PATH" ;; esac'
+    - 'export NPM_CONFIG_PACKAGE_MANAGER="pnpm"'
+  when: ansible_os_family == "Darwin"
+
+- name: Configure pnpm environment (Linux)
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+    line: "{{ item }}"
+    create: true
+  loop:
+    - 'export PNPM_HOME="$HOME/.local/share/pnpm"'
+    - 'case ":$PATH:" in *":$PNPM_HOME:"*) ;; *) export PATH="$PNPM_HOME:$PATH" ;; esac'
+    - 'export NPM_CONFIG_PACKAGE_MANAGER="pnpm"'
+  when: ansible_os_family != "Darwin"
+
+- name: Setup pnpm global directory
+  ansible.builtin.shell: |
+    export PATH="$HOME/.local/share/pnpm:$HOME/Library/pnpm:$PATH"
+    export PNPM_HOME="${HOME}/.local/share/pnpm"
+    if [[ "{{ ansible_os_family }}" == "Darwin" ]]; then
+      export PNPM_HOME="${HOME}/Library/pnpm"
+    fi
+    pnpm setup --force
+  ignore_errors: true
 
 - name: Install common Node.js tools
   ansible.builtin.shell: |
+    export PATH="$HOME/.local/share/pnpm:$HOME/Library/pnpm:$PATH"
+    export PNPM_HOME="${HOME}/.local/share/pnpm"
+    if [[ "{{ ansible_os_family }}" == "Darwin" ]]; then
+      export PNPM_HOME="${HOME}/Library/pnpm"
+    fi
     pnpm add -g {{ item }}
   loop:
     - typescript
@@ -35,4 +81,18 @@
     - eslint
     - prettier
     - vite
+  retries: 2
+  delay: 5
   ignore_errors: true
+
+- name: Verify Node.js installation
+  ansible.builtin.command: node --version
+  register: node_version
+  failed_when: node_version.rc != 0
+  changed_when: false
+
+- name: Verify pnpm installation
+  ansible.builtin.command: pnpm --version
+  register: pnpm_version
+  failed_when: pnpm_version.rc != 0
+  changed_when: false

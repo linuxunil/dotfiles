@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+
+# Editor Testing Script
+# Quick way to test different editors with your projects
+
+set -e
+
+EDITOR_NAME="$1"
+PROJECT_PATH="${2:-$(pwd)}"
+
+if [[ -z "$EDITOR_NAME" ]]; then
+    echo "🔧 Editor Testing Suite"
+    echo ""
+    echo "Usage: editor-test <editor> [project-path]"
+    echo ""
+    echo "Available editors:"
+    echo "  emacs     - GNU Emacs (terminal)"
+    echo "  emacsg    - GNU Emacs (GUI)"
+    echo "  goland    - JetBrains GoLand"
+    echo "  pycharm   - JetBrains PyCharm"
+    echo "  zed       - Zed editor"
+    echo "  nvim      - Neovim (your current setup)"
+    echo ""
+    echo "Examples:"
+    echo "  editor-test emacs ~/projects/myapp"
+    echo "  editor-test goland"
+    echo "  editor-test zed ."
+    echo ""
+    echo "📊 Editor Comparison Notes:"
+    echo "  • All editors are configured with Catppuccin theme"
+    echo "  • LSP support configured for Go, Python, TypeScript"
+    echo "  • Git integration available in all editors"
+    echo "  • Terminal access via zellij for most editors"
+    exit 0
+fi
+
+echo "🚀 Testing $EDITOR_NAME with project: $PROJECT_PATH"
+
+case "$EDITOR_NAME" in
+    emacs)
+        echo "📝 Starting Emacs (terminal mode)"
+        echo "💡 Use C-x C-f to open files, C-x g for git, C-c z to switch to zellij"
+        cd "$PROJECT_PATH" && emacs -nw .
+        ;;
+    emacsg)
+        echo "📝 Starting Emacs (GUI mode)"
+        echo "💡 Same keybindings as terminal mode, but with GUI benefits"
+        cd "$PROJECT_PATH" && emacs . &
+        ;;
+    goland)
+        echo "🏗️ Starting GoLand"
+        echo "💡 JetBrains IDE with full Go support and debugging"
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            open -a "GoLand" "$PROJECT_PATH"
+        else
+            goland "$PROJECT_PATH" &
+        fi
+        ;;
+    pycharm)
+        echo "🐍 Starting PyCharm"
+        echo "💡 JetBrains IDE with full Python support and debugging"
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            open -a "PyCharm" "$PROJECT_PATH"
+        else
+            pycharm "$PROJECT_PATH" &
+        fi
+        ;;
+    zed)
+        echo "⚡ Starting Zed"
+        echo "💡 Modern, fast editor with great language support"
+        cd "$PROJECT_PATH" && zed .
+        ;;
+    nvim)
+        echo "✨ Starting Neovim (your current setup)"
+        echo "💡 Your fully configured setup with all plugins"
+        cd "$PROJECT_PATH" && nvim .
+        ;;
+    *)
+        echo "❌ Unknown editor: $EDITOR_NAME"
+        echo "Run 'editor-test' without arguments to see available editors"
+        exit 1
+        ;;
+esac

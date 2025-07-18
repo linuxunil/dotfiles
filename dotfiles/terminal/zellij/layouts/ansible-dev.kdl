@@ -1,0 +1,56 @@
+layout {
+    default_tab_template {
+        children
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+    
+    tab name="Code" focus=true {
+        pane split_direction="vertical" {
+            pane size="65%" {
+                command "nvim"
+                args "."
+            }
+            pane split_direction="horizontal" {
+                pane name="Tasks" {
+                    command "zsh"
+                    args "-c" "task --list"
+                }
+                pane name="Terminal"
+            }
+        }
+    }
+    
+    tab name="Testing" {
+        pane split_direction="horizontal" {
+            pane name="Syntax Check" {
+                command "zsh"
+                args "-c" "task check || ansible-playbook --syntax-check site.yml"
+            }
+            pane name="Dry Run" {
+                command "zsh"
+                args "-c" "task dry-run || ansible-playbook --check site.yml"
+            }
+        }
+    }
+    
+    tab name="Execution" {
+        pane split_direction="vertical" {
+            pane name="Run" {
+                command "zsh"
+                args "-c" "task bootstrap || ansible-playbook site.yml"
+            }
+            pane name="Terminal"
+        }
+    }
+    
+    tab name="Git" {
+        pane split_direction="vertical" {
+            pane {
+                command "lazygit"
+            }
+            pane name="Terminal"
+        }
+    }
+}

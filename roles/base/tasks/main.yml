@@ -6,12 +6,7 @@
     mode: '0755'
   loop: "{{ base_directories }}"
 
-- name: Install base packages
-  ansible.builtin.include_role:
-    name: package_manager
-  vars:
-    packages_to_install: "{{ base_packages_combined }}"
-    cask_packages_to_install: "{{ macos_applications | default([]) }}"
+# Note: Base packages are now installed by package_manager role to avoid duplicates
 
 - name: Add local bin to PATH
   ansible.builtin.lineinfile:

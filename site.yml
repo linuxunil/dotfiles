@@ -1,19 +1,68 @@
 ---
 # Main site playbook - orchestrates all configuration
-- import_playbook: bootstrap.yml
-  tags: ['bootstrap', 'all']
-
-- import_playbook: base.yml
-  tags: ['base']
-
-- import_playbook: dev.yml
-  tags: ['dev']
-
-- import_playbook: gui.yml
-  tags: ['gui']
-
-- import_playbook: dotfiles.yml
-  tags: ['dotfiles']
-
-- import_playbook: maintenance.yml
-  tags: ['maintenance']
+- name: Configure All Machines
+  hosts: all
+  gather_facts: true
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+  
+  pre_tasks:
+    - name: Display machine information
+      ansible.builtin.debug:
+        msg: 
+          - "Configuring {{ inventory_hostname }}"
+          - "Machine profile: {{ machine_profile | default('default') }}"
+          - "OS: {{ ansible_os_family }}"
+          - "Architecture: {{ ansible_architecture }}"
+    
+    - name: Validate basic system requirements
+      block:
+        - name: Check for required system commands
+          ansible.builtin.command: command -v {{ item }}
+          loop:
+            - curl
+            - tar
+            - git
+          failed_when: false
+          register: prereq_check
+          changed_when: false
+        
+        - name: Report missing critical commands
+          ansible.builtin.fail:
+            msg: "Critical command missing: {{ item.item }}. Please install it before continuing."
+          loop: "{{ prereq_check.results }}"
+          when: 
+            - item.rc != 0
+            - item.item in ['curl', 'git']  # Only fail for absolutely critical commands
+      tags: always
+    
+    - name: Update package cache
+      ansible.builtin.include_tasks: tasks/update_cache.yml
+      tags: always
+  
+  roles:
+    - role: package_manager
+      tags: ['package_manager']
+    - role: base
+      tags: ['base']
+    - role: dev
+      tags: ['dev']
+      when: machine_profile in ['developer', 'linux_workstation']
+    - role: gui
+      tags: ['gui']
+      when: "ansible_env.DISPLAY is defined or ansible_os_family == 'Darwin'"
+    - role: dotfiles
+      tags: ['dotfiles']
+    - role: shell
+      tags: ['shell']
+  
+  post_tasks:
+    - name: Display completion message
+      ansible.builtin.debug:
+        msg: 
+          - "Configuration completed successfully!"
+          - "Machine {{ inventory_hostname }} is ready for use"
+    
+    - name: Show installed tools status
+      ansible.builtin.include_tasks: tasks/show_status.yml
+      tags: ['status']

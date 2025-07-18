@@ -14,6 +14,7 @@
     enabled: true
     state: started
   when: ansible_service_mgr == "systemd"
+  notify: restart podman socket
 
 - name: Create virtiofsd symlink for Podman (RedHat/Fedora)
   ansible.builtin.file:

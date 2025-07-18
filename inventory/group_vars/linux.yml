@@ -2,13 +2,15 @@
 # Variables for Linux machines
 os_family: Linux
 
-# Linux-specific packages
-linux_packages:
-  - gcc
-  - gcc-c++
-  - make
-  - pkgconf
-  - fd-find
+# Linux-specific packages - consolidated from all sources
+linux_packages_combined: >
+  {{
+    (base_packages | default([])) +
+    (workstation_packages | default([])) +
+    (development_tools | default([])) +
+    (container_tools | default([])) +
+    (['gcc', 'gcc-c++', 'make', 'pkgconf', 'fd-find', 'openssl-devel', 'readline-devel', 'zlib-devel', 'ncurses-devel', 'libffi-devel', 'gdbm-devel', 'libyaml-devel', 'sqlite-devel'])
+  }}
 
 # Package manager specifics
 redhat_packages:
@@ -17,13 +19,8 @@ redhat_packages:
   - make
   - pkgconf
 
-# Flatpak applications for Linux GUI
-flatpak_applications:
-  - org.mozilla.firefox
-  - com.visualstudio.code
-  - com.discordapp.Discord
-  - com.slack.Slack
-  - md.obsidian.Obsidian
+# Flatpak applications for Linux GUI (only for package_manager role)
+flatpak_applications: []
 
 # System services
 system_services:
@@ -39,3 +36,16 @@ desktop_packages:
   - wofi
   - grim
   - slurp
+  - wl-clipboard
+  - xdg-desktop-portal-hyprland
+  - xdg-desktop-portal-gtk
+  - hyprlock
+  - hypridle
+  - hyprpaper
+  - polkit-gnome
+  - pipewire
+  - pipewire-pulseaudio
+  - brightnessctl
+  - playerctl
+  - foot
+  - pavucontrol

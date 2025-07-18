@@ -1,0 +1,128 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  become: true
+  vars:
+    test_user: testuser
+    test_home: /home/testuser
+  
+  tasks:
+    - name: Switch to test user for verification
+      become_user: "{{ test_user }}"
+      become: true
+      block:
+        - name: Check Go installation
+          ansible.builtin.command: go version
+          register: go_result
+          changed_when: false
+          environment:
+            PATH: "{{ test_home }}/go/bin:{{ ansible_env.PATH }}"
+            GOPATH: "{{ test_home }}/go"
+        
+        - name: Check Python installation  
+          ansible.builtin.command: python3 --version
+          register: python_result
+          changed_when: false
+        
+        - name: Check UV installation
+          ansible.builtin.command: "{{ test_home }}/.local/bin/uv --version"
+          register: uv_result
+          changed_when: false
+        
+        - name: Check Node.js installation
+          ansible.builtin.command: node --version
+          register: node_result
+          changed_when: false
+        
+        - name: Check npm installation
+          ansible.builtin.command: npm --version
+          register: npm_result
+          changed_when: false
+        
+        - name: Check pnpm installation
+          ansible.builtin.command: pnpm --version
+          register: pnpm_result
+          changed_when: false
+          environment:
+            PATH: "{{ test_home }}/.local/share/pnpm:{{ ansible_env.PATH }}"
+        
+        - name: Check Git configuration
+          ansible.builtin.command: git config --get init.defaultBranch
+          register: git_config_result
+          changed_when: false
+        
+        - name: Verify Go tools installation
+          ansible.builtin.command: "{{ test_home }}/go/bin/{{ item }}"
+          loop:
+            - gopls
+            - golangci-lint
+          register: go_tools_result
+          changed_when: false
+          failed_when: false
+        
+        - name: Check Python tools with UV
+          ansible.builtin.shell: |
+            {{ test_home }}/.local/bin/uv tool list | grep -E "(ruff|black|mypy|pytest|ipython)"
+          register: python_tools_result
+          changed_when: false
+          failed_when: false
+        
+        - name: Check TypeScript global installation
+          ansible.builtin.command: "{{ test_home }}/.local/share/pnpm/tsc --version"
+          register: typescript_result
+          changed_when: false
+          failed_when: false
+          environment:
+            PATH: "{{ test_home }}/.local/share/pnpm:{{ ansible_env.PATH }}"
+    
+    - name: Verify all tools installed correctly
+      ansible.builtin.assert:
+        that:
+          - go_result.rc == 0
+          - python_result.rc == 0
+          - uv_result.rc == 0
+          - node_result.rc == 0
+          - npm_result.rc == 0
+          - pnpm_result.rc == 0
+          - git_config_result.stdout == "main"
+        fail_msg: "One or more development tools failed to install properly"
+        success_msg: "All development tools installed successfully"
+    
+    - name: Display installation results
+      ansible.builtin.debug:
+        msg: |
+          Development Tools Installation Summary:
+          =====================================
+          Go: {{ go_result.stdout }}
+          Python: {{ python_result.stdout }}
+          UV: {{ uv_result.stdout }}
+          Node.js: {{ node_result.stdout }}
+          npm: {{ npm_result.stdout }}
+          pnpm: {{ pnpm_result.stdout }}
+          Git default branch: {{ git_config_result.stdout }}
+          
+          Go Tools Status:
+          {% for result in go_tools_result.results %}
+          - {{ result.item }}: {{ 'INSTALLED' if result.rc == 0 else 'MISSING' }}
+          {% endfor %}
+          
+          Python Tools Status: {{ 'INSTALLED' if python_tools_result.rc == 0 else 'MISSING' }}
+          TypeScript Status: {{ 'INSTALLED' if typescript_result.rc == 0 else 'MISSING' }}
+    
+    - name: Test idempotency (run role again)
+      ansible.builtin.include_role:
+        name: dev
+      vars:
+        machine_profile: linux_workstation
+        ansible_user: "{{ test_user }}"
+        ansible_env:
+          HOME: "{{ test_home }}"
+      register: second_run
+    
+    - name: Verify idempotency
+      ansible.builtin.assert:
+        that:
+          - second_run is not changed
+        fail_msg: "Role is not idempotent - made changes on second run"
+        success_msg: "Role is idempotent - no changes on second run"

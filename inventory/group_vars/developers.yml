@@ -2,14 +2,21 @@
 # Variables for developer machines
 machine_profile: developer
 
-# Development-specific packages
-developer_packages:
+# Development-specific Homebrew packages
+developer_homebrew_packages:
   - go-task
   - lazygit
   - starship
   - zoxide
   - zellij
-  - uv
+  - uv  # Modern Python package manager
+  - neovim
+  - gh
+  - direnv
+  - emacs
+  - helix
+  - rbenv
+  - ruby-build
 
 # Programming languages and tools
 programming_languages:
@@ -23,7 +30,10 @@ programming_languages:
     enabled: true
     version: lts
   rust:
+    enabled: false
+  ruby:
     enabled: true
+    version: "3.2"
 
 # Container and virtualization tools
 container_tools:
@@ -34,13 +44,19 @@ container_tools:
 development_services:
   docker_desktop: false  # Use podman instead
   
-# Database tools
-database_tools:
-  - postgresql
-  - redis
-
-# Cloud tools
+# Cloud tools (minimal set)
 cloud_tools:
-  - kubectl
-  - terraform
   - ansible
+
+# Ruby development dependencies for Linux
+ruby_dev_packages:
+  - git
+  - curl
+  - openssl-devel
+  - readline-devel
+  - zlib-devel
+  - ncurses-devel
+  - libffi-devel
+  - gdbm-devel
+  - libyaml-devel
+  - sqlite-devel

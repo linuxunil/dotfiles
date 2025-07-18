@@ -1,0 +1,88 @@
+# Language-specific configurations for Helix
+# This file extends the default language configurations
+
+# Language server configurations
+[language-server]
+gopls = { command = "gopls", args = ["serve"] }
+rust-analyzer = { command = "rust-analyzer" }
+pyright = { command = "pyright-langserver", args = ["--stdio"] }
+typescript-language-server = { command = "typescript-language-server", args = ["--stdio"] }
+eslint = { command = "vscode-eslint-language-server", args = ["--stdio"] }
+yaml-language-server = { command = "yaml-language-server", args = ["--stdio"] }
+taplo = { command = "taplo", args = ["lsp", "stdio"] }
+marksman = { command = "marksman", args = ["server"] }
+harper = { command = "harper-ls", args = ["--stdio"] }
+bash-language-server = { command = "bash-language-server", args = ["start"] }
+
+# Go configuration
+[[language]]
+name = "go"
+auto-format = true
+indent = { tab-width = 4, unit = "\t" }
+language-servers = ["gopls"]
+
+# Python configuration
+[[language]]
+name = "python"
+auto-format = true
+indent = { tab-width = 4, unit = "    " }
+language-servers = ["pyright"]
+
+# TypeScript configuration
+[[language]]
+name = "typescript"
+auto-format = true
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["typescript-language-server"]
+
+# JavaScript configuration
+[[language]]
+name = "javascript"
+auto-format = true
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["typescript-language-server"]
+
+# Rust configuration
+[[language]]
+name = "rust"
+auto-format = true
+indent = { tab-width = 4, unit = "    " }
+language-servers = ["rust-analyzer"]
+
+# JSON configuration
+[[language]]
+name = "json"
+auto-format = true
+indent = { tab-width = 2, unit = "  " }
+
+# YAML configuration
+[[language]]
+name = "yaml"
+auto-format = true
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["yaml-language-server"]
+
+# TOML configuration
+[[language]]
+name = "toml"
+auto-format = true
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["taplo"]
+
+# Markdown configuration
+[[language]]
+name = "markdown"
+auto-format = true
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["marksman", "harper"]
+soft-wrap = { enable = true, wrap-at-text-width = true }
+text-width = 80
+completion-timeout = 250
+file-types = ["md", "markdown", "mkd", "mdx", "mdwn", "mdown", "markdn", "mdtxt", "mdtext", "workbook"]
+
+# Bash/Shell configuration
+[[language]]
+name = "bash"
+auto-format = true
+indent = { tab-width = 2, unit = "  " }
+language-servers = ["bash-language-server"]
