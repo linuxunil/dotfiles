@@ -1,227 +1,52 @@
-# Taskfile.yml - Go-based task runner for system setup
-# https://taskfile.dev/
 version: '3'
 
-vars:
-  INVENTORY: inventory/hosts.yml
-  ANSIBLE_CONFIG: ansible.cfg
-  OS: '{{OS}}'
-  ARCH: '{{ARCH}}'
-  CURRENT_HOST: '{{if eq .OS "darwin"}}hera{{else}}athena{{end}}'
-
-env:
-  ANSIBLE_HOST_KEY_CHECKING: "False"
-  ANSIBLE_STDOUT_CALLBACK: "yaml"
-
 tasks:
-  default:
-    desc: Show available tasks
-    silent: true
-    cmds:
-      - echo "System Setup Tasks"
-      - echo "=================="
-      - task --list-all
-
-  # Setup tasks
   install-deps:
-    desc: Install Ansible dependencies from Galaxy
-    cmds:
-      - echo "Installing Ansible Galaxy collections..."
-      - ansible-galaxy collection install -r requirements.yml --force --upgrade
-      - echo "Collections installed successfully!"
-      - echo "Verifying installed collections..."
-      - ansible-galaxy collection list | grep -E "(community.general|ansible.posix|community.docker)"
-    sources:
-      - requirements.yml
+    desc: Install Ansible Galaxy collections
+    cmd: ansible-galaxy collection install -r requirements.yml
 
-  # System setup tasks
+  macos:
+    desc: Configure macOS machine
+    deps: [install-deps]
+    cmd: ansible-playbook -i machines/macos.yml site.yml
+
+  linux:
+    desc: Configure Linux machine  
+    deps: [install-deps]
+    cmd: ansible-playbook -i machines/linux.yml site.yml
+
   base:
-    desc: Install base packages only (git, curl, bat, etc.)
+    desc: Install base domain only
     deps: [install-deps]
-    cmds:
-      - ansible-playbook -i {{.INVENTORY}} base.yml
-    sources:
-      - "base.yml"
-      - "roles/base/**/*"
-      - "roles/package_manager/**/*"
+    cmd: ansible-playbook -i machines/{{OS}}.yml site.yml --tags base
 
-  dev:
-    desc: Install development environment (base + neovim, go, python, etc.)
+  development:
+    desc: Install development domain only
     deps: [install-deps]
-    cmds:
-      - ansible-playbook -i {{.INVENTORY}} dev.yml
-    sources:
-      - "dev.yml"
-      - "roles/dev/**/*"
-      - "roles/dotfiles/**/*"
-      - "roles/shell/**/*"
+    cmd: ansible-playbook -i machines/{{OS}}.yml site.yml --tags development
 
   gui:
-    desc: Install GUI applications (firefox, vscode, discord, etc.)
+    desc: Install GUI domain only
     deps: [install-deps]
-    cmds:
-      - ansible-playbook -i {{.INVENTORY}} gui.yml
-    sources:
-      - "gui.yml"
-      - "roles/gui/**/*"
+    cmd: ansible-playbook -i machines/{{OS}}.yml site.yml --tags gui
 
   dotfiles:
-    desc: Configure dotfiles and shell
+    desc: Setup dotfiles only
     deps: [install-deps]
-    cmds:
-      - ansible-playbook -i {{.INVENTORY}} dotfiles.yml
-    sources:
-      - "dotfiles.yml"
-      - "roles/dotfiles/**/*"
-      - "roles/shell/**/*"
-      - "dotfiles/**/*"
+    cmd: ansible-playbook -i machines/{{OS}}.yml playbooks/dotfiles.yml
 
-  # Machine setup tasks
-  bootstrap:
-    desc: Quick bootstrap for new machine (recommended)
-    deps: [install-deps]
-    cmds:
-      - echo "🚀 Bootstrapping new machine..."
-      - ansible-playbook -i {{.INVENTORY}} bootstrap.yml
-      - echo "✅ Bootstrap complete!"
-
-  all:
-    desc: Setup all machines (runs site.yml)
-    deps: [install-deps]
-    cmds:
-      - echo "🚀 Setting up all machines..."
-      - ansible-playbook -i {{.INVENTORY}} site.yml
-      - echo "✅ All machines configured!"
-
-  # Maintenance tasks
-  clean:
-    desc: Clean up broken symlinks and temporary files
-    deps: [install-deps]
-    cmds:
-      - ansible-playbook -i {{.INVENTORY}} maintenance.yml --tags cleanup
-
-  update:
-    desc: Update package managers and system
-    deps: [install-deps]
-    cmds:
-      - ansible-playbook -i {{.INVENTORY}} maintenance.yml --tags update
-
-  maintenance:
-    desc: Run full system maintenance
-    deps: [install-deps]
-    cmds:
-      - ansible-playbook -i {{.INVENTORY}} maintenance.yml
-
-  # Validation tasks
   check:
-    desc: Test Ansible syntax and validate configuration
-    cmds:
-      - echo "Checking Ansible syntax..."
-      - ansible-playbook -i {{.INVENTORY}} site.yml --syntax-check
-      - echo "Validating inventory..."
-      - ansible-inventory -i {{.INVENTORY}} --list > /dev/null
-      - echo "All checks passed!"
+    desc: Validate Ansible syntax
+    cmd: ansible-playbook --syntax-check -i machines/{{OS}}.yml site.yml
 
   dry-run:
-    desc: Show what would be done (dry run)
-    cmds:
-      - ansible-playbook -i {{.INVENTORY}} site.yml --check --diff
-
-  test:
-    desc: Test setup on current system (safe dry run)
-    cmds:
-      - echo "Testing system setup (dry run)..."
-      - task dry-run
-      - echo "Test completed successfully!"
-
-  # Molecule testing tasks
-  test-dev:
-    desc: Test dev role with Molecule (containerized testing)
-    cmds:
-      - echo "🧪 Testing dev role with Molecule..."
-      - cd roles/dev && uv run molecule test
-      - echo "✅ Dev role tests passed!"
-    sources:
-      - "roles/dev/**/*"
-      - "roles/dev/molecule/**/*"
-
-  test-dev-quick:
-    desc: Quick test of dev role (converge + verify only)
-    cmds:
-      - echo "🚀 Quick testing dev role..."
-      - cd roles/dev && uv run molecule converge
-      - cd roles/dev && uv run molecule verify
-      - echo "✅ Quick test completed!"
-    sources:
-      - "roles/dev/**/*"
-
-  test-dev-verify:
-    desc: Run verification tests only (assumes container exists)
-    cmds:
-      - echo "🔍 Running dev role verification tests..."
-      - cd roles/dev && uv run molecule verify
-      - echo "✅ Verification completed!"
-
-  test-dev-clean:
-    desc: Clean up dev role test containers
-    cmds:
-      - echo "🧹 Cleaning up test containers..."
-      - cd roles/dev && uv run molecule destroy
-      - echo "✅ Cleanup completed!"
-
-  test-all-roles:
-    desc: Test all roles with Molecule (future expansion)
-    cmds:
-      - echo "🧪 Testing all roles..."
-      - task test-dev
-      - echo "✅ All role tests completed!"
-
-  # Local machine tasks
-  local:
-    desc: Install packages for current local machine only
+    desc: Preview changes without applying
     deps: [install-deps]
-    cmds:
-      - echo "🏠 Configuring local machine ({{.CURRENT_HOST}})..."
-      - ansible-playbook -i {{.INVENTORY}} site.yml --limit {{.CURRENT_HOST}}
-      - echo "✅ Local machine configuration complete!"
+    cmd: ansible-playbook -i machines/{{OS}}.yml site.yml --check --diff
 
-  local-base:
-    desc: Install only base packages for current local machine
-    deps: [install-deps]
-    cmds:
-      - echo "🏠 Installing base packages for local machine ({{.CURRENT_HOST}})..."
-      - ansible-playbook -i {{.INVENTORY}} base.yml --limit {{.CURRENT_HOST}}
-      - echo "✅ Base packages installed!"
+  clean:
+    desc: Clean broken symlinks
+    cmd: find ~ -xtype l -delete
 
-  local-dev:
-    desc: Install only dev packages for current local machine
-    deps: [install-deps]
-    cmds:
-      - echo "🏠 Installing dev packages for local machine ({{.CURRENT_HOST}})..."
-      - ansible-playbook -i {{.INVENTORY}} dev.yml --limit {{.CURRENT_HOST}}
-      - echo "✅ Dev packages installed!"
-
-  local-gui:
-    desc: Install only GUI packages for current local machine
-    deps: [install-deps]
-    cmds:
-      - echo "🏠 Installing GUI packages for local machine ({{.CURRENT_HOST}})..."
-      - ansible-playbook -i {{.INVENTORY}} gui.yml --limit {{.CURRENT_HOST}}
-      - echo "✅ GUI packages installed!"
-
-  # Information tasks
-  status:
-    desc: Show current system setup status
-    deps: [install-deps]
-    cmds:
-      - ansible-playbook -i {{.INVENTORY}} maintenance.yml --tags status
-
-  inventory:
-    desc: Show Ansible inventory
-    cmds:
-      - ansible-inventory -i {{.INVENTORY}} --list --yaml
-
-  facts:
-    desc: Gather and display system facts
-    cmds:
-      - ansible -i {{.INVENTORY}} localhost -m setup | rg "(ansible_os_family|ansible_distribution|ansible_architecture)"
+vars:
+  OS: '{{.OS | default "linux"}}'

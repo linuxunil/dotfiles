@@ -1,0 +1,22 @@
+---
+# Base CLI packages for all machines
+base_packages:
+  - git
+  - curl
+  - wget
+  - unzip
+  - zip
+  - htop
+  - tree
+  - jq
+  - bat
+  - ripgrep
+  - fzf
+  - fd-find  # fd on Linux, fd on macOS
+  - neovim
+  - gh
+  - direnv
+
+# Default settings
+default_editor: nvim
+container_runtime: podman

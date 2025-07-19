@@ -1,0 +1,23 @@
+---
+- name: Install UV (macOS)
+  community.general.homebrew:
+    name: uv
+    state: present
+  when: ansible_os_family == "Darwin"
+
+- name: Install UV (Linux)
+  ansible.builtin.get_url:
+    url: https://astral.sh/uv/install.sh
+    dest: /tmp/uv-install.sh
+    mode: '0755'
+  when: ansible_os_family == "RedHat"
+
+- name: Run UV installer (Linux)
+  ansible.builtin.shell: /tmp/uv-install.sh
+  when: ansible_os_family == "RedHat"
+
+- name: Install Python via UV
+  ansible.builtin.shell: |
+    uv python install {{ language_setup.python.version | default('3.11') }}
+  environment:
+    PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.PATH }}"

@@ -1,0 +1,43 @@
+---
+all:
+  hosts:
+    localhost:
+      ansible_connection: local
+      ansible_python_interpreter: auto_silent
+      
+      # Machine configuration
+      machine_type: macos
+      domains:
+        - base
+        - development
+        - gui
+      
+      # Programming languages
+      languages:
+        - go
+        - python
+        - zig
+      
+      # Language-specific settings
+      language_setup:
+        go:
+          enabled: true
+          version: latest
+        python:
+          enabled: true
+          version: "3.11"
+          package_manager: uv
+        zig:
+          enabled: true
+          version: latest
+        ruby:
+          enabled: false
+          version: "3.2"
+      
+      # GUI settings
+      gui_font_family: "JetBrains Mono"
+      gui_font_size: 12
+      
+      # Container runtime
+      container_runtime: podman
+      default_editor: nvim

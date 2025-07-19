@@ -1,0 +1,45 @@
+---
+- name: Create common directories
+  ansible.builtin.file:
+    path: "{{ directory }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ ansible_env.HOME }}/.local/bin"
+    - "{{ ansible_env.HOME }}/.config"
+    - "{{ ansible_env.HOME }}/.cache"
+  loop_control:
+    loop_var: directory
+
+- name: Install base CLI packages (macOS)
+  community.general.homebrew:
+    name: "{{ base_packages }}"
+    state: present
+  when: ansible_os_family == "Darwin"
+
+- name: Enable COPR repository for Starship (Linux)
+  ansible.builtin.shell: |
+    dnf copr enable -y atim/starship
+  become: yes
+  when: ansible_os_family == "RedHat"
+
+- name: Install base CLI packages (Linux)
+  ansible.builtin.dnf:
+    name: "{{ base_packages }}"
+    state: present
+  become: yes
+  when: ansible_os_family == "RedHat"
+
+
+- name: Setup shell environment
+  ansible.builtin.template:
+    src: environment.j2
+    dest: "{{ ansible_env.HOME }}/.local/bin/environment"
+    mode: '0644'
+
+- name: Source environment in shell profile
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+    line: "source ~/.local/bin/environment"
+    create: yes
+    mode: '0644'

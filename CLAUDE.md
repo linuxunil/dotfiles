@@ -4,185 +4,175 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is a standardized Ansible-based system configuration management repository that uses:
-- Ansible Galaxy collections for community-maintained modules
-- Standard Ansible roles structure for better organization
+This is a domain-based Ansible system configuration management repository that uses:
+- Domain-based architecture for clean separation of concerns
+- Simple machine declarations for easy machine setup
+- Cross-platform support (macOS and Linux)
+- Static dotfiles managed by git
 - Go-task as the primary interface for user commands
-- Cross-platform support (macOS and Fedora/RedHat)
-- Proper inventory structure for easy machine declaration
 
 ## Key Commands
 
-### Setup and Installation
+### Machine Setup
 ```bash
-task install-deps  # Install Ansible Galaxy collections
-task base          # Install essential CLI tools (zsh, git, neovim, etc.)
-task dev           # Install development tools (containers, languages, databases)
-task dotfiles      # Configure dotfiles and shell
-task gui           # Install GUI applications
-task all           # Complete setup for current platform
-task bootstrap     # Quick setup for new machines (recommended)
+task macos          # Configure complete macOS machine
+task linux          # Configure complete Linux machine
+task install-deps   # Install Ansible Galaxy collections
+```
+
+### Domain Installation
+```bash
+task base           # Install essential CLI tools
+task development    # Install development tools and languages
+task gui            # Install GUI applications and desktop
+task dotfiles       # Setup dotfiles symlinks only
 ```
 
 ### Development and Maintenance
 ```bash
-task check         # Validate Ansible playbook syntax
-task dry-run       # Preview changes without applying
-task test          # Safe test run with --check flag
-task clean         # Clean broken symlinks
-task update        # Update package managers (brew/apt)
-task status        # Show what's installed
-task maintenance   # Run full system maintenance
-```
-
-### Testing Commands
-```bash
-task test-dev         # Test dev role with Molecule (containerized testing)
-task test-dev-quick   # Quick test of dev role (converge + verify only)
-task test-dev-verify  # Run verification tests only
-task test-dev-clean   # Clean up dev role test containers
-task test-all-roles   # Test all roles with Molecule
-```
-
-### Information Commands
-```bash
-task inventory    # Show Ansible inventory
-task facts        # Gather and display system facts
+task check          # Validate Ansible playbook syntax
+task dry-run        # Preview changes without applying
+task clean          # Clean broken symlinks
 ```
 
 ## Architecture
 
-### Standardized Ansible Structure
-- `site.yml` is the main playbook that includes all roles
-- `requirements.yml` defines Galaxy collections dependencies
-- Uses community collections:
-  - `community.general` for package management (homebrew, flatpak)
-  - `ansible.posix` for POSIX utilities
-  - `community.docker` for container management
+### Domain-Based Structure
+The repository is organized into three main domains:
+
+#### Base Domain
+Essential CLI tools for all machines:
+- git, curl, wget, unzip, zip, htop, tree
+- jq, bat, ripgrep, fzf, fd, neovim, gh, direnv, starship
+
+#### Development Domain  
+Programming languages and development tools:
+- Languages: Go, Python, Zig (Ruby optional, disabled by default)
+- Tools: go-task, lazygit, zoxide, zellij, uv, emacs, helix
+- Containers: podman, podman-compose, ansible
+- Language servers: zls (for Zig)
+
+#### GUI Domain
+Desktop applications and window management:
+- **Common (both platforms)**: firefox, discord, obsidian, ghostty, goland, pycharm, zed
+- **macOS-specific**: raycast
+- **Linux-specific**: Full Hyprland desktop environment with catppuccin-macchiato theme
 
 ### Directory Structure
 ```
-├── site.yml           # Main playbook
-├── requirements.yml   # Galaxy dependencies
-├── ansible.cfg        # Ansible configuration
-├── Taskfile.yml       # Go-task configuration
-├── inventory/         # Inventory files
-│   └── hosts.yml     # Host definitions
-├── roles/            # Standard Ansible roles
-│   ├── base/         # Core system packages
-│   ├── dev/          # Development tools (with Molecule testing)
-│   ├── gui/          # GUI applications
-│   ├── package_manager/ # Package manager setup
-│   ├── dotfiles/     # Configuration management
-│   └── shell/        # Shell configuration
-├── dotfiles/         # Configuration files
-│   ├── shell/        # Shell configs (zshrc, aliases)
-│   ├── git/          # Git configuration
-│   ├── nvim/         # Neovim configuration
-│   ├── terminal/     # Terminal configs
-│   └── wm/           # Window manager configs
-├── tasks/            # Common Ansible tasks
-└── *.yml             # Individual playbooks (base.yml, dev.yml, etc.)
+├── site.yml              # Main playbook
+├── requirements.yml      # Ansible Galaxy collections
+├── ansible.cfg          # Ansible configuration
+├── Taskfile.yml         # Go-task configuration
+├── machines/            # Machine declarations
+│   ├── macos.yml        # macOS machine configuration
+│   └── linux.yml        # Linux machine configuration
+├── domains/             # Domain roles
+│   ├── base/            # Essential CLI tools
+│   ├── development/     # Programming languages & dev tools
+│   └── gui/             # GUI applications & desktop
+├── playbooks/           # Reusable playbooks
+│   └── dotfiles.yml     # Dotfiles symlink management
+├── templates/           # Jinja2 templates (minimal usage)
+│   ├── environment.j2   # Environment variables
+│   ├── dev_aliases.j2   # Development aliases
+│   └── *.j2             # GUI theming templates
+└── dotfiles/            # Static configuration files (git-managed)
+    ├── shell/           # Shell configs (zshrc, aliases)
+    ├── git/             # Git configuration
+    ├── nvim/            # Neovim configuration
+    ├── terminal/        # Terminal and multiplexer configs
+    └── ...              # Other application configs
 ```
 
-### Role Structure
-Each role follows Ansible best practices:
-```
-roles/rolename/
-├── tasks/main.yml      # Main tasks
-├── defaults/main.yml   # Default variables
-├── vars/main.yml       # Role variables
-├── files/              # Static files
-├── templates/          # Jinja2 templates
-└── handlers/main.yml   # Event handlers
+### Machine Declarations
+Simple YAML files define what each machine type should have:
+
+```yaml
+# machines/macos.yml
+domains: [base, development, gui]
+languages: [go, python, zig]
+
+# machines/linux.yml  
+domains: [base, development, gui]
+languages: [go, python, zig]
 ```
 
-### Task Runner Integration
-- All operations go through `task` command (go-task)
-- Taskfile.yml defines all available commands
-- Shell aliases are set up for quick access (e.g., `dot-base` → `task base`)
+### Domain Role Structure
+Each domain follows Ansible best practices:
+```
+domains/domainname/
+├── tasks/main.yml         # Main tasks
+├── tasks/languages/       # Language-specific tasks (development only)
+├── defaults/main.yml      # Default variables
+├── vars/Darwin.yml        # macOS-specific variables
+├── vars/RedHat.yml        # Linux-specific variables
+└── meta/main.yml          # Role metadata
+```
 
 ## Development Guidelines
 
 ### Installing Dependencies
 Always run `task install-deps` first to ensure Galaxy collections are installed.
 
+### Machine Setup
+- **macOS**: `task macos` 
+- **Linux**: `task linux`
+- **Specific domain**: `task base|development|gui`
+
 ### Adding New Packages
-1. Edit the appropriate role's `defaults/main.yml` to add packages
-2. Update the role's `tasks/main.yml` if new logic is needed
-3. Use community collections for package management:
-   - `community.general.homebrew` for macOS
-   - `ansible.builtin.apt` for Debian/Ubuntu
-   - `ansible.builtin.dnf` for Fedora/RedHat
-   - `community.general.flatpak` for GUI apps on Linux
-4. Test with `task dry-run` before applying
+1. Edit the appropriate domain's `defaults/main.yml`
+2. Add platform-specific packages in `vars/Darwin.yml` or `vars/RedHat.yml`
+3. Test with `task dry-run`
 
 ### Managing Dotfiles
-1. **Edit dotfiles directly** in the `dotfiles/` directory (e.g., `dotfiles/shell/zshrc`)
-2. **Add new dotfiles** by updating `roles/dotfiles/defaults/main.yml` to include the symlink
-3. **Never modify dotfiles with Ansible** - they should be static files managed by Git
-4. The dotfiles role only handles symlinking, not content modification
+1. **Edit dotfiles directly** in the `dotfiles/` directory
+2. **Add new dotfiles** by updating `playbooks/dotfiles.yml` symlink list
+3. **Never modify dotfiles with Ansible** - they are static files managed by Git
+4. Run `task dotfiles` to update symlinks
 
-### Creating New Roles
-1. Create role structure: `mkdir -p roles/newrole/{tasks,defaults,vars}`
-2. Add role to `site.yml` with appropriate tags
-3. Follow Ansible best practices for idempotency
+### Language Management
+Languages are configured per machine in the machine declaration:
+- **Enabled languages** are listed in the `languages` array
+- **Language settings** are in the `language_setup` section
+- **Ruby** is disabled by default but available when explicitly enabled
 
 ### Testing Changes
-Always test Ansible changes before applying:
 ```bash
-task check      # Syntax validation
-task dry-run    # Preview all changes
-task test       # Safe test run
+task check        # Syntax validation
+task dry-run      # Preview changes
 ```
 
 ## Platform Considerations
 
-- **macOS**: Uses Homebrew (via `community.general.homebrew`)
-- **Fedora**: Uses DNF package manager, includes RPM Fusion repositories
-- **Debian/Ubuntu**: Uses APT package manager
-- **Linux GUI**: Uses Flatpak for cross-distribution GUI applications
-- Platform detection is automatic via Ansible facts
-- GUI applications only installed on systems with displays
-- Container runtime: Podman (cross-platform)
-- Python management: UV (modern Python package manager)
+- **macOS**: Uses Homebrew, includes Raycast
+- **Linux**: Uses DNF + Flatpak, includes full Hyprland desktop
+- **Theming**: Everything uses catppuccin-macchiato theme
+- **Container Runtime**: Podman (cross-platform)
+- **Python Management**: UV (modern Python package manager)
+- **Shell**: Zsh with Starship prompt
 
-## Key Ansible Collections Used
+## Key Features
 
-- **community.general**: Package managers (homebrew, flatpak), system utilities
-- **ansible.posix**: File operations, system configuration
-- **community.docker**: Container management (works with Podman)
-- **ansible.builtin**: Core Ansible functionality
+### Minimal Templating
+- Templates only used for font customization and platform-specific environment variables
+- Most configuration files are static and git-managed
+- Catppuccin-macchiato theming is pre-configured
 
-## Testing and Quality Assurance
+### Domain Dependencies
+- Development domain depends on base domain
+- GUI domain depends on base domain
+- Clean separation allows selective installation
 
-### Molecule Testing
-The dev role includes comprehensive Molecule testing for containerized validation:
-- **Full test suite**: `task test-dev` - runs create, converge, verify, destroy
-- **Quick testing**: `task test-dev-quick` - converge and verify only
-- **Verification only**: `task test-dev-verify` - run tests on existing container
-- **Cleanup**: `task test-dev-clean` - destroy test containers
-- **Direct script**: `./test-dev-role.sh [scenario]` - alternative test runner
-
-### Python/UV Environment
-- Uses UV for Python package management and virtual environments
-- Dev dependencies managed in `pyproject.toml`:
-  - `ansible-lint` for linting playbooks
-  - `molecule[podman]` for containerized testing
-  - `yamllint` for YAML validation
-- Install dev dependencies: `uv sync --dev`
-
-### Linting and Validation
-```bash
-task check         # Ansible syntax validation
-uv run ansible-lint site.yml  # Lint playbooks
-uv run yamllint .  # Validate YAML syntax
-```
+### Cross-Platform Consistency
+- Same software stack across macOS and Linux (where possible)
+- Platform-specific implementations handled transparently
+- Consistent development environment
 
 ## Best Practices
 
-1. **Idempotency**: All tasks should be safe to run multiple times
-2. **Tags**: Use tags consistently for selective execution
-3. **Variables**: Define defaults in `defaults/main.yml`, override in `vars/`
-4. **Testing**: Always use `--check` mode before applying changes
-5. **Collections**: Prefer community collections over shell commands
+1. **Simplicity**: Domain declarations are simple and readable
+2. **Static Configuration**: Dotfiles are managed by git, not generated
+3. **Platform Abstraction**: Same commands work across platforms
+4. **Selective Installation**: Install only needed domains
+5. **Testing**: Always validate changes before applying

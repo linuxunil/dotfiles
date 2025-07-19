@@ -1,0 +1,12 @@
+---
+# macOS-specific development packages
+dev_packages:
+  - go-task
+  - lazygit
+  - zoxide
+  - zellij
+  - emacs
+  - helix
+  - podman
+  - ansible
+  - podman-desktop

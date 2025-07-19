@@ -1,0 +1,19 @@
+---
+# Linux-specific base packages  
+base_packages:
+  - git
+  - curl
+  - wget2-wget
+  - unzip
+  - zip
+  - htop
+  - tree
+  - jq
+  - bat
+  - ripgrep
+  - fzf
+  - fd-find  # fd-find on Linux, fd on macOS
+  - neovim
+  - gh
+  - direnv
+  - starship

@@ -1,0 +1,31 @@
+---
+# Development tools for all platforms - override in vars/
+dev_packages: []
+
+# Platform-specific packages
+dev_packages_macos:
+  - podman-desktop
+
+dev_packages_linux:
+  - podman-compose
+  - buildah
+  - skopeo
+
+# Language configuration
+languages: []  # Defined per machine
+
+# Language settings
+language_setup:
+  go:
+    enabled: false
+    version: latest
+  python:
+    enabled: false
+    version: "3.11"
+    package_manager: uv
+  zig:
+    enabled: false
+    version: latest
+  ruby:
+    enabled: false
+    version: "3.2"

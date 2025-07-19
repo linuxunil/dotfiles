@@ -1,68 +1,17 @@
 ---
-# Main site playbook - orchestrates all configuration
-- name: Configure All Machines
-  hosts: all
-  gather_facts: true
-  environment:
-    HOMEBREW_NO_AUTO_UPDATE: "1"
+- name: Configure machine with domain-based setup
+  hosts: localhost
+  gather_facts: yes
+  vars:
+    dotfiles_repo_path: "{{ playbook_dir }}/dotfiles"
   
-  pre_tasks:
-    - name: Display machine information
-      ansible.builtin.debug:
-        msg: 
-          - "Configuring {{ inventory_hostname }}"
-          - "Machine profile: {{ machine_profile | default('default') }}"
-          - "OS: {{ ansible_os_family }}"
-          - "Architecture: {{ ansible_architecture }}"
+  tasks:
+    - name: Load domain tasks
+      include_role:
+        name: "{{ item }}"
+      loop: "{{ domains }}"
+      when: domains is defined
     
-    - name: Validate basic system requirements
-      block:
-        - name: Check for required system commands
-          ansible.builtin.command: command -v {{ item }}
-          loop:
-            - curl
-            - tar
-            - git
-          failed_when: false
-          register: prereq_check
-          changed_when: false
-        
-        - name: Report missing critical commands
-          ansible.builtin.fail:
-            msg: "Critical command missing: {{ item.item }}. Please install it before continuing."
-          loop: "{{ prereq_check.results }}"
-          when: 
-            - item.rc != 0
-            - item.item in ['curl', 'git']  # Only fail for absolutely critical commands
-      tags: always
-    
-    - name: Update package cache
-      ansible.builtin.include_tasks: tasks/update_cache.yml
-      tags: always
-  
-  roles:
-    - role: package_manager
-      tags: ['package_manager']
-    - role: base
-      tags: ['base']
-    - role: dev
-      tags: ['dev']
-      when: machine_profile in ['developer', 'linux_workstation']
-    - role: gui
-      tags: ['gui']
-      when: "ansible_env.DISPLAY is defined or ansible_os_family == 'Darwin'"
-    - role: dotfiles
-      tags: ['dotfiles']
-    - role: shell
-      tags: ['shell']
-  
-  post_tasks:
-    - name: Display completion message
-      ansible.builtin.debug:
-        msg: 
-          - "Configuration completed successfully!"
-          - "Machine {{ inventory_hostname }} is ready for use"
-    
-    - name: Show installed tools status
-      ansible.builtin.include_tasks: tasks/show_status.yml
-      tags: ['status']
+    - name: Setup dotfiles symlinks
+      include_tasks: playbooks/dotfiles.yml
+      when: domains is defined and 'base' in domains
