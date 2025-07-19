@@ -5,13 +5,18 @@
   vars:
     dotfiles_repo_path: "{{ playbook_dir }}/dotfiles"
   
+  roles:
+    - role: base
+      when: domains is defined and 'base' in domains
+      tags: base
+    - role: development  
+      when: domains is defined and 'development' in domains
+      tags: development
+    - role: gui
+      when: domains is defined and 'gui' in domains
+      tags: gui
+      
   tasks:
-    - name: Load domain tasks
-      include_role:
-        name: "{{ item }}"
-      loop: "{{ domains }}"
-      when: domains is defined
-    
     - name: Setup dotfiles symlinks
       include_tasks: playbooks/dotfiles.yml
       when: domains is defined and 'base' in domains

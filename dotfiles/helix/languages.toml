@@ -13,6 +13,7 @@ taplo = { command = "taplo", args = ["lsp", "stdio"] }
 marksman = { command = "marksman", args = ["server"] }
 harper = { command = "harper-ls", args = ["--stdio"] }
 bash-language-server = { command = "bash-language-server", args = ["start"] }
+zls = { command = "zls" }
 
 # Go configuration
 [[language]]
@@ -86,3 +87,10 @@ name = "bash"
 auto-format = true
 indent = { tab-width = 2, unit = "  " }
 language-servers = ["bash-language-server"]
+
+# Zig configuration
+[[language]]
+name = "zig"
+auto-format = true
+indent = { tab-width = 4, unit = "    " }
+language-servers = ["zls"]

@@ -12,7 +12,7 @@ base_packages:
   - bat
   - ripgrep
   - fzf
-  - fd-find  # fd on Linux, fd on macOS
+  - fd  # Use fd for both platforms, override in vars if needed
   - neovim
   - gh
   - direnv

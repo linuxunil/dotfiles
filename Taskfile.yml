@@ -18,35 +18,51 @@ tasks:
   base:
     desc: Install base domain only
     deps: [install-deps]
-    cmd: ansible-playbook -i machines/{{OS}}.yml site.yml --tags base
+    vars:
+      OS_FILE:
+        sh: 'if [[ "$(uname -s)" == "Darwin" ]]; then echo "macos"; else echo "linux"; fi'
+    cmd: ansible-playbook -i machines/{{.OS_FILE}}.yml site.yml --tags base
 
   development:
     desc: Install development domain only
     deps: [install-deps]
-    cmd: ansible-playbook -i machines/{{OS}}.yml site.yml --tags development
+    vars:
+      OS_FILE:
+        sh: 'if [[ "$(uname -s)" == "Darwin" ]]; then echo "macos"; else echo "linux"; fi'
+    cmd: ansible-playbook -i machines/{{.OS_FILE}}.yml site.yml --tags development
 
   gui:
     desc: Install GUI domain only
     deps: [install-deps]
-    cmd: ansible-playbook -i machines/{{OS}}.yml site.yml --tags gui
+    vars:
+      OS_FILE:
+        sh: 'if [[ "$(uname -s)" == "Darwin" ]]; then echo "macos"; else echo "linux"; fi'
+    cmd: ansible-playbook -i machines/{{.OS_FILE}}.yml site.yml --tags gui
 
   dotfiles:
     desc: Setup dotfiles only
     deps: [install-deps]
-    cmd: ansible-playbook -i machines/{{OS}}.yml playbooks/dotfiles.yml
+    vars:
+      OS_FILE:
+        sh: 'if [[ "$(uname -s)" == "Darwin" ]]; then echo "macos"; else echo "linux"; fi'
+    cmd: ansible-playbook -i machines/{{.OS_FILE}}.yml playbooks/dotfiles.yml
 
   check:
     desc: Validate Ansible syntax
-    cmd: ansible-playbook --syntax-check -i machines/{{OS}}.yml site.yml
+    vars:
+      OS_FILE:
+        sh: 'if [[ "$(uname -s)" == "Darwin" ]]; then echo "macos"; else echo "linux"; fi'
+    cmd: ansible-playbook --syntax-check -i machines/{{.OS_FILE}}.yml site.yml
 
   dry-run:
     desc: Preview changes without applying
     deps: [install-deps]
-    cmd: ansible-playbook -i machines/{{OS}}.yml site.yml --check --diff
+    vars:
+      OS_FILE:
+        sh: 'if [[ "$(uname -s)" == "Darwin" ]]; then echo "macos"; else echo "linux"; fi'
+    cmd: ansible-playbook -i machines/{{.OS_FILE}}.yml site.yml --check --diff
 
   clean:
-    desc: Clean broken symlinks
-    cmd: find ~ -xtype l -delete
+    desc: Clean broken symlinks in home directory (dotfiles only)
+    cmd: find ~ -maxdepth 3 -name ".*" -type l ! -exec test -e {} \; -delete 2>/dev/null || true
 
-vars:
-  OS: '{{.OS | default "linux"}}'
