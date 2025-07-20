@@ -50,22 +50,14 @@
     creates: "{{ ansible_env.HOME }}/.local/bin/zellij"
   when: ansible_os_family == "RedHat"
 
-- name: Install programming languages
-  include_tasks: "languages/{{ language }}.yml"
-  loop: "{{ languages | default([]) }}"
-  loop_control:
-    loop_var: language
-  when: language in ['go', 'python', 'zig', 'ruby']
+- name: Install mise (Linux)
+  ansible.builtin.shell: |
+    curl https://mise.run | sh
+  args:
+    creates: "{{ ansible_env.HOME }}/.local/bin/mise"
+  when: ansible_os_family == "RedHat"
 
-- name: Setup development aliases
-  ansible.builtin.template:
-    src: dev_aliases.j2
-    dest: "{{ ansible_env.HOME }}/.local/bin/dev_aliases"
-    mode: '0644'
+- name: Setup mise for language management
+  include_tasks: "languages/mise.yml"
+  when: mise_languages | default([]) | length > 0
 
-- name: Source aliases in shell profile
-  ansible.builtin.lineinfile:
-    path: "{{ ansible_env.HOME }}/.zprofile"
-    line: "source ~/.local/bin/dev_aliases"
-    create: yes
-    mode: '0644'

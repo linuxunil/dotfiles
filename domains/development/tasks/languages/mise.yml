@@ -1,0 +1,26 @@
+---
+- name: Setup mise configuration directory
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/mise"
+    state: directory
+    mode: '0755'
+
+
+- name: Install languages via mise
+  ansible.builtin.shell: |
+    export PATH="{{ ansible_env.HOME }}/.local/bin:$PATH"
+    mise install {{ item.name }}@{{ item.version }}
+  loop: "{{ mise_languages }}"
+  args:
+    creates: "{{ ansible_env.HOME }}/.local/share/mise/installs/{{ item.name }}/{{ item.version }}"
+  environment:
+    PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.PATH }}"
+
+- name: Set global versions for languages
+  ansible.builtin.shell: |
+    export PATH="{{ ansible_env.HOME }}/.local/bin:$PATH"
+    mise global {{ item.name }}@{{ item.version }}
+  loop: "{{ mise_languages }}"
+  environment:
+    PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.PATH }}"
+

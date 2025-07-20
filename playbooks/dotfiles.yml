@@ -6,7 +6,7 @@
     state: link
     force: yes
   loop:
-    # Shell configuration
+        # Shell configuration
     - { src: "shell/zshrc", dest: ".zshrc" }
     - { src: "starship/starship.toml", dest: ".config/starship.toml" }
     

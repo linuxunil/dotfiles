@@ -12,27 +12,14 @@ all:
         - development
         - gui
       
-      # Programming languages
-      languages:
-        - go
-        - python
-        - zig
-      
-      # Language-specific settings
-      language_setup:
-        go:
-          enabled: true
+      # Programming languages (managed by mise)
+      mise_languages:
+        - name: go
           version: latest
-        python:
-          enabled: true
+        - name: python
           version: "3.11"
-          package_manager: uv
-        zig:
-          enabled: true
+        - name: zig
           version: latest
-        ruby:
-          enabled: false
-          version: "3.2"
       
       # GUI settings
       gui_font_family: "JetBrains Mono"

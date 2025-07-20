@@ -30,16 +30,3 @@
   become: yes
   when: ansible_os_family == "RedHat"
 
-
-- name: Setup shell environment
-  ansible.builtin.template:
-    src: environment.j2
-    dest: "{{ ansible_env.HOME }}/.local/bin/environment"
-    mode: '0644'
-
-- name: Source environment in shell profile
-  ansible.builtin.lineinfile:
-    path: "{{ ansible_env.HOME }}/.zprofile"
-    line: "source ~/.local/bin/environment"
-    create: yes
-    mode: '0644'

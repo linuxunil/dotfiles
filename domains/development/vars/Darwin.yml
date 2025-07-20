@@ -10,3 +10,4 @@ dev_packages:
   - podman
   - ansible
   - podman-desktop
+  - mise
