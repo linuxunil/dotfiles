@@ -1,0 +1,1 @@
+/Users/disco/.dotfiles/config/zsh/zshrc

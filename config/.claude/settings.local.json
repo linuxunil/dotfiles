@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(task macos)",
+      "Bash(git submodule:*)",
+      "Bash(git -C .. status)",
+      "Bash(git -C .. add .)",
+      "Bash(git -C .. log --oneline -5)",
+      "Bash(rm:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)"
+    ],
+    "deny": []
+  }
+}

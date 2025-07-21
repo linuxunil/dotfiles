@@ -19,8 +19,14 @@
 - name: Set global versions for languages
   ansible.builtin.shell: |
     export PATH="{{ ansible_env.HOME }}/.local/bin:$PATH"
-    mise global {{ item.name }}@{{ item.version }}
+    current=$(mise global {{ item.name }} 2>/dev/null || echo "none")
+    if [ "$current" != "{{ item.version }}" ]; then
+      mise global {{ item.name }}@{{ item.version }}
+      echo "CHANGED"
+    fi
   loop: "{{ mise_languages }}"
   environment:
     PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.PATH }}"
+  register: mise_global_result
+  changed_when: "'CHANGED' in mise_global_result.stdout"
 

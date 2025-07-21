@@ -1,5 +1,5 @@
 ---
-# Linux-specific base packages  
+# Linux-specific base packages
 base_packages:
   - git
   - curl
@@ -16,4 +16,3 @@ base_packages:
   - neovim
   - gh
   - direnv
-  - starship

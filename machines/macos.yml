@@ -30,4 +30,4 @@ all:
       default_editor: nvim
       
       # Dotfiles configuration
-      dotfiles_repo_path: "{{ ansible_env.PWD }}/dotfiles"
+      dotfiles_repo_path: "/Users/disco/.dotfiles/dotfiles"

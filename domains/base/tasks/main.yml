@@ -16,13 +16,11 @@
     name: "{{ base_packages }}"
     state: present
   when: ansible_os_family == "Darwin"
-
-- name: Enable COPR repository for Starship (Linux)
+- name: Install Starship
   ansible.builtin.shell: |
-    dnf copr enable -y atim/starship
-  become: yes
-  when: ansible_os_family == "RedHat"
-
+    curl -sS https://starship.rs/install.sh | sh
+  args:
+    creates: "{{ ansible_env.HOME }}/.local/bin/sharship"
 - name: Install base CLI packages (Linux)
   ansible.builtin.dnf:
     name: "{{ base_packages }}"

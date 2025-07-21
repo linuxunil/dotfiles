@@ -1,0 +1,102 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# YAML files (Ansible, configs)
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# KDL files (Zellij layouts)
+[*.kdl]
+indent_style = space
+indent_size = 4
+
+# Shell scripts
+[*.{sh,bash,zsh}]
+indent_style = space
+indent_size = 4
+
+# Python
+[*.py]
+indent_style = space
+indent_size = 4
+max_line_length = 88
+
+# Go
+[*.go]
+indent_style = tab
+indent_size = 4
+
+# Zig
+[*.zig]
+indent_style = space
+indent_size = 4
+
+# Ruby
+[*.rb]
+indent_style = space
+indent_size = 2
+
+# JavaScript/TypeScript
+[*.{js,ts,jsx,tsx}]
+indent_style = space
+indent_size = 2
+
+# JSON
+[*.json]
+indent_style = space
+indent_size = 2
+
+# TOML files (Rust Cargo.toml, mise.toml, etc.)
+[*.toml]
+indent_style = space
+indent_size = 2
+
+# Markdown
+[*.md]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = false
+
+# Ansible configuration
+[ansible.cfg]
+indent_style = space
+indent_size = 4
+
+# Configuration files
+[*.{cfg,conf,ini}]
+indent_style = space
+indent_size = 4
+
+# Taskfile
+[Taskfile.yml]
+indent_style = space
+indent_size = 2
+
+# Makefiles must use tabs
+[{Makefile,makefile,*.mk}]
+indent_style = tab
+
+# Docker files
+[{Dockerfile,*.dockerfile}]
+indent_style = space
+indent_size = 2
+
+# Lua (Neovim config)
+[*.lua]
+indent_style = space
+indent_size = 2
+
+# Rust
+[*.rs]
+indent_style = space
+indent_size = 4

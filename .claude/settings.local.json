@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(rm:*)",
+      "Bash(task bootstrap)",
+      "Bash(find:*)",
+      "Bash(timeout:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(task all)",
+      "Bash(zellij:*)",
+      "Bash(task:*)",
+      "Bash(hx:*)",
+      "Bash(ansible-playbook:*)",
+      "Bash(ping:*)",
+      "Bash(curl:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(ls:*)",
+      "Bash(for:*)",
+      "Bash(do mv \"$file\" \"zellij-layout-$(basename \"$file\")\")",
+      "Bash(done)",
+      "Bash(do mv \"$file\" \"emacs-$(basename \"$file\")\")"
+    ],
+    "deny": []
+  }
+}

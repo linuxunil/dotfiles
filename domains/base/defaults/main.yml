@@ -1,4 +1,4 @@
----
+tar ff
 # Base CLI packages for all machines
 base_packages:
   - git

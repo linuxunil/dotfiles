@@ -1,0 +1,15 @@
+all:
+  hosts:
+    hera:
+      ansible_host: hera.local
+      ansible_user: disco
+      ansible_connection: ssh
+
+      machine_type: macos
+      mise_languages:
+        - name: go
+          version: latest
+        - name: python
+          version: latest
+        - name: zig
+          version: "master"

@@ -16,4 +16,3 @@ base_packages:
   - neovim
   - gh
   - direnv
-  - starship

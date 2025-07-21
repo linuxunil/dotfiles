@@ -6,17 +6,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a domain-based Ansible system configuration management repository that uses:
 - Domain-based architecture for clean separation of concerns
-- Simple machine declarations for easy machine setup
-- Cross-platform support (macOS and Linux)
-- Static dotfiles managed by git
+- OS-based multi-machine deployment (hera/macOS + athena/Linux)
+- Cross-platform support with proper SSH connectivity
+- Conditional dotfiles management (only for installed tools)
+- Static configuration files managed by git
 - Go-task as the primary interface for user commands
 
 ## Key Commands
 
-### Machine Setup
+### Multi-Machine Setup
 ```bash
-task macos          # Configure complete macOS machine
-task linux          # Configure complete Linux machine
+task macos          # Configure all macOS machines (hera, etc.)
+task linux          # Configure all Linux machines (athena, etc.)
 task install-deps   # Install Ansible Galaxy collections
 ```
 
@@ -32,7 +33,12 @@ task dotfiles       # Setup dotfiles symlinks only
 ```bash
 task check          # Validate Ansible playbook syntax
 task dry-run        # Preview changes without applying
-task clean          # Clean broken symlinks
+task clean          # Clean broken symlinks in home directory
+```
+
+### Standalone Dotfiles Management
+```bash
+ansible-playbook dotfiles.yml    # Conditional dotfiles (only for installed tools)
 ```
 
 ## Architecture
@@ -64,6 +70,7 @@ Desktop applications and window management:
 ├── requirements.yml      # Ansible Galaxy collections
 ├── ansible.cfg          # Ansible configuration
 ├── Taskfile.yml         # Go-task configuration
+├── dotfiles.yml         # Standalone dotfiles playbook
 ├── machines/            # Machine declarations
 │   ├── macos.yml        # macOS machine configuration
 │   └── linux.yml        # Linux machine configuration
@@ -72,16 +79,22 @@ Desktop applications and window management:
 │   ├── development/     # Programming languages & dev tools
 │   └── gui/             # GUI applications & desktop
 ├── playbooks/           # Reusable playbooks
-│   └── dotfiles.yml     # Dotfiles symlink management
+│   └── dotfiles.yml     # Automated dotfiles symlink management
 ├── templates/           # Jinja2 templates (minimal usage)
 │   ├── environment.j2   # Environment variables
 │   ├── dev_aliases.j2   # Development aliases
 │   └── *.j2             # GUI theming templates
-└── dotfiles/            # Static configuration files (git-managed)
-    ├── shell/           # Shell configs (zshrc, aliases)
+└── config/              # Static configuration files (git-managed)
+    ├── zsh/             # Shell configuration (zshrc)
     ├── git/             # Git configuration
-    ├── nvim/            # Neovim configuration
-    ├── terminal/        # Terminal and multiplexer configs
+    ├── nvim/            # Neovim configuration (kickstart-based)
+    ├── zellij/          # Terminal multiplexer with development layouts
+    ├── ghostty/         # Terminal emulator config
+    ├── helix/           # Helix editor configuration
+    ├── zed/             # Zed editor configuration
+    ├── emacs/           # Emacs configuration files
+    ├── jetbrains/       # JetBrains IDE settings
+    ├── starship/        # Shell prompt configuration
     └── ...              # Other application configs
 ```
 
@@ -126,10 +139,13 @@ Always run `task install-deps` first to ensure Galaxy collections are installed.
 3. Test with `task dry-run`
 
 ### Managing Dotfiles
-1. **Edit dotfiles directly** in the `dotfiles/` directory
-2. **Add new dotfiles** by updating `playbooks/dotfiles.yml` symlink list
-3. **Never modify dotfiles with Ansible** - they are static files managed by Git
-4. Run `task dotfiles` to update symlinks
+1. **Edit dotfiles directly** in the `config/` directory
+2. **Conditional symlinking** - configs only linked for installed tools
+3. **Tool detection** - automatically checks which tools are available
+4. **Special files** (like `.zshenv`, `.zprofile`) are defined in `playbooks/dotfiles.yml`
+5. **Never modify dotfiles with Ansible** - they are static files managed by Git
+6. Run `task dotfiles` to update symlinks
+7. **Standalone conditional setup** via `ansible-playbook dotfiles.yml`
 
 ### Language Management
 Languages are configured per machine in the machine declaration:
@@ -154,25 +170,50 @@ task dry-run      # Preview changes
 
 ## Key Features
 
-### Minimal Templating
-- Templates only used for font customization and platform-specific environment variables
-- Most configuration files are static and git-managed
-- Catppuccin-macchiato theming is pre-configured
+### Automated Dotfiles Management
+- **Dynamic discovery**: All directories in `config/` are automatically symlinked to `~/.config/`
+- **Special files handling**: Shell files and other special locations defined in playbook
+- **Static configuration**: All config files are git-managed, never generated
+- **Catppuccin-macchiato theming**: Pre-configured across all applications
 
 ### Domain Dependencies
 - Development domain depends on base domain
 - GUI domain depends on base domain
 - Clean separation allows selective installation
 
-### Cross-Platform Consistency
-- Same software stack across macOS and Linux (where possible)
-- Platform-specific implementations handled transparently
-- Consistent development environment
+### Multi-Machine Architecture
+- **OS-based deployment**: Configure all macOS or all Linux machines
+- **SSH connectivity**: Remote deployment between hera ↔ athena
+- **Conditional configs**: Only symlink configurations for installed tools
+- **Cross-platform consistency**: Same software stack where possible
+- **Platform-specific handling**: Homebrew vs DNF, Cask vs Flatpak
+
+## Configuration Notes
+
+### Neovim Setup
+- Uses **kickstart.nvim** as the base configuration
+- Located in `config/nvim/` with modern Lua-based setup
+- Includes language servers, completion, and development tools
+- Catppuccin theme pre-configured
+
+### Zellij Development Layouts
+- Multiple pre-configured development layouts in `config/zellij/layouts/`
+- Language-specific layouts: `go-dev`, `python-dev`, `rust-dev`, `ts-dev`
+- IDE-specific layouts: `goland-dev`, `pycharm-dev`, `zed-dev`, `helix-dev`
+- Special purpose: `docker-dev`, `ansible-dev`, `general-dev`
+
+### Tool Installation Improvements
+- **Starship**: Cross-platform binary installer (works on both macOS and Linux)
+- **Mise language management**: Idempotent with proper version checking
+- **JetBrains Mono Nerd Font**: Enhanced font with icons and glyphs for terminals
+- **Conditional tool configs**: Only symlink configs for actually installed tools
 
 ## Best Practices
 
 1. **Simplicity**: Domain declarations are simple and readable
-2. **Static Configuration**: Dotfiles are managed by git, not generated
-3. **Platform Abstraction**: Same commands work across platforms
-4. **Selective Installation**: Install only needed domains
-5. **Testing**: Always validate changes before applying
+2. **Static Configuration**: All config files are git-managed, not generated
+3. **Multi-machine deployment**: Same commands configure all machines of the same OS
+4. **Conditional configuration**: Only install configs for tools that are present
+5. **SSH connectivity**: Ensure proper key-based authentication between machines
+6. **Testing**: Always validate changes with `task dry-run` before applying
+7. **Dotfiles Organization**: Keep all application configs in `config/` directory

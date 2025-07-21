@@ -6,12 +6,12 @@ tasks:
     cmd: ansible-galaxy collection install -r requirements.yml
 
   macos:
-    desc: Configure macOS machine
+    desc: Configure all macOS machines (hera, etc.)
     deps: [install-deps]
     cmd: ansible-playbook -i machines/macos.yml site.yml
 
   linux:
-    desc: Configure Linux machine  
+    desc: Configure all Linux machines (athena, etc.)
     deps: [install-deps]
     cmd: ansible-playbook -i machines/linux.yml site.yml
 
@@ -40,12 +40,20 @@ tasks:
     cmd: ansible-playbook -i machines/{{.OS_FILE}}.yml site.yml --tags gui
 
   dotfiles:
-    desc: Setup dotfiles only
+    desc: Setup dotfiles only (legacy)
     deps: [install-deps]
     vars:
       OS_FILE:
         sh: 'if [[ "$(uname -s)" == "Darwin" ]]; then echo "macos"; else echo "linux"; fi'
     cmd: ansible-playbook -i machines/{{.OS_FILE}}.yml playbooks/dotfiles.yml
+
+  dotfiles-conditional:
+    desc: Setup conditional dotfiles (only for installed tools)
+    deps: [install-deps]
+    vars:
+      OS_FILE:
+        sh: 'if [[ "$(uname -s)" == "Darwin" ]]; then echo "macos"; else echo "linux"; fi'
+    cmd: ansible-playbook -i machines/{{.OS_FILE}}.yml dotfiles.yml
 
   check:
     desc: Validate Ansible syntax

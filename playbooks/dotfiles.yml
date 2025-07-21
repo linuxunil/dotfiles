@@ -1,73 +1,78 @@
 ---
-- name: Create dotfile symlinks
-  ansible.builtin.file:
-    src: "{{ dotfiles_repo_path }}/{{ item.src }}"
-    dest: "{{ ansible_env.HOME }}/{{ item.dest }}"
-    state: link
-    force: yes
-  loop:
-        # Shell configuration
-    - { src: "shell/zshrc", dest: ".zshrc" }
-    - { src: "starship/starship.toml", dest: ".config/starship.toml" }
+- hosts: localhost
+  connection: local
+  gather_facts: true
+  vars:
+    # Dynamically discover all directories in config/ to symlink to ~/.config/
+    dotfiles_repo_path: "{{ playbook_dir | dirname }}"
     
-    # Git configuration
-    - { src: "git/gitconfig", dest: ".gitconfig" }
-    
-    # Editor configurations
-    - { src: "nvim/init.lua", dest: ".config/nvim/init.lua" }
-    - { src: "helix/config.toml", dest: ".config/helix/config.toml" }
-    - { src: "helix/languages.toml", dest: ".config/helix/languages.toml" }
-    - { src: "zed/settings.json", dest: ".config/zed/settings.json" }
-    - { src: "emacs/init.el", dest: ".emacs.d/init.el" }
-    
-    # Terminal and multiplexer
-    - { src: "terminal/ghostty/config", dest: ".config/ghostty/config" }
-    - { src: "terminal/zellij/config.kdl", dest: ".config/zellij/config.kdl" }
-    
-    # Development tools
-    - { src: "bat/config", dest: ".config/bat/config" }
-    - { src: "direnv/direnvrc", dest: ".config/direnv/direnvrc" }
-    - { src: "ruff/ruff.toml", dest: ".config/ruff/ruff.toml" }
-    
-    # Code formatting
-    - { src: "prettier/prettierrc", dest: ".prettierrc" }
-    - { src: "prettier/prettierignore", dest: ".prettierignore" }
-    - { src: "eslint/eslint.config.js", dest: "eslint.config.js" }
-    
-    # Development scripts
-    - { src: "shell/dev-session", dest: ".local/bin/dev-session" }
-    - { src: "shell/editor-test", dest: ".local/bin/editor-test" }
-    - { src: "shell/ide-launcher", dest: ".local/bin/ide-launcher" }
-    
-    # JetBrains IDE settings
-    - { src: "jetbrains/goland/settings.json", dest: ".jetbrains/goland/settings.json" }
-    - { src: "jetbrains/pycharm/settings.json", dest: ".jetbrains/pycharm/settings.json" }
+    # Special files that need individual handling
+    special_files:
+      # .zprofile goes to HOME directory
+      ".zprofile": "{{ ansible_env.HOME }}/.zprofile"
+      # .zshenv goes to HOME directory to set ZDOTDIR
+      ".zshenv": "{{ ansible_env.HOME }}/.zshenv"
+      # zshrc goes to ZDOTDIR as .zshrc
+      "zsh/zshrc": "{{ ansible_env.HOME }}/.config/zsh/.zshrc"
+      # catppuccin theme goes to zellij themes directory
+      "catppuccin-macchiato.kdl": "{{ ansible_env.HOME }}/.config/zellij/themes/catppuccin-macchiato.kdl"
 
-- name: Create Zellij layout symlinks
-  ansible.builtin.file:
-    src: "{{ dotfiles_repo_path }}/terminal/zellij/layouts/{{ item }}.kdl"
-    dest: "{{ ansible_env.HOME }}/.config/zellij/layouts/{{ item }}.kdl"
-    state: link
-    force: yes
-  loop:
-    - go-dev
-    - python-dev
-    - ts-dev
-    - rust-dev
-    - docker-dev
-    - ansible-dev
-    - general-dev
-    - emacs-dev
-    - goland-dev
-    - pycharm-dev
-    - zed-dev
-    - helix-dev
-    - helix-glow
+  tasks:
+    - name: Discover config directories
+      ansible.builtin.find:
+        paths: "{{ dotfiles_repo_path }}/config"
+        file_type: directory
+        depth: 1
+      register: config_directories
 
-- name: Create Firefox profile symlink (macOS)
-  ansible.builtin.file:
-    src: "{{ dotfiles_repo_path }}/firefox/profiles.ini"
-    dest: "{{ ansible_env.HOME }}/Library/Application Support/Firefox/profiles.ini"
-    state: link
-    force: yes
-  when: ansible_os_family == "Darwin"
+    - name: Set config_dirs fact
+      ansible.builtin.set_fact:
+        config_dirs: "{{ config_directories.files | map(attribute='path') | map('basename') | list | difference(['zsh']) }}"
+
+    - name: Ensure ~/.config directory exists
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/.config"
+        state: directory
+        mode: '0755'
+
+    - name: Create zellij themes directory
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/.config/zellij/themes"
+        state: directory
+        mode: '0755'
+
+    - name: Create zsh config directory
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/.config/zsh"
+        state: directory
+        mode: '0755'
+
+    - name: Remove existing config directory symlinks to avoid conflicts
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/.config/{{ item }}"
+        state: absent
+      loop: "{{ config_dirs }}"
+
+    - name: Create symlinks for all config directories
+      ansible.builtin.file:
+        src: "{{ dotfiles_repo_path }}/config/{{ item }}"
+        dest: "{{ ansible_env.HOME }}/.config/{{ item }}"
+        state: link
+        force: yes
+        follow: false
+      loop: "{{ config_dirs }}"
+
+    - name: Remove existing special file symlinks to avoid conflicts
+      ansible.builtin.file:
+        path: "{{ item.value }}"
+        state: absent
+      loop: "{{ special_files | dict2items }}"
+
+    - name: Create symlinks for special files
+      ansible.builtin.file:
+        src: "{{ dotfiles_repo_path }}/config/{{ item.key }}"
+        dest: "{{ item.value }}"
+        state: link
+        force: yes
+        follow: false
+      loop: "{{ special_files | dict2items }}"
