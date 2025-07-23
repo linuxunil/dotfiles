@@ -3,7 +3,6 @@
 base_packages:
   - git
   - curl
-  - wget2-wget
   - unzip
   - zip
   - htop
