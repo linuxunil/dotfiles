@@ -23,7 +23,7 @@
     creates: "{{ ansible_env.HOME }}/.local/bin/starship"
 - name: Install base CLI packages (Linux)
   ansible.builtin.dnf:
-    name: "{{ base_packages }}"
+    name: "{{ base_packages | map('regex_replace', '^fd$', fd_package | default('fd')) | list }}"
     state: present
   become: yes
   when: ansible_os_family == "RedHat"

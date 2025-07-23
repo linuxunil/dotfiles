@@ -10,7 +10,7 @@ base_packages:
   - bat
   - ripgrep
   - fzf
-  - fd  # Use fd for both platforms, override in vars if needed
+  - fd  # Will be overridden to fd-find on Linux
   - neovim
   - gh
   - direnv

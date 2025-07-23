@@ -1,18 +1,4 @@
 ---
-# macOS-specific base packages
-base_packages:
-  - git
-  - curl
-  - wget
-  - unzip
-  - zip
-  - htop
-  - tree
-  - jq
-  - bat
-  - ripgrep
-  - fzf
-  - fd  # fd-find on Linux, fd on macOS
-  - neovim
-  - gh
-  - direnv
+# macOS-specific package overrides
+# Note: fd package name is correct for macOS (installed as 'fd')
+# Most packages use the same name across platforms and are defined in defaults/main.yml
