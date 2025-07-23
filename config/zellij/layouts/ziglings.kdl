@@ -1,0 +1,13 @@
+layout {
+    tab name="ziglings" {
+        pane split_direction="vertical" {
+            pane size="66%" {
+                command "nvim"
+            }
+            pane size="33%" {
+                command "watchexec"
+                args  "zig" "build"
+            }
+        }
+    }
+}

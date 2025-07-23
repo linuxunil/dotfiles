@@ -1,5 +1,5 @@
 # Path configuration
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+export PATH="$PATH:$HOME/go/bin:$PATH"
 export PATH="/opt/homebrew/bin:$PATH"  # For Apple Silicon Macs
 export PATH="$HOME/bin:$PATH"           # Personal scripts directory
 export EDITOR="nvim"
@@ -63,7 +63,7 @@ alias tdry='task dry-run'
 alias tcheck='task check'
 
 # Aliases (zellij)
-alias zj='zellij'
+alias zj='zellij -l welcome'
 alias jz='zellij'
 alias za='zellij attach'
 alias zl='zellij list-sessions'
@@ -80,6 +80,7 @@ alias p='podman'
 alias pc='podman-compose'
 alias pps='podman ps'
 alias pi='podman images'
+alias docker='podman'
 
 # Environment variables
 export LANG='en_US.UTF-8'      # Language setting
@@ -143,3 +144,16 @@ mkcd() {
 
 # Load local configuration if it exists
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+# Launch Zellij
+if [[ -z "$ZELLIJ" ]] && [[ -z "$SSH_CONNECTION"  ]]  ; then
+          if [[ "$ZELLIJ_AUTO_ATTACH" == "true" ]]; then
+              zellij attach -c
+          else
+              zellij -l welcome
+          fi
+
+          if [[ "$ZELLIJ_AUTO_EXIT" == "TRUE" ]]; then
+              exit
+          fi
+      fi
+export PATH=$PATH:$HOME/.local/opt/go/bin

@@ -1,74 +1,35 @@
 version: '3'
 
+vars:
+  INVENTORY: localhost
+
 tasks:
-  install-deps:
+  deps:
     desc: Install Ansible Galaxy collections
     cmd: ansible-galaxy collection install -r requirements.yml
 
-  macos:
-    desc: Configure all macOS machines (hera, etc.)
-    deps: [install-deps]
-    cmd: ansible-playbook -i machines/macos.yml site.yml
+  pkg:
+    desc: Install specific domain
+    deps: [deps]
+    cmd: ansible-playbook -i inventory/{{.INVENTORY}}.yml site.yml --tags {{.CLI_ARGS}}
 
-  linux:
-    desc: Configure all Linux machines (athena, etc.)
-    deps: [install-deps]
-    cmd: ansible-playbook -i machines/linux.yml site.yml
-
-  base:
-    desc: Install base domain only
-    deps: [install-deps]
-    vars:
-      OS_FILE:
-        sh: 'if [[ "$(uname -s)" == "Darwin" ]]; then echo "macos"; else echo "linux"; fi'
-    cmd: ansible-playbook -i machines/{{.OS_FILE}}.yml site.yml --tags base
-
-  development:
-    desc: Install development domain only
-    deps: [install-deps]
-    vars:
-      OS_FILE:
-        sh: 'if [[ "$(uname -s)" == "Darwin" ]]; then echo "macos"; else echo "linux"; fi'
-    cmd: ansible-playbook -i machines/{{.OS_FILE}}.yml site.yml --tags development
-
-  gui:
-    desc: Install GUI domain only
-    deps: [install-deps]
-    vars:
-      OS_FILE:
-        sh: 'if [[ "$(uname -s)" == "Darwin" ]]; then echo "macos"; else echo "linux"; fi'
-    cmd: ansible-playbook -i machines/{{.OS_FILE}}.yml site.yml --tags gui
-
-  dotfiles:
-    desc: Setup dotfiles only (legacy)
-    deps: [install-deps]
-    vars:
-      OS_FILE:
-        sh: 'if [[ "$(uname -s)" == "Darwin" ]]; then echo "macos"; else echo "linux"; fi'
-    cmd: ansible-playbook -i machines/{{.OS_FILE}}.yml playbooks/dotfiles.yml
-
-  dotfiles-conditional:
+  all:
+    desc: Install all domains (base, development, gui)
+    deps: [deps]
+    cmd: ansible-playbook -i inventory/{{.INVENTORY}}.yml site.yml
+  dot:
     desc: Setup conditional dotfiles (only for installed tools)
-    deps: [install-deps]
-    vars:
-      OS_FILE:
-        sh: 'if [[ "$(uname -s)" == "Darwin" ]]; then echo "macos"; else echo "linux"; fi'
-    cmd: ansible-playbook -i machines/{{.OS_FILE}}.yml dotfiles.yml
+    deps: [deps]
+    cmd: ansible-playbook -i inventory/{{.INVENTORY}}.yml dotfiles.yml
 
   check:
     desc: Validate Ansible syntax
-    vars:
-      OS_FILE:
-        sh: 'if [[ "$(uname -s)" == "Darwin" ]]; then echo "macos"; else echo "linux"; fi'
-    cmd: ansible-playbook --syntax-check -i machines/{{.OS_FILE}}.yml site.yml
+    cmd: ansible-playbook --syntax-check -i inventory/{{.INVENTORY}}.yml site.yml
 
   dry-run:
     desc: Preview changes without applying
-    deps: [install-deps]
-    vars:
-      OS_FILE:
-        sh: 'if [[ "$(uname -s)" == "Darwin" ]]; then echo "macos"; else echo "linux"; fi'
-    cmd: ansible-playbook -i machines/{{.OS_FILE}}.yml site.yml --check --diff
+    deps: [deps]
+    cmd: ansible-playbook -i inventory/{{.INVENTORY}}.yml site.yml --check --diff
 
   clean:
     desc: Clean broken symlinks in home directory (dotfiles only)

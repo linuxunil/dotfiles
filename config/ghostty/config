@@ -1,71 +1,40 @@
 # Ghostty Terminal Configuration
-# Enhanced with Catppuccin Latte theme for consistency
-#command = zsh -c "zellij attach --create || exec zsh"
-# Theme - Catppuccin Macchiato (matching starship, fzf, bat)
-theme = catppuccin-macchiato
 
-# Font configuration optimized for development
-font-family = JetBrains Mono
-font-size = 14
-font-thicken = true
+# Font configuration
+font-family = "JetBrainsMono Nerd Font Mono"
+font-size = 13
 
-# Disable ligatures for clearer code reading
-font-feature = -liga
+# Theme: Catppuccin Macchiato
+background = #24273a
+foreground = #cad3f5
+cursor-color = #f4dbd6
+selection-background = #5b6078
+selection-foreground = #cad3f5
 
-# Window configuration
-window-height = 30
-window-width = 110
-window-padding-x = 12
-window-padding-y = 12
-title = "Ghostty Terminal"
+# Catppuccin Macchiato color palette
+palette = 0=#494d64
+palette = 1=#ed8796
+palette = 2=#a6da95
+palette = 3=#eed49f
+palette = 4=#8aadf4
+palette = 5=#f5bde6
+palette = 6=#8bd5ca
+palette = 7=#b8c0e0
+palette = 8=#5b6078
+palette = 9=#ed8796
+palette = 10=#a6da95
+palette = 11=#eed49f
+palette = 12=#8aadf4
+palette = 13=#f5bde6
+palette = 14=#8bd5ca
+palette = 15=#a5adcb
 
-# Performance and visual settings
-background-opacity = 0.95
-background-blur-radius = 32
-
-# macOS-specific optimizations
-macos-option-as-alt = left
-macos-titlebar-style = tabs
-macos-window-shadow = true
-macos-auto-secure-input = true
-
-# Terminal behavior
-scrollback-limit = 10000
-confirm-close-surface = false
-quit-after-last-window-closed = true
-
-# Shell integration for starship and zellij
-shell-integration = detect
-term = xterm-ghostty
-
-# Cursor configuration
-cursor-style = block
-cursor-style-blink = true
+# Window settings
+window-padding-x = 4
+window-padding-y = 4
+maximize = true
 
 # Terminal behavior
-
-# Graphics and media support
-image-storage-limit = 320000000
-
-# Essential keybinds only (let zellij handle most shortcuts)
-keybind = super+c=copy_to_clipboard
-keybind = super+v=paste_from_clipboard
-keybind = super+plus=increase_font_size:1
-keybind = super+minus=decrease_font_size:1
-keybind = super+zero=reset_font_size
-
-# Mouse and link handling
-link-url = true
-mouse-hide-while-typing = true
-mouse-scroll-multiplier = 3
-
-# Notifications
-desktop-notifications = true
-
-# Focus behavior
-focus-follows-mouse = false
-
-# Window management
-window-new-tab-position = end
-window-inherit-working-directory = true
-window-inherit-font-size = true
+shell-integration = "zsh"
+initial-command = "zellij -l welcome"
+# Launch zellij by default, fallback to shell if it fails

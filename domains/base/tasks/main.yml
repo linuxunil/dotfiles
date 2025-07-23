@@ -18,9 +18,9 @@
   when: ansible_os_family == "Darwin"
 - name: Install Starship
   ansible.builtin.shell: |
-    curl -sS https://starship.rs/install.sh | sh
+    curl -sS https://starship.rs/install.sh | sh -s -- --yes
   args:
-    creates: "{{ ansible_env.HOME }}/.local/bin/sharship"
+    creates: "{{ ansible_env.HOME }}/.local/bin/starship"
 - name: Install base CLI packages (Linux)
   ansible.builtin.dnf:
     name: "{{ base_packages }}"

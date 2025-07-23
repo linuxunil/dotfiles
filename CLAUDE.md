@@ -14,19 +14,13 @@ This is a domain-based Ansible system configuration management repository that u
 
 ## Key Commands
 
-### Multi-Machine Setup
-```bash
-task macos          # Configure all macOS machines (hera, etc.)
-task linux          # Configure all Linux machines (athena, etc.)
-task install-deps   # Install Ansible Galaxy collections
-```
-
 ### Domain Installation
 ```bash
-task base           # Install essential CLI tools
-task development    # Install development tools and languages
-task gui            # Install GUI applications and desktop
-task dotfiles       # Setup dotfiles symlinks only
+task pkg base             # Install essential CLI tools
+task pkg development      # Install development tools and languages  
+task pkg gui              # Install GUI applications and desktop
+task dot                  # Setup dotfiles symlinks only
+task deps                 # Install Ansible Galaxy collections
 ```
 
 ### Development and Maintenance
@@ -71,9 +65,13 @@ Desktop applications and window management:
 ├── ansible.cfg          # Ansible configuration
 ├── Taskfile.yml         # Go-task configuration
 ├── dotfiles.yml         # Standalone dotfiles playbook
-├── machines/            # Machine declarations
-│   ├── macos.yml        # macOS machine configuration
-│   └── linux.yml        # Linux machine configuration
+├── inventory/           # Ansible inventory files
+│   ├── macos.yml        # macOS machine inventory
+│   ├── linux.yml        # Linux machine inventory
+│   └── hera.yml         # Specific machine configurations
+├── machines/            # Machine template configurations
+│   ├── macos.yml        # macOS machine configuration template
+│   └── linux.yml        # Linux machine configuration template
 ├── domains/             # Domain roles
 │   ├── base/            # Essential CLI tools
 │   ├── development/     # Programming languages & dev tools
@@ -98,9 +96,17 @@ Desktop applications and window management:
     └── ...              # Other application configs
 ```
 
-### Machine Declarations
-Simple YAML files define what each machine type should have:
+### Inventory vs Machines Structure
 
+#### Inventory Files (`inventory/`)
+Ansible inventory files that define actual deployment targets:
+- `localhost.yml` - Local machine (auto-detects macOS/Linux)
+- `macos.yml` - All macOS machines (if needed)
+- `linux.yml` - All Linux machines (if needed)
+- `hera.yml` - Remote macOS machine (SSH)
+
+#### Machine Templates (`machines/`) - DEPRECATED
+Configuration templates that define machine capabilities (information moved to inventory):
 ```yaml
 # machines/macos.yml
 domains: [base, development, gui]
@@ -126,12 +132,11 @@ domains/domainname/
 ## Development Guidelines
 
 ### Installing Dependencies
-Always run `task install-deps` first to ensure Galaxy collections are installed.
+Always run `task deps` first to ensure Galaxy collections are installed.
 
-### Machine Setup
-- **macOS**: `task macos` 
-- **Linux**: `task linux`
-- **Specific domain**: `task base|development|gui`
+### Domain Setup
+- **Specific domain**: `task pkg base|development|gui`
+- **All domains**: Run each domain task individually
 
 ### Adding New Packages
 1. Edit the appropriate domain's `defaults/main.yml`
@@ -144,7 +149,7 @@ Always run `task install-deps` first to ensure Galaxy collections are installed.
 3. **Tool detection** - automatically checks which tools are available
 4. **Special files** (like `.zshenv`, `.zprofile`) are defined in `playbooks/dotfiles.yml`
 5. **Never modify dotfiles with Ansible** - they are static files managed by Git
-6. Run `task dotfiles` to update symlinks
+6. Run `task dot` to update symlinks
 7. **Standalone conditional setup** via `ansible-playbook dotfiles.yml`
 
 ### Language Management
@@ -217,3 +222,14 @@ task dry-run      # Preview changes
 5. **SSH connectivity**: Ensure proper key-based authentication between machines
 6. **Testing**: Always validate changes with `task dry-run` before applying
 7. **Dotfiles Organization**: Keep all application configs in `config/` directory
+
+## Claude Code Guidance
+
+### Working Method
+- I want to do the actual implementation unless otherwise told.
+
+### Important Notes
+- The **README.md** appears outdated and refers to old task names and structure
+- **CLAUDE.md** is the authoritative documentation for this repository
+- Current task interface uses `task pkg <domain>` not the old `task base|dev|gui` pattern shown in README
+- The `machines/` directory is deprecated - machine configuration is now in inventory files
