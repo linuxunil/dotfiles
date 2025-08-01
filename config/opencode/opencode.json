@@ -36,9 +36,10 @@
     },
     "zig-docs": {
       "type": "local",
-      "command": ["npx", "-y", "@zig-wasm/zig-mcp"],
+      "command": ["bunx", "-y", "zig-mcp@latest", "--version", "master", "--update-policy", "manual"],
       "enabled": true,
-      "environment": {}
+      "environment": {
+      }
     }
   },
 
