@@ -21,12 +21,12 @@ return {
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+            end,
+          },
         },
         opts = {},
       },
@@ -74,14 +74,17 @@ return {
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        documentation = { auto_show = false, auto_show_delay_ms = 500, window = { border = 'single' } },
         menu = {
+          border = 'single',
           draw = {
             columns = { { 'kind_icon' }, { 'label', 'label_detail', gap = 1 } },
             components = {
               label_detail = {
                 text = function(ctx)
-                  return ctx.item.detail or ''
+                  local detail = ctx.item.detail or ''
+                  -- Remove newlines and extra whitespace that can cause rendering issues
+                  return detail:gsub('[\r\n]', ' '):gsub('%s+', ' '):match '^%s*(.-)%s*$' or ''
                 end,
                 highlight = 'Comment',
               },
@@ -91,10 +94,55 @@ return {
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev' },
+        -- Dynamic provider selection based on filetype and context
+        default = function(ctx)
+          -- Check if we're in a comment (requires treesitter)
+          local success, node = pcall(vim.treesitter.get_node)
+          if success and node and vim.tbl_contains({ 'comment', 'line_comment', 'block_comment' }, node:type()) then
+            return { 'buffer' }
+          end
+
+          -- Filetype-specific provider selection
+          if vim.bo.filetype == 'go' then
+            return { 'lsp', 'path', 'snippets' }
+          elseif vim.bo.filetype == 'lua' then
+            return { 'lsp', 'path', 'lazydev' }
+          elseif vim.bo.filetype == 'python' then
+            return { 'lsp', 'path', 'snippets', 'buffer' }
+          elseif vim.bo.filetype == 'markdown' then
+            return { 'buffer', 'path' }
+          elseif vim.bo.filetype == 'yaml' or vim.bo.filetype == 'yml' then
+            return { 'lsp', 'path', 'buffer' }
+          else
+            return { 'lsp', 'path', 'snippets', 'buffer' }
+          end
+        end,
         providers = {
-          lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+          lazydev = {
+            module = 'lazydev.integrations.blink',
+            score_offset = 100,
+          },
+          -- Enhanced buffer completion from all open buffers
+          buffer = {
+            opts = {
+              get_bufnrs = function()
+                return vim.tbl_filter(function(bufnr)
+                  return vim.bo[bufnr].buftype == ''
+                end, vim.api.nvim_list_bufs())
+              end,
+            },
+          },
         },
+        -- Set minimum keyword length by filetype
+        min_keyword_length = function()
+          if vim.bo.filetype == 'markdown' then
+            return 2
+          elseif vim.bo.filetype == 'yaml' or vim.bo.filetype == 'yml' then
+            return 1
+          else
+            return 0
+          end
+        end,
       },
 
       snippets = { preset = 'luasnip' },
@@ -106,10 +154,14 @@ return {
       -- the rust implementation via `'prefer_rust_with_warning'`
       --
       -- See :h blink-cmp-config-fuzzy for more information
-      fuzzy = { implementation = 'lua' },
+      fuzzy = { implementation = 'prefer_rust_with_warning', sorts = {
+        'exact',
+        'score',
+        'sort_text',
+      } },
 
       -- Shows a signature help window while you type arguments for a function
-      signature = { enabled = true },
+      signature = { enabled = true, window = { border = 'single' } },
     },
   },
 }

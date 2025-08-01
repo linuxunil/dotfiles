@@ -52,6 +52,7 @@ return {
   {
     'echasnovski/mini.animate',
     lazy = false,
+    enabled = false,
     opts = {
       cursor = {
         enable = true,

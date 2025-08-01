@@ -136,7 +136,7 @@ fi
 if command -v fzf 1>/dev/null 2>&1; then
 	source <(fzf --zsh)
 fi
-
+	eval "$(mise activate zsh)"
 # Custom functions
 mkcd() {
     mkdir -p "$1" && cd "$1"

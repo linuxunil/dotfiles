@@ -1,0 +1,184 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "theme": "catppuccin",
+  "model": "anthropic/claude-sonnet-4-20250514",
+  "autoupdate": true,
+  "share": "manual",
+
+  "instructions": [
+    "AGENTS.md",
+    "CLAUDE.md"
+  ],
+
+  "provider": {
+    "anthropic": {
+      "models": {
+        "anthropic/claude-sonnet-4-20250514": {}
+      },
+      "options": {
+        "apiKey": "{env:ANTHROPIC_API_KEY}"
+      }
+    }
+  },
+
+  "disabled_providers": [
+    "openai",
+    "groq"
+  ],
+
+  "mcp": {
+    "godoc": {
+      "type": "local",
+      "command": ["/Users/disco/.local/share/mise/installs/go/1.24.5/bin/godoc-mcp"],
+      "enabled": true,
+      "environment": {
+      }
+    },
+    "zig-docs": {
+      "type": "local",
+      "command": ["npx", "-y", "@zig-wasm/zig-mcp"],
+      "enabled": true,
+      "environment": {}
+    }
+  },
+
+  "keybinds": {
+    "leader": "ctrl+space",
+
+    "app_help": "<leader>h",
+    "switch_mode": "tab",
+    "editor_open": "<leader>e",
+
+    "session_new": "<leader>n",
+    "session_list": "<leader>l",
+    "session_share": "<leader>s",
+    "session_unshare": "<leader>u",
+    "session_interrupt": "esc",
+    "session_compact": "<leader>c",
+
+    "tool_details": "<leader>d",
+    "model_list": "<leader>m",
+    "theme_list": "<leader>t",
+    "project_init": "<leader>i",
+
+    "input_clear": "ctrl+c",
+    "input_paste": "ctrl+v",
+    "input_submit": "enter",
+    "input_newline": "shift+enter",
+
+    "messages_page_up": "ctrl+u",
+    "messages_page_down": "ctrl+d",
+    "messages_half_page_up": "ctrl+b",
+    "messages_half_page_down": "ctrl+f",
+    "messages_first": "gg",
+    "messages_last": "G",
+    "messages_copy": "<leader>y",
+
+    "app_exit": "<leader>q"
+  },
+
+  "mode": {
+    "build": {
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "patch": true,
+        "todowrite": true,
+        "todoread": true,
+        "webfetch": true
+      }
+    },
+
+    "plan": {
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false,
+        "patch": false,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "todowrite": true,
+        "todoread": true,
+        "webfetch": true
+      }
+    },
+
+    "review": {
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false,
+        "patch": false,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "todowrite": true,
+        "todoread": true,
+        "webfetch": true
+      }
+    },
+
+    "debug": {
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "patch": false,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "todowrite": true,
+        "todoread": true,
+        "webfetch": true
+      }
+    },
+
+    "docs": {
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": false,
+        "patch": false,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "todowrite": true,
+        "todoread": true,
+        "webfetch": true
+      }
+    },
+
+    "mentor": {
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "prompt": "{file:./prompts/mentor.txt}",
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "patch": false,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "todowrite": true,
+        "todoread": true,
+        "webfetch": true
+      }
+    }
+  }
+}

@@ -75,13 +75,28 @@ end, { desc = 'Git [d]iff against index' })
 vim.keymap.set('n', '<leader>GD', function()
   require('gitsigns').diffthis '@'
 end, { desc = 'Git [D]iff against last commit' })
+-- Neogit operations
+vim.keymap.set('n', '<leader>Gg', function()
+  require('neogit').open()
+end, { desc = 'Open Neo[g]it' })
 
+vim.keymap.set('n', '<leader>Gc', function()
+  require('neogit').open { 'commit' }
+end, { desc = 'Git [c]ommit' })
+
+vim.keymap.set('n', '<leader>Gl', function()
+  require('neogit').open { 'log' }
+end, { desc = 'Git [l]og' })
+
+vim.keymap.set('n', '<leader>Gf', function()
+  require('neogit').open { kind = 'floating' }
+end, { desc = 'Git [f]loating window' })
 -- Register groups with which-key (deferred until which-key loads)
 vim.api.nvim_create_autocmd('User', {
   pattern = 'VeryLazy',
   callback = function()
-    require('which-key').add({
+    require('which-key').add {
       { '<leader>G', group = '[G]it' },
-    })
+    }
   end,
 })

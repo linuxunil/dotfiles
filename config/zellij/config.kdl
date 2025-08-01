@@ -9,6 +9,8 @@ scroll_buffer_size 10000
 copy_command "pbcopy"
 copy_clipboard "primary"
 show_startup_tips false
+forward_signals true
+terminal_signal_handling true
 
 
 // UI preferences
