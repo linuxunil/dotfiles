@@ -149,7 +149,7 @@ mkcd() {
 # Load local configuration if it exists
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
 # Launch Zellij
-if [[ -z "$ZELLIJ" ]] && [[ -z "$SSH_CONNECTION"  ]] && [[ -n "$DISPLAY"]] ; then
+if [[ -z "$ZELLIJ" ]] && [[ -z "$SSH_CONNECTION"  ]] ; then
           if [[ "$ZELLIJ_AUTO_ATTACH" == "true" ]]; then
               zellij attach -c
           else
