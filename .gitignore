@@ -27,3 +27,5 @@ ansible.cfg.local
 hosts.local
 *.local.yml
 .zsh_history
+
+.bw_session

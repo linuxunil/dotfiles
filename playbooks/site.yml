@@ -1,0 +1,21 @@
+---
+- name: Setup Linux Desktop
+  hosts: athena
+  become: false
+  roles:
+    - system
+    - dotfiles
+
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+
+  pre_tasks:
+    - name: Update package cache
+      ansible.builtin.dnf:
+        update_cache: true
+      become: true
+
+  post_tasks:
+    - name: Completion message
+      ansible.builtin.debug:
+        msg: "Setup complete"

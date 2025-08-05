@@ -1,0 +1,24 @@
+---
+- name: Install mise
+  ansible.builtin.shell: |
+    curl https://mise.run | sh
+    echo 'eval "$(~/.local/bin/mise activate zsh)"' >> ~/.zshrc
+  args:
+    creates: ~/.local/bin/mise
+
+- name: Create mise config directory
+  ansible.builtin.file:
+    path: ~/.config/mise
+    state: directory
+
+- name: Deploy global mise config
+  ansible.builtin.template:
+    src: mise-global.toml.j2
+    dest: ~/.config/mise/config.toml
+
+- name: Install global languages
+  ansible.builtin.shell: |
+    src ~/.zshrc
+    mise install
+  args:
+    chdir: "~"

@@ -1,0 +1,37 @@
+---
+# Configuration files to symlink
+dotfiles:
+  # Shell configs
+  - path: ".zshrc"
+    src: "zsh/zshrc"
+
+  # XDG config directory files
+  - path: ".config/bat/config"
+    src: "bat/config"
+
+  - path: ".config/nvim"
+    src: "nvim"
+    type: "directory"
+
+  - path: ".config/zellij/config.kdl"
+    src: "zellij/config.kdl"
+
+  - path: ".config/zellij/layouts"
+    src: "zellij/layouts"
+    type: "directory"
+
+  - path: ".config/ghostty/config"
+    src: "ghostty/config"
+
+  - path: ".config/starship/starship.toml"
+    src: "starship/starship.toml"
+
+  - path: ".config/git/ignore"
+    src: "git/ignore"
+    
+  # Mise configuration
+  - path: ".config/mise/config.toml"
+    src: "mise/config.toml"
+
+# Source directory for configs
+config_source_dir: "{{ playbook_dir }}/config"

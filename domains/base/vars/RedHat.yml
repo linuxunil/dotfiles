@@ -1,4 +1,0 @@
----
-# Linux-specific package overrides
-# Override fd package name for Linux (installed as 'fd-find')
-fd_package: fd-find

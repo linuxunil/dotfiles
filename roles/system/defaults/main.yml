@@ -1,0 +1,34 @@
+# DNF packages (from fedora repos + RPM Fusion )
+dnf_packages:
+  - git
+  - neovim
+  - fzf
+  - flatpak
+  - dnf-plugins-core
+  - "@Development Tools"
+  - ripgrep
+  - gh
+  - firefox
+  - hyprland
+  - waybar
+  - mako
+  - wofi
+  - grim
+  - slurp
+  - wl-clipboard
+  - pipewire
+  - pipewire-pulseaudio
+  - wireplumber
+  - zellij
+  - ghostty
+
+#Flatpak packages
+flatpak_packages: []
+
+copr_repos:
+  - varlad/zellij
+  - scottames/ghostty
+
+copr_packages:
+  - zellij
+

@@ -1,5 +1,0 @@
-all:
-  hosts:
-    hera:
-      ansible_host: hera.local
-      ansible_connection: ssh

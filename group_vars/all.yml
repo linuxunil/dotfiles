@@ -1,0 +1,7 @@
+# Global Configuration
+ansible_become_method: sudo
+ansible_become_ask_pass: false
+
+# User configuration
+user_shell: /usr/bin/zsh
+

@@ -1,2 +1,23 @@
 [tools]
-zig = "master"
+pipx = "latest"
+ansible = "latest"
+
+[settings]
+experimental = true
+
+[env]
+ANSIBLE_CONFIG = "{{config_root}}/ansible.cfg"
+
+
+[tasks.run]
+description = "Run the main playbook on all hosts"
+run = """
+ansible-playbook playbooks/site.yml "$@"
+"""
+
+[tasks.check]
+description = "Dry-run the playbook"
+run = """
+ansible-playbook playbooks/site.yml --check --diff "$@"
+"""
+

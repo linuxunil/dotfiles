@@ -1,0 +1,10 @@
+[tools]
+ansible = "latest"
+uv = "latest"
+bitwarden = "latest"
+starship = "latest"
+python = "latest"
+
+[settings]
+experimental = true
+pipx.uvx = true

@@ -1,4 +1,0 @@
----
-# macOS-specific package overrides
-# Note: fd package name is correct for macOS (installed as 'fd')
-# Most packages use the same name across platforms and are defined in defaults/main.yml
