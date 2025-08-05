@@ -1,7 +1,9 @@
 # Path configuration
 export PATH="$PATH:$HOME/go/bin:$PATH"
-export PATH="/opt/homebrew/bin:$PATH"  # For Apple Silicon Macs
-export PATH="$HOME/bin:$PATH"           # Personal scripts directory
+if command -v brew 1>/dev/null 2>&1; then
+	export PATH="/opt/homebrew/bin:$PATH"  # For Apple Silicon Macs
+fi
+export PATH="$HOME/.local/bin:$PATH"           # Personal scripts directory
 export EDITOR="nvim"
 export UV_PYTHON_PREFERENCE=only-managed
 export UV_PROJECT_ENVIRONMENT=.venv
@@ -33,7 +35,9 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'  # Case-insensitive completi
 # PROMPT='%F{blue}%n@%m%f:%F{cyan}%~%f$ '
 
 # Aliases (basic)
-alias cd='z'
+if command -v z 1>/dev/null 2>&1; then
+	alias cd='z'
+fi
 alias ll='ls -la'
 alias la='ls -A'
 alias l='ls -CF'
@@ -145,7 +149,7 @@ mkcd() {
 # Load local configuration if it exists
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
 # Launch Zellij
-if [[ -z "$ZELLIJ" ]] && [[ -z "$SSH_CONNECTION"  ]]  ; then
+if [[ -z "$ZELLIJ" ]] && [[ -z "$SSH_CONNECTION"  ]] && [[ -n "$DISPLAY"]] ; then
           if [[ "$ZELLIJ_AUTO_ATTACH" == "true" ]]; then
               zellij attach -c
           else
@@ -157,3 +161,6 @@ if [[ -z "$ZELLIJ" ]] && [[ -z "$SSH_CONNECTION"  ]]  ; then
           fi
       fi
 export PATH=$PATH:$HOME/.local/opt/go/bin
+
+# opencode
+export PATH=/home/disco/.opencode/bin:$PATH

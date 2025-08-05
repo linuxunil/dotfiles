@@ -28,10 +28,10 @@ dotfiles:
 
   - path: ".config/git/ignore"
     src: "git/ignore"
-    
+
   # Mise configuration
   - path: ".config/mise/config.toml"
     src: "mise/config.toml"
 
 # Source directory for configs
-config_source_dir: "{{ playbook_dir }}/config"
+config_source_dir: "{{inventory_dir}}/../config"
