@@ -4,6 +4,7 @@ uv = "latest"
 bitwarden = "latest"
 starship = "latest"
 python = "latest"
+npm = "latest"
 
 [settings]
 experimental = true
