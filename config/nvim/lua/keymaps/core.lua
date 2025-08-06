@@ -1,4 +1,4 @@
--- Navigation operations keymaps
+-- Core navigation and editing keymaps that don't belong to specific plugins
 
 -- ============================================================================
 -- CORE NAVIGATION AND EDITING
@@ -49,25 +49,11 @@ vim.keymap.set('n', '<leader>bn', '<cmd>bnext<cr>', { desc = 'Next buffer' })
 vim.keymap.set('n', '<leader>bp', '<cmd>bprevious<cr>', { desc = 'Previous buffer' })
 
 -- ============================================================================
--- JUMP OPERATIONS
+-- FILE OPERATIONS
 -- ============================================================================
 
--- Jump operations
-vim.keymap.set('n', '<leader>jj', '<cmd>Telescope jumplist<cr>', { desc = 'Jump list' })
-vim.keymap.set('n', '<leader>jm', '<cmd>Telescope marks<cr>', { desc = 'Marks' })
-
--- ============================================================================
--- FLASH NAVIGATION
--- ============================================================================
-
--- Flash navigation
-vim.keymap.set({ 'n', 'x', 'o' }, 's', function()
-  require('flash').jump()
-end, { desc = 'Flash' })
-
-vim.keymap.set({ 'n', 'x', 'o' }, 'S', function()
-  require('flash').treesitter()
-end, { desc = 'Flash Treesitter' })
+-- Basic file operations
+vim.keymap.set('n', '<leader>fn', '<cmd>enew<CR>', { desc = 'New file' })
 
 -- Register groups with which-key (deferred until which-key loads)
 vim.api.nvim_create_autocmd('User', {
@@ -76,7 +62,8 @@ vim.api.nvim_create_autocmd('User', {
     require('which-key').add {
       { '<leader>w', group = '[W]indow' },
       { '<leader>b', group = '[B]uffers' },
-      { '<leader>j', group = '[J]ump' },
+      { '<leader>d', group = '[D]iagnostic' },
+      { '<leader>p', group = '[P]rojects' },
     }
   end,
 })

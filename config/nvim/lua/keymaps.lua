@@ -1,10 +1,6 @@
--- Central keymap loader - imports all keymap files
--- This file loads all keymaps from the keymaps/ directory
+-- Central keymap loader - imports core keymap files
+-- Plugin-specific keymaps have been moved to their respective plugin configurations
 
-require('keymaps.files')
-require('keymaps.search')
-require('keymaps.git')
+require('keymaps.core')
 require('keymaps.ui')
-require('keymaps.code')
-require('keymaps.navigation')
 require('keymaps.editing')

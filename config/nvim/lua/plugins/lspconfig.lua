@@ -288,6 +288,25 @@ return {
           end,
         },
       }
+      
+      -- LSP keybinds (for non-telescope LSP operations)
+      vim.keymap.set('n', 'grn', vim.lsp.buf.rename, { desc = '[G]oto [R]ename' })
+      vim.keymap.set({ 'n', 'x' }, 'gra', vim.lsp.buf.code_action, { desc = '[G]oto [A]ction' })
+      vim.keymap.set('n', 'grD', vim.lsp.buf.declaration, { desc = '[G]oto [D]eclaration' })
+      
+      -- LSP hover and signature help
+      vim.keymap.set('n', 'K', vim.lsp.buf.hover, { desc = 'Hover Documentation' })
+      vim.keymap.set('i', '<C-k>', vim.lsp.buf.signature_help, { desc = 'Signature Documentation' })
+      
+      -- Register which-key groups
+      vim.api.nvim_create_autocmd('User', {
+        pattern = 'VeryLazy',
+        callback = function()
+          require('which-key').add {
+            { 'gr', group = '[G]oto [R]eferences/LSP' },
+          }
+        end,
+      })
     end,
   },
 }

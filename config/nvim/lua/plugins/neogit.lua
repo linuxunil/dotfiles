@@ -33,4 +33,24 @@ return {
       section = { '󰅂', '󰅀' }, -- Chevron right/down
     },
   },
+  config = function(_, opts)
+    require('neogit').setup(opts)
+    
+    -- Neogit operations
+    vim.keymap.set('n', '<leader>Gg', function()
+      require('neogit').open()
+    end, { desc = 'Open Neo[g]it' })
+    
+    vim.keymap.set('n', '<leader>Gc', function()
+      require('neogit').open { 'commit' }
+    end, { desc = 'Git [c]ommit' })
+    
+    vim.keymap.set('n', '<leader>Gl', function()
+      require('neogit').open { 'log' }
+    end, { desc = 'Git [l]og' })
+    
+    vim.keymap.set('n', '<leader>Gf', function()
+      require('neogit').open { kind = 'floating' }
+    end, { desc = 'Git [f]loating window' })
+  end,
 }

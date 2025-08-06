@@ -81,6 +81,14 @@ return {
         },
       },
     },
+    config = function(_, opts)
+      require('conform').setup(opts)
+      
+      -- Code formatting keybind
+      vim.keymap.set('n', '<leader>cf', function()
+        require('conform').format { async = true, lsp_format = 'fallback' }
+      end, { desc = 'Code [f]ormat' })
+    end,
   },
 }
 -- vim: ts=2 sts=2 sw=2 et
