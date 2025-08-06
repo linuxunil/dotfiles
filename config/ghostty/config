@@ -32,9 +32,8 @@ palette = 15=#a5adcb
 # Window settings
 window-padding-x = 4
 window-padding-y = 4
-maximize = true
 
 # Terminal behavior
-shell-integration = "zsh"
-initial-command = "zellij -l welcome"
+# shell-integration = detect
+# command = "zsh -c zellij -l welcome"
 # Launch zellij by default, fallback to shell if it fails

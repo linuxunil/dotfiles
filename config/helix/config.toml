@@ -1,55 +1,43 @@
 theme = "catppuccin_macchiato"
 
 [editor]
-line-number = "relative"
-mouse = true
-middle-click-paste = true
-scroll-lines = 3
 shell = ["zsh", "-c"]
-text-width = 80
-completion-trigger-len = 2
-auto-completion = true
+line-number = "relative"
+text-width = 100
+continue-comments = false
 auto-format = true
 idle-timeout = 400
 preview-completion-insert = true
 completion-replace = false
-auto-info = true
 true-color = true
 undercurl = true
 color-modes = true
+bufferline = "multiple"
+trim-trailing-whitespace = true
+popup-border = "popup"
+end-of-line-diagnostics = "hint"
 
 [editor.statusline]
 left = ["mode", "spinner"]
-center = ["file-name", "file-modification-indicator"]
+center = ["file-base-name", "file-modification-indicator"]
 right = ["diagnostics", "selections", "register", "position", "file-encoding"]
 separator = "│"
 mode.normal = "NORMAL"
 mode.insert = "INSERT"
 mode.select = "SELECT"
+diagnostics = ["warning", "error"]
+workspace-diagnostics = ["warning", "error"]
 
 [editor.lsp]
-enable = true
-display-messages = true
-auto-signature-help = true
-display-inlay-hints = true
+display-progress-messages = true
+display-color-swatches = true
 display-signature-help-docs = true
-snippets = true
-goto-reference-include-declaration = true
 
 [editor.cursor-shape]
 insert = "bar"
-normal = "block"
-select = "underline"
 
 [editor.file-picker]
 hidden = false
-follow-symlinks = true
-deduplicate-links = true
-parents = true
-ignore = true
-git-ignore = true
-git-global = true
-git-exclude = true
 max-depth = 25
 
 [editor.auto-pairs]
@@ -59,14 +47,12 @@ max-depth = 25
 '"' = '"'
 '`' = '`'
 
-[editor.search]
-smart-case = true
-wrap-around = true
+[editor.auto-save]
+focus-lost = true
 
 [editor.whitespace]
-# render = "selection"
-# characters = { space = "·", nbsp = "⍽", tab = "→", newline = "⏎" }
-# 
+characters = { nbsp = "⍽", tab = "→" }
+
 [editor.indent-guides]
 render = true
 character = "┊"
@@ -77,7 +63,11 @@ layout = ["diff", "diagnostics", "line-numbers", "spacer"]
 
 [editor.soft-wrap]
 enable = true
+max-indent-retain = 0
+
 [keys.normal]
+C-n = "move_parent_node_end"
+C-u = "move_parent_node_start"
 C-s = ":w"
 C-q = ":q"
 C-f = "format_selections"
@@ -93,4 +83,8 @@ C-s = ["commit_undo_checkpoint", ":w"]
 j = { k = "normal_mode" }
 
 [keys.select]
-C-s = ["normal_mode", ":w"]
+tab = "extend_parent_node_end"
+S-tab = "extend_parent_node_start"
+
+[editor.inline-diagnostics]
+cursor-line = "warning"

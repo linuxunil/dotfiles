@@ -140,6 +140,28 @@ return {
         },
       }
 
+      -- Python environment detection for uv projects
+      local function get_python_path()
+        -- Check if we're in a uv project
+        local uv_lock = vim.fn.findfile('uv.lock', '.;')
+        local pyproject = vim.fn.findfile('pyproject.toml', '.;')
+
+        if uv_lock ~= '' or pyproject ~= '' then
+          -- Use uv to get Python path
+          local handle = io.popen 'uv run which python 2>/dev/null'
+          if handle then
+            local result = handle:read '*a'
+            handle:close()
+            if result and result ~= '' then
+              return vim.trim(result)
+            end
+          end
+        end
+
+        -- Fallback to system Python
+        return vim.fn.exepath 'python3' or vim.fn.exepath 'python'
+      end
+
       -- LSP servers and clients are able to communicate to each other what features they support.
       --  By default, Neovim doesn't support everything that is in the LSP specification.
       --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
@@ -171,12 +193,14 @@ return {
           },
         },
         ruff = {},
+
         -- pyright = {
         --   settings = {
         --     python = {
+        --       pythonPath = get_python_path(),
         --       analysis = {
         --         -- Disable pyright's linting (let ruff handle it)
-        --         typeCheckingMode = 'basic', -- or "strict" if youwant more type checking
+        --         typeCheckingMode = 'basic', -- or "strict" if you want more type checking
         --         autoSearchPaths = true,
         --         useLibraryCodeForTypes = true,
         --         autoImportCompletions = true,
@@ -188,7 +212,7 @@ return {
         --     local caps = vim.tbl_deep_extend('force', {}, capabilities)
         --     caps.textDocument.formatting = false
         --     caps.textDocument.rangeFormatting = false
-        --     caps.textDocument.codeAction = false -- Let ruff handlecode actions
+        --     caps.textDocument.codeAction = false -- Let ruff handle code actions
         --     return caps
         --   end)(),
         -- },
@@ -246,6 +270,7 @@ return {
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'ruff',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 

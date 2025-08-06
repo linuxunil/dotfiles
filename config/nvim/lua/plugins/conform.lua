@@ -23,10 +23,62 @@ return {
         lua = { 'stylua' },
         go = { 'gofumpt', 'goimports' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
+        python = { 'ruff_fix', 'ruff_format', 'ruff_organize_imports' },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
+      },
+      formatters = {
+        ruff_format = {
+          command = function()
+            -- Check if we're in a uv project
+            local uv_lock = vim.fn.findfile('uv.lock', '.;')
+            local pyproject = vim.fn.findfile('pyproject.toml', '.;')
+
+            if uv_lock ~= '' or pyproject ~= '' then
+              return 'uv'
+            else
+              return 'ruff'
+            end
+          end,
+          args = function()
+            -- Check if we're in a uv project
+            local uv_lock = vim.fn.findfile('uv.lock', '.;')
+            local pyproject = vim.fn.findfile('pyproject.toml', '.;')
+
+            if uv_lock ~= '' or pyproject ~= '' then
+              return { 'run', 'ruff', 'format', '--stdin-filename', '$FILENAME', '-' }
+            else
+              return { 'format', '--stdin-filename', '$FILENAME', '-' }
+            end
+          end,
+          stdin = true,
+        },
+        ruff_organize_imports = {
+          command = function()
+            -- Check if we're in a uv project
+            local uv_lock = vim.fn.findfile('uv.lock', '.;')
+            local pyproject = vim.fn.findfile('pyproject.toml', '.;')
+
+            if uv_lock ~= '' or pyproject ~= '' then
+              return 'uv'
+            else
+              return 'ruff'
+            end
+          end,
+          args = function()
+            -- Check if we're in a uv project
+            local uv_lock = vim.fn.findfile('uv.lock', '.;')
+            local pyproject = vim.fn.findfile('pyproject.toml', '.;')
+
+            if uv_lock ~= '' or pyproject ~= '' then
+              return { 'run', 'ruff', 'check', '--select', 'I', '--fix', '--stdin-filename', '$FILENAME', '-' }
+            else
+              return { 'check', '--select', 'I', '--fix', '--stdin-filename', '$FILENAME', '-' }
+            end
+          end,
+          stdin = true,
+        },
       },
     },
   },

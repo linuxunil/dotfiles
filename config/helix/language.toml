@@ -3,8 +3,12 @@
 command = "gopls"
 
 [language-server.ruff]
-command = "ruff"
-args = ["server"]
+command = "uvx"
+args = ["ruff", "server"]
+
+[language-server.ty]
+command = "uvx"
+args = ["ty","server"]
 
 [language-server.zls]
 command = "zls"
@@ -18,7 +22,7 @@ auto-format = true
 # Python Configuration
 [[language]]
 name = "python"
-language-servers = ["ruff"]
+language-servers = ["ruff", "tv"]
 auto-format = true
 
 # Zig Configuration
