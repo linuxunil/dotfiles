@@ -5,6 +5,12 @@
     state: directory
     mode: '0755'
 
+- name: Remove any existing broken symlinks
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/{{ item.path }}"
+    state: absent
+  loop: "{{ dotfiles }}"
+
 - name: Create config subdirectories
   ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/{{ item.path | dirname }}"
@@ -15,12 +21,21 @@
     - item.path | dirname != '.'
     - item.path | dirname != '.config'
 
-- name: Symlink dotfiles
-  ansible.builtin.file:
+- name: Copy dotfiles (files)
+  ansible.builtin.copy:
     src: "{{ config_source_dir }}/{{ item.src }}"
     dest: "{{ ansible_env.HOME }}/{{ item.path }}"
-    state: link
-    force: true
+    mode: '0644'
   loop: "{{ dotfiles }}"
+  when: item.type is not defined or item.type != 'directory'
+
+- name: Copy dotfiles (directories)
+  ansible.posix.synchronize:
+    src: "{{ config_source_dir }}/{{ item.src }}/"
+    dest: "{{ ansible_env.HOME }}/{{ item.path }}/"
+    delete: false
+    recursive: true
+  loop: "{{ dotfiles }}"
+  when: item.type is defined and item.type == 'directory'
 
 

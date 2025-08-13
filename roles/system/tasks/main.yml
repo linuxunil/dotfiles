@@ -1,11 +1,17 @@
 ---
-- name: Update system packages
+# Load OS-specific variables
+- name: Include OS-specific variables
+  ansible.builtin.include_vars: "{{ ansible_os_family }}.yml"
+
+# Fedora/Red Hat tasks
+- name: Update system packages (Fedora)
   ansible.builtin.dnf:
     name: "*"
     state: latest
   become: true
+  when: ansible_os_family == "RedHat"
 
-- name: Enable RPM Fusion repositories
+- name: Enable RPM Fusion repositories (Fedora)
   ansible.builtin.dnf:
     name:
       - "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ansible_distribution_major_version}}.noarch.rpm"
@@ -13,19 +19,37 @@
     state: present
     disable_gpg_check: true
   become: true
+  when: ansible_os_family == "RedHat"
 
-- name: Enable COPR repositories
+- name: Enable COPR repositories (Fedora)
   community.general.copr:
     name: "{{ item }}"
     state: enabled
   loop: "{{ copr_repos }}"
   become: true
+  when: ansible_os_family == "RedHat" and copr_repos | length > 0
 
-- name: Install DNF packages
+- name: Install DNF packages (Fedora)
   ansible.builtin.dnf:
     name: "{{ dnf_packages }}"
     state: present
   become: true
+  when: ansible_os_family == "RedHat"
+
+# Debian/Ubuntu tasks
+- name: Update package cache (Debian)
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  become: true
+  when: ansible_os_family == "Debian"
+
+- name: Install APT packages (Debian)
+  ansible.builtin.apt:
+    name: "{{ apt_packages }}"
+    state: present
+  become: true
+  when: ansible_os_family == "Debian"
 
 - name: Add Flathub repository
   community.general.flatpak_remote:

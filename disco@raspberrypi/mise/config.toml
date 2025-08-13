@@ -1,0 +1,12 @@
+[tools]
+ansible = "latest"
+uv = "latest"
+bitwarden = "latest"
+starship = "latest"
+python = "latest"
+npm = "latest"
+
+[settings]
+experimental = true
+pipx.uvx = true
+idiomatic_version_file_enable_tools = ["rust"]

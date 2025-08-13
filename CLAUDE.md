@@ -4,108 +4,99 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-Domain-based Ansible system configuration management for macOS and Linux environments. Uses Go-task as the primary command interface with conditional dotfiles management that only symlinks configurations for installed tools.
+Ansible-based system configuration management for Linux environments with automated dotfiles deployment. Uses mise for task management and tool installation with role-based Ansible architecture.
 
 ## Key Commands
 
 ### Essential Setup
 ```bash
-task deps                 # Install Ansible Galaxy collections (run first!)
-task pkg base             # Install essential CLI tools
-task pkg development      # Install development tools and languages  
-task pkg gui              # Install GUI applications and desktop
-task all                  # Install all domains for current machine
-task dot                  # Setup dotfiles symlinks (conditional)
+mise install             # Install required tools (Ansible, pipx)
+mise run run             # Run the main playbook on all hosts
+mise run check           # Dry-run the playbook with diff output
 ```
 
-### Development Workflow
+### Direct Ansible Commands
 ```bash
-task check               # Validate Ansible playbook syntax
-task dry-run             # Preview changes without applying
-task clean               # Clean broken symlinks in home directory
-ansible-playbook dotfiles.yml    # Standalone dotfiles management
+ansible-playbook playbooks/site.yml              # Run main playbook
+ansible-playbook playbooks/site.yml --check --diff  # Preview changes
+ansible-playbook playbooks/site.yml --limit athena  # Target specific host
 ```
 
 ## Architecture
 
-### Domain Structure
-- **base**: Essential CLI tools (git, neovim, ripgrep, fzf, starship)
-- **development**: Languages (Go, Python, Zig via Mise) and dev tools (podman, zellij, lazygit)
-- **gui**: Desktop apps and Hyprland environment (Linux) with catppuccin-macchiato theme
+### Role Structure
+- **system**: Linux desktop environment with Hyprland, development tools, and applications
+- **dotfiles**: Automated dotfiles management and symlink creation
+- **languages**: Language runtime management (currently basic setup)
 
 ### Directory Layout
 ```
-├── Taskfile.yml         # Go-task commands
-├── site.yml             # Main Ansible playbook
-├── dotfiles.yml         # Conditional dotfiles playbook
-├── inventory/           # Machine configurations
-│   ├── localhost.yml    # Local machine (auto-detects OS)
-│   ├── linux.yml        # athena.local remote
-│   └── hera.yml         # hera.local remote
-├── domains/             # Domain roles
-│   ├── base/            # Core CLI tools
-│   ├── development/     # Dev tools & languages
-│   └── gui/             # Desktop applications
+├── mise.toml            # Mise task runner and tool management
+├── ansible.cfg          # Ansible configuration
+├── playbooks/
+│   └── site.yml         # Main playbook for Linux workstation setup
+├── inventory/
+│   └── hosts.yml        # Host definitions (athena.local)
+├── group_vars/
+│   └── all.yml          # Global Ansible variables
+├── roles/               # Ansible roles
+│   ├── system/          # Package installation and system setup
+│   ├── dotfiles/        # Dotfiles symlink management
+│   └── languages/       # Language runtime setup
 └── config/              # Static dotfiles (git-managed)
-    ├── nvim/            # Neovim (kickstart-based)
-    ├── zellij/          # Terminal multiplexer with dev layouts
-    ├── ghostty/         # Terminal emulator
-    └── ...              # Other app configs
+    ├── nvim/            # Neovim configuration
+    ├── zellij/          # Terminal multiplexer layouts
+    ├── ghostty/         # Terminal emulator config
+    └── ...              # Application configurations
 ```
 
 ## Development Guidelines
 
 ### Adding Packages
-1. Edit domain's `defaults/main.yml` for package lists
-2. Add platform-specific packages in `vars/Darwin.yml` or `vars/RedHat.yml`
-3. Test with `task dry-run` before applying
+1. Edit `roles/system/defaults/main.yml` for package lists
+2. Add DNF packages to `dnf_packages` list
+3. Add Flatpak packages to `flatpak_packages` list
+4. Add COPR repositories to `copr_repos` if needed
+5. Test with `mise run check` before applying
 
 ### Managing Dotfiles
 - **Edit directly** in `config/` directory - all files are static and git-managed
-- **Conditional linking** - only creates symlinks for installed tools
-- **Update symlinks** with `task dot` after installing new tools
+- **Automated linking** - dotfiles role handles symlink creation
 - **Never generate configs** - Ansible only manages symlinks, not content
 
 ### Testing Changes
 ```bash
-task deps                # Ensure Galaxy collections installed
-task check               # Validate syntax
-task dry-run             # Preview changes
-task pkg <domain>        # Apply specific domain
+mise install             # Ensure tools are installed
+mise run check           # Validate syntax and preview changes
+mise run run             # Apply changes to target hosts
 ```
 
 ## Platform Notes
 
-- **macOS**: Uses Homebrew and Cask, includes Raycast
-- **Linux**: Uses DNF and Flatpak, includes full Hyprland desktop
-- **Container runtime**: Podman (cross-platform)
-- **Language management**: Mise for Go, Python, Zig
-- **Python packages**: UV for modern Python management
-- **Shell**: Zsh with Starship prompt
+- **Linux**: Fedora-based with DNF package manager and Flatpak
+- **Desktop**: Hyprland compositor with Waybar, Mako, and Wofi
+- **Terminal**: Ghostty and Zellij for terminal multiplexing
+- **Development**: Neovim, ripgrep, fzf, gh CLI
+- **Audio**: Pipewire with PulseAudio compatibility
 
 ## Key Features
 
-### Conditional Dotfiles
-- Automatically discovers directories in `config/`
-- Only symlinks configs for installed tools
-- Special handling for shell files (.zshenv, .zprofile)
-- Tool detection via `which` command
+### Automated Dotfiles Management
+- Static configuration files stored in `config/` directory
+- Ansible role automatically creates symlinks to home directory
+- No dynamic generation - all configs are version controlled
 
-### Zellij Development Layouts
-Pre-configured layouts in `config/zellij/layouts/`:
-- Language-specific: `go-dev`, `python-dev`, `rust-dev`, `ts-dev`
-- IDE-specific: `goland-dev`, `pycharm-dev`, `zed-dev`, `helix-dev`
-- Special purpose: `docker-dev`, `ansible-dev`, `general-dev`
+### Zellij Terminal Layouts
+Pre-configured layouts in `config/zellij/layouts/` for development workflows
 
-### Multi-Machine Deployment
-- SSH-based remote deployment (hera ↔ athena)
-- Inventory-based configuration
-- OS detection for localhost
-- Consistent tool stack across platforms
+### Remote Deployment
+- SSH-based deployment to athena.local Linux workstation
+- Inventory-based host configuration
+- Idempotent playbook execution
 
 ## Important Notes
 
-- Always run `task deps` first for Galaxy collections
-- The machines/ directory is deprecated - use inventory files
+- Target host: athena.local (Linux workstation)
 - All config files are static (git-managed), never generated by Ansible
-- Domain dependencies: development and gui both require base
+- Use `mise run check` to preview changes before applying
+- COPR repositories used for packages not in main Fedora repos

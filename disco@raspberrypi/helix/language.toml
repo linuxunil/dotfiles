@@ -1,0 +1,32 @@
+# Language Servers
+[language-server.gopls]
+command = "gopls"
+
+[language-server.ruff]
+command = "uvx"
+args = ["ruff", "server"]
+
+[language-server.ty]
+command = "uvx"
+args = ["ty","server"]
+
+[language-server.zls]
+command = "zls"
+
+# Go Configuration
+[[language]]
+name = "go"
+language-servers = ["gopls"]
+auto-format = true
+
+# Python Configuration
+[[language]]
+name = "python"
+language-servers = ["ruff", "tv"]
+auto-format = true
+
+# Zig Configuration
+[[language]]
+name = "zig"
+language-servers = ["zls"]
+auto-format = true

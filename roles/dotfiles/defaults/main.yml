@@ -1,14 +1,11 @@
 ---
-# Configuration files to symlink
+# Configuration files to copy
 dotfiles:
   # Shell configs
   - path: ".zshrc"
     src: "zsh/zshrc"
 
   # XDG config directory files
-  - path: ".config/bat/config"
-    src: "bat/config"
-
   - path: ".config/nvim"
     src: "nvim"
     type: "directory"
@@ -20,6 +17,10 @@ dotfiles:
     src: "zellij/layouts"
     type: "directory"
 
+  - path: ".config/zellij/themes"
+    src: "zellij/themes"
+    type: "directory"
+
   - path: ".config/ghostty/config"
     src: "ghostty/config"
 
@@ -29,7 +30,6 @@ dotfiles:
   - path: ".config/git/ignore"
     src: "git/ignore"
 
-  # Mise configuration
   - path: ".config/mise/config.toml"
     src: "mise/config.toml"
 

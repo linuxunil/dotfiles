@@ -21,3 +21,15 @@ run = """
 ansible-playbook playbooks/site.yml --check --diff "$@"
 """
 
+[tasks.raspberry-pi]
+description = "Setup Raspberry Pi (kevin)"
+run = """
+ansible-playbook playbooks/raspberry-pi.yml "$@"
+"""
+
+[tasks.raspberry-pi-check]
+description = "Dry-run Raspberry Pi setup"
+run = """
+ansible-playbook playbooks/raspberry-pi.yml --check --diff "$@"
+"""
+

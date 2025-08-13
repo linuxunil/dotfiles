@@ -1,0 +1,1 @@
+/Users/disco/.dotfiles/dotfiles/dotfiles/eslint.config.js

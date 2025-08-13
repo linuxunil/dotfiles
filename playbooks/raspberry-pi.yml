@@ -1,0 +1,40 @@
+---
+- name: Setup Raspberry Pi
+  hosts: raspberry_pi
+  become: false
+  gather_facts: false
+  roles:
+    - system
+    - dotfiles
+
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+  pre_tasks:
+    - name: Install Python3 if needed
+      ansible.builtin.raw: |
+        if ! command -v python3 &> /dev/null; then
+          apt update && apt install -y python3
+        fi
+      become: true
+      changed_when: false
+
+    - name: Gather facts after Python installation
+      ansible.builtin.setup:
+
+    - name: Update package cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+      become: true
+
+  post_tasks:
+    - name: Change default shell to zsh
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        shell: /usr/bin/zsh
+      become: true
+
+    - name: Completion message
+      ansible.builtin.debug:
+        msg: "Raspberry Pi setup complete for {{ inventory_hostname }} - zsh and dotfiles configured"

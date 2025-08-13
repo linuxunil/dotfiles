@@ -1,0 +1,78 @@
+# Ruff configuration for Python development
+
+# Line length (same as Black default)
+line-length = 88
+indent-width = 4
+
+# Python version
+target-version = "py312"
+
+# Exclude common directories
+exclude = [
+    ".bzr",
+    ".direnv", 
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+[lint]
+# Comprehensive rule selection replacing Flake8, Black, isort
+select = [
+    "E4",   # Pycodestyle errors
+    "E7",   # Pycodestyle errors  
+    "E9",   # Pycodestyle errors
+    "F",    # Pyflakes
+    "I",    # Import sorting (replaces isort)
+    "UP",   # Pyupgrade
+    "W",    # Pycodestyle warnings
+    "B",    # Flake8-bugbear
+    "C4",   # Flake8-comprehensions
+    "N",    # PEP8 naming
+    "PERF", # Performance
+    "RUF",  # Ruff-specific rules
+]
+
+# Rules to ignore
+ignore = [
+    "E501",   # Line too long (handled by formatter)
+]
+
+# Allow automatic fixes
+fixable = ["ALL"]
+unfixable = []
+
+# Per-file ignores
+[lint.per-file-ignores]
+"tests/**/*" = ["D"]
+"__init__.py" = ["F401"]
+
+[format]
+# Black-compatible formatting
+quote-style = "double"
+indent-style = "space" 
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
+
+[lint.isort]
+# Import sorting configuration
+force-single-line = false
+lines-between-types = 1
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]

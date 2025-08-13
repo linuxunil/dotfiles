@@ -1,0 +1,20 @@
+# APT packages for Debian/Ubuntu/Raspbian
+apt_packages:
+  - git
+  - neovim
+  - fzf
+  - ripgrep
+  - curl
+  - wget
+  - build-essential
+  - zsh
+
+# Snap packages (if needed)
+snap_packages: []
+
+# No COPR repos for Debian-based systems
+copr_repos: []
+copr_packages: []
+
+# No Flatpak packages for minimal Pi setup
+flatpak_packages: []

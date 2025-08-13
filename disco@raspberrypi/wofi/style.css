@@ -1,0 +1,176 @@
+/* Wofi CSS - Catppuccin Macchiato Theme */
+/* Enhanced styling for better appearance */
+
+/* Main window */
+window {
+    margin: 0px;
+    border: 2px solid #5b6078;
+    border-radius: 16px;
+    background-color: #24273a;
+    font-family: "JetBrains Mono Nerd Font", "JetBrains Mono", monospace;
+    font-size: 13px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Input field */
+#input {
+    all: unset;
+    min-height: 40px;
+    padding: 8px 16px;
+    margin: 12px;
+    border: 2px solid #363a4f;
+    border-radius: 12px;
+    color: #cad3f5;
+    background-color: #1e2030;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+#input:focus {
+    border: 2px solid #c6a0f6;
+    background-color: #24273a;
+    box-shadow: 0 0 0 3px rgba(198, 160, 246, 0.2);
+}
+
+#input image {
+    color: #a5adcb;
+    margin-right: 8px;
+}
+
+#input image:hover {
+    color: #cad3f5;
+}
+
+/* Inner box */
+#inner-box {
+    margin: 4px 8px 8px 8px;
+    padding: 8px;
+    border: none;
+    background-color: transparent;
+    border-radius: 12px;
+}
+
+/* Outer box */
+#outer-box {
+    margin: 0px;
+    border: none;
+    background-color: transparent;
+    border-radius: 16px;
+}
+
+/* Scroll area */
+#scroll {
+    margin: 0px;
+    border: none;
+    border-radius: 12px;
+    background-color: transparent;
+}
+
+/* Entries */
+#entry {
+    padding: 8px 12px;
+    margin: 4px 8px;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    background-color: #1e2030;
+    transition: all 0.2s ease;
+}
+
+#entry:selected {
+    background: linear-gradient(135deg, #c6a0f6 0%, #b7bdf8 100%);
+    border: 2px solid transparent;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(198, 160, 246, 0.3);
+}
+
+#entry:hover:not(:selected) {
+    background-color: #363a4f;
+    border: 2px solid #494d64;
+}
+
+/* Text in entries */
+#text {
+    margin: 0px 4px;
+    padding: 0px;
+    border: none;
+    color: #cad3f5;
+    background-color: transparent;
+    font-weight: 400;
+}
+
+#entry:selected #text {
+    color: #181926;
+    font-weight: 600;
+}
+
+/* Image/icon */
+#img {
+    margin: 0px 8px 0px 0px;
+    padding: 0px;
+    border: none;
+    background-color: transparent;
+    size: 20px;
+}
+
+#entry:selected #img {
+    filter: brightness(0) saturate(100%);
+}
+
+/* Mode switcher */
+#mode-switcher {
+    margin: 8px 12px;
+    border-radius: 10px;
+    background-color: #1e2030;
+    padding: 4px;
+}
+
+#mode-switcher button {
+    padding: 6px 12px;
+    margin: 2px;
+    border: none;
+    border-radius: 8px;
+    background-color: transparent;
+    color: #a5adcb;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+#mode-switcher button:hover {
+    background-color: #363a4f;
+    color: #cad3f5;
+}
+
+#mode-switcher button.active {
+    background-color: #c6a0f6;
+    color: #181926;
+}
+
+/* No results */
+#no-results {
+    padding: 20px;
+    margin: 8px;
+    border: none;
+    color: #6e738d;
+    background-color: transparent;
+    font-style: italic;
+    text-align: center;
+}
+
+/* Scrollbar */
+#scroll scrollbar {
+    width: 8px;
+    border: none;
+    margin: 4px;
+}
+
+#scroll scrollbar handle {
+    border: none;
+    border-radius: 4px;
+    background-color: #494d64;
+    min-height: 20px;
+}
+
+#scroll scrollbar handle:hover {
+    background-color: #5b6078;
+}
